@@ -1,0 +1,36 @@
+---
+alwaysApply: true
+---
+
+# CloudNow Website Admin Project Configuration
+
+## Tailwind Configuration
+
+This project uses Tailwind CSS with configuration managed through `components.json` instead of the traditional `tailwind.config.js` file. The newer Tailwind setup leverages shadcn/ui's component system.
+
+Key configuration details:
+
+- CSS variables are defined in `src/app/globals.css`
+- Component styles are configured in `components.json`
+- Tailwind is imported at the top of `globals.css`
+- Theme configuration is handled through the `@theme inline` directive in globals.css
+
+## shadcn/ui Integration
+
+- Component variants are defined in individual component files
+- UI components are stored in `/src/components/ui`
+- The `cn()` utility from `/src/lib/utils.ts` is used for conditional class merging
+- Component configuration is centralized in `components.json` including:
+  - Style (New York)
+  - React Server Components (RSC) support
+  - CSS variable naming conventions
+  - Import aliases
+
+## Project Structure
+
+- `/src/app` - Next.js app router structure
+- `/src/components` - Reusable components
+  - `/src/components/ui` - UI components (shadcn/ui based)
+  - `/src/components/icons` - Icon components
+- `/src/lib` - Utility functions
+- `/src/hooks` - Custom React hooks

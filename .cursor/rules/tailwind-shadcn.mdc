@@ -1,0 +1,32 @@
+---
+globs: *.tsx,*.css
+---
+
+# Tailwind and shadcn/ui Guidelines
+
+## Modern Tailwind Setup
+
+- This project does NOT use a traditional `tailwind.config.js` file
+- Tailwind configuration is managed through `components.json`
+- CSS variables are defined in `src/app/globals.css`
+- Use the `@theme inline` directive in globals.css for theme configuration
+
+## shadcn/ui Component Usage
+
+- Import UI components from `@/components/ui/`
+- Use the `cn()` utility from `@/lib/utils.ts` for conditional class merging
+- Component variants are defined in their respective files
+- Follow the shadcn/ui naming conventions for props and variants
+
+## CSS Variables
+
+- Use CSS variables for colors, spacing, and other design tokens
+- Access theme values through the CSS variable system
+- Example: `bg-[var(--primary)]` instead of hardcoded colors
+- Refer to `globals.css` for the complete list of available variables
+
+## Component Customization
+
+- Extend shadcn/ui components by wrapping them, not modifying source files
+- Use composition patterns when building new components
+- Maintain consistent styling across custom and shadcn/ui components

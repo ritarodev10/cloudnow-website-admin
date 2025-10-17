@@ -1,0 +1,32 @@
+---
+globs: *.tsx
+---
+
+# Form Component Guidelines
+
+## shadcn/ui Form Components
+
+- Use shadcn/ui form components from `@/components/ui/`
+- Import Button, Input, and Label components from their respective files
+- Use the `cn()` utility for conditional class names
+- Follow shadcn/ui's component API for consistent styling
+
+## Form Security
+
+- Always use `autoComplete="new-password"` for sensitive input fields to prevent browser autofill
+- Add unique name attributes to input fields to further prevent autofill (e.g., `name="username_unique"`)
+- Add `autoCorrect="off"` and `autoCapitalize="off"` to text inputs where appropriate
+- Use `spellCheck="false"` on forms containing sensitive information
+
+## Authentication Forms
+
+- Login form should have empty initial state for email/password fields
+- Password visibility toggle should use the Eye/EyeOff icons from lucide-react
+- Use proper state management for form fields
+
+## Styling with Tailwind
+
+- Use Tailwind's opacity modifiers (e.g., `bg-white/10`) for semi-transparent elements
+- Use `backdrop-blur-xl` for glassmorphism effects
+- Follow the project's border radius convention with `rounded-xl`
+- Use the project's color variables through Tailwind classes
