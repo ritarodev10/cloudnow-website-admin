@@ -1,0 +1,252 @@
+---
+alwaysApply: true
+description: Guidelines for using shadcn/ui components as the primary UI library
+---
+
+# shadcn/ui Component Guidelines
+
+## Always Use shadcn/ui First
+
+When creating pages or components, **ALWAYS** check if shadcn/ui has a component that meets your needs before creating custom components or using HTML elements.
+
+### Available shadcn/ui Components
+
+Check the [shadcn/ui documentation](https://ui.shadcn.com/docs/components) for available components:
+
+#### Layout & Structure
+
+- `Card`, `CardContent`, `CardDescription`, `CardFooter`, `CardHeader`, `CardTitle`
+- `Separator`
+- `Sheet` (for sidebars, drawers)
+
+#### Data Display
+
+- `Table`, `TableBody`, `TableCell`, `TableHead`, `TableHeader`, `TableRow`
+- `Badge`
+- `Avatar`
+- `Skeleton`
+
+#### Forms & Inputs
+
+- `Button` (with variants: default, destructive, outline, secondary, ghost, link)
+- `Input`
+- `Label`
+- `Form`, `FormControl`, `FormDescription`, `FormField`, `FormItem`, `FormLabel`, `FormMessage`
+- `Switch`
+- `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue`
+
+#### Navigation
+
+- `NavigationMenu`, `NavigationMenuContent`, `NavigationMenuItem`, `NavigationMenuLink`, `NavigationMenuList`, `NavigationMenuTrigger`
+- `Breadcrumb`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbList`, `BreadcrumbPage`, `BreadcrumbSeparator`
+
+#### Feedback
+
+- `Alert`, `AlertDescription`, `AlertTitle`
+- `Dialog`, `DialogContent`, `DialogDescription`, `DialogFooter`, `DialogHeader`, `DialogTitle`, `DialogTrigger`
+- `Tooltip`, `TooltipContent`, `TooltipProvider`, `TooltipTrigger`
+- `DropdownMenu`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuTrigger`
+
+#### Overlays
+
+- `Sheet`, `SheetContent`, `SheetDescription`, `SheetFooter`, `SheetHeader`, `SheetTitle`, `SheetTrigger`
+
+### Component Usage Rules
+
+#### 1. Import from shadcn/ui
+
+```typescript
+// ✅ Correct - Use shadcn components
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+// ❌ Avoid - Raw HTML elements
+<button className="...">Click me</button>
+<div className="border rounded-md p-4">...</div>
+<table className="...">...</table>
+```
+
+#### 2. Use Component Variants
+
+```typescript
+// ✅ Correct - Use shadcn variants
+<Button variant="outline" size="sm">Cancel</Button>
+<Button variant="destructive" size="lg">Delete</Button>
+<Card className="w-full">
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+```
+
+#### 3. Combine Components Properly
+
+```typescript
+// ✅ Correct - Proper shadcn composition
+<Card>
+  <CardHeader>
+    <CardTitle>Blog Posts</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Title</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Post Title</TableCell>
+          <TableCell>
+            <Badge variant="secondary">Published</Badge>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </CardContent>
+</Card>
+```
+
+### When to Create Custom Components
+
+Only create custom components when:
+
+1. **shadcn/ui doesn't have the component** you need
+2. **You need to compose multiple shadcn components** into a reusable pattern
+3. **You need business logic** that wraps shadcn components
+
+#### Example: Custom Component Using shadcn
+
+```typescript
+// ✅ Good - Custom component using shadcn
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+interface BlogPostCardProps {
+  post: BlogPost;
+  onEdit: () => void;
+}
+
+export function BlogPostCard({ post, onEdit }: BlogPostCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{post.title}</CardTitle>
+        <Badge variant={post.status === "Published" ? "default" : "secondary"}>
+          {post.status}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <p>{post.description}</p>
+        <Button onClick={onEdit} variant="outline" size="sm">
+          Edit
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Installation Commands
+
+When you need a new shadcn component:
+
+```bash
+# Install individual components
+npx shadcn@latest add button
+npx shadcn@latest add card
+npx shadcn@latest add table
+npx shadcn@latest add form
+npx shadcn@latest add dialog
+
+# Install multiple components at once
+npx shadcn@latest add button card table form dialog
+```
+
+### Benefits of Using shadcn/ui
+
+1. **Consistent Design**: All components follow the same design system
+2. **Accessibility**: Built-in accessibility features
+3. **TypeScript Support**: Full TypeScript support with proper types
+4. **Customizable**: Easy to customize with CSS variables
+5. **Performance**: Optimized and lightweight components
+6. **Maintenance**: Well-maintained and regularly updated
+
+### Common Patterns
+
+#### Page Layout with shadcn
+
+```typescript
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PageTitle } from "@/components/ui/page-title";
+
+export default function MyPage() {
+  return (
+    <PageTitle
+      title="Page Title"
+      description="Page description"
+      actions={<Button>New Item</Button>}
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>Content Title</CardTitle>
+        </CardHeader>
+        <CardContent>{/* Page content */}</CardContent>
+      </Card>
+    </PageTitle>
+  );
+}
+```
+
+#### Data Table with shadcn
+
+```typescript
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+export function DataTable({ data }: { data: any[] }) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map((item) => (
+          <TableRow key={item.id}>
+            <TableCell>{item.name}</TableCell>
+            <TableCell>
+              <Badge variant={item.active ? "default" : "secondary"}>
+                {item.active ? "Active" : "Inactive"}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              <Button variant="ghost" size="sm">
+                Edit
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+Remember: **Always check shadcn/ui first before creating custom components or using raw HTML elements.**

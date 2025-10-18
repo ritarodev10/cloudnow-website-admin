@@ -2,38 +2,45 @@
 @import "tw-animate-css";
 
 @layer utilities {
-  /* Custom scrollbar styles */
+  /* Ultra-sleek sidebar scrollbar styles */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
 
-  .scrollbar-thumb-rounded::-webkit-scrollbar {
-    width: 6px;
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 2px;
   }
 
-  .scrollbar-thumb-rounded::-webkit-scrollbar-track {
+  .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
-    background-color: var(--border);
-    border-radius: 20px;
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 1px;
+    transition: background-color 200ms ease-in-out;
   }
 
-  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-    background-color: rgba(3, 75, 110, 0.2);
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
   }
 
-  .hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(3, 75, 110, 0.3);
-  }
-
-  .dark .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  /* Dark mode scrollbar */
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
   }
 
-  .dark .hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Remove any hover background on track */
+  .scrollbar-thin::-webkit-scrollbar-track:hover {
+    background: transparent;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-track:hover {
+    background: transparent;
   }
 }
 
@@ -315,10 +322,6 @@
     transition: all 200ms ease-in-out !important;
   }
 
-  [data-slot="sidebar-container"] [data-slot="sidebar-item"]:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
   [data-slot="sidebar-container"]
     [data-slot="sidebar-item"][data-active="true"] {
     background-color: rgba(255, 255, 255, 0.15);
@@ -443,10 +446,9 @@
     box-shadow: none;
   }
 
-  /* Sidebar item hover */
-  .dark [data-slot="sidebar-item"]:hover {
-    background-color: rgba(3, 75, 110, 0.2);
-    border-color: rgba(3, 75, 110, 0.3);
+  /* Sidebar item styling - no hover effects */
+  .dark [data-slot="sidebar-item"] {
+    transition: all 200ms ease-in-out !important;
   }
 
   /* Input focus styling */

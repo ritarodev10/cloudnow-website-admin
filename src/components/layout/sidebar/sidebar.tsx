@@ -19,7 +19,7 @@ export function Sidebar() {
         </div>
 
         {/* Scrollable menu section */}
-        <div className="flex-grow overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
+        <div className="flex-grow overflow-y-auto overflow-x-hidden scrollbar-thin">
           {sidebarConfig.groups.map((group) => (
             <SidebarGroupComponent key={group.id} group={group} />
           ))}
