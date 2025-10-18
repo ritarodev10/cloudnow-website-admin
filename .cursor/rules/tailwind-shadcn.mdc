@@ -30,3 +30,13 @@ globs: *.tsx,*.css
 - Extend shadcn/ui components by wrapping them, not modifying source files
 - Use composition patterns when building new components
 - Maintain consistent styling across custom and shadcn/ui components
+
+## Lucide React Icons
+
+- **Important**: Lucide React icons inherit the parent's color for both background and path by default
+- **Specific Issue**: `text-primary` class causes icons to render as solid blocks instead of outlined icons
+- When wrapping icons with `text-primary`, you MUST specify a background color
+- Use `bg-transparent` if no background color is needed
+- Use a different background color (e.g., `bg-primary/10`, `bg-white`) if you want a visible background
+- **Example**: `<div className="text-primary bg-transparent"><Icon /></div>` or `<div className="text-primary bg-primary/10"><Icon /></div>`
+- **Note**: Other text color classes like `text-white`, `text-[#hexcode]` work fine without background specification

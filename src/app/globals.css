@@ -1,6 +1,42 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@layer utilities {
+  /* Custom scrollbar styles */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-rounded::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thumb-rounded::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 20px;
+  }
+
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: rgba(3, 75, 110, 0.2);
+  }
+
+  .hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(3, 75, 110, 0.3);
+  }
+
+  .dark .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -68,56 +104,386 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #034b6e;
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: #034b6e;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: rgba(255, 255, 255, 0.2);
+  --sidebar-ring: oklch(0.985 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  /* Deep black background */
+  --background: oklch(0.12 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+
+  /* Card styling with subtle blue border */
+  --card: oklch(0.12 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+
+  /* Popover styling */
+  --popover: oklch(0.12 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+
+  /* Brand blue for primary actions - #034b6e */
+  --primary: #034b6e;
+  --primary-foreground: oklch(0.98 0 0);
+
+  /* Secondary and accent colors with blue tint */
+  --secondary: #023654;
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
+  --muted: #023654;
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: #034b6e;
   --accent-foreground: oklch(0.985 0 0);
+
+  /* Other UI colors */
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --border: rgba(3, 75, 110, 0.3);
+  --input: rgba(3, 75, 110, 0.3);
+  --ring: rgba(3, 75, 110, 0.4);
+
+  /* Chart colors */
+  --chart-1: #034b6e;
+  --chart-2: #0369a1;
+  --chart-3: #0284c7;
+  --chart-4: #0ea5e9;
+  --chart-5: #38bdf8;
+
+  /* Sidebar styling */
+  --sidebar: oklch(0.14 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: #034b6e;
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: #023654;
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: rgba(3, 75, 110, 0.2);
+  --sidebar-ring: rgba(3, 75, 110, 0.3);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  :root {
+    --theme-transition: 200ms ease-in-out;
+  }
+
+  html {
+    transition: none !important;
+    overscroll-behavior: none;
+  }
+
   body {
     @apply bg-background text-foreground;
+    transition: background-color 200ms ease-in-out, color 200ms ease-in-out,
+      border-color 200ms ease-in-out !important;
+    overscroll-behavior: none;
+  }
+
+  /* Apply transitions to common elements */
+  button,
+  a,
+  svg,
+  path,
+  .bg-card,
+  .bg-background,
+  .bg-muted,
+  .bg-primary,
+  .bg-secondary,
+  .bg-accent,
+  .text-foreground,
+  .text-muted-foreground,
+  .text-primary,
+  .text-secondary,
+  .text-accent,
+  .border,
+  .border-t,
+  .border-b,
+  .border-l,
+  .border-r,
+  [class*="bg-"],
+  [class*="border-"],
+  [class*="text-"],
+  header,
+  footer,
+  main,
+  section,
+  div,
+  nav,
+  aside {
+    transition: background-color var(--theme-transition),
+      border-color var(--theme-transition), color var(--theme-transition),
+      fill var(--theme-transition), stroke var(--theme-transition),
+      opacity var(--theme-transition);
+  }
+
+  /* Ensure main background elements have consistent transitions */
+  main,
+  .bg-background,
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-content"],
+  [data-slot="sidebar-group-label"],
+  [data-slot="sidebar-group-content"],
+  [data-slot="sidebar-item"],
+  header,
+  footer,
+  .card,
+  .bg-card,
+  [class*="bg-card"] {
+    transition: background-color 200ms ease-in-out, color 200ms ease-in-out,
+      border-color 200ms ease-in-out !important;
+  }
+
+  /* Dark mode card styling */
+  .dark .card,
+  .dark [class*="bg-card"] {
+    border: 1px solid rgba(3, 75, 110, 0.3);
+    box-shadow: none;
+  }
+
+  /* Ensure all elements transition at the same speed */
+  .dark,
+  .dark *,
+  .dark [class*="bg-"],
+  .dark [class*="text-"],
+  .dark [class*="border-"],
+  .dark [data-slot="sidebar-container"],
+  .dark [data-slot="sidebar-content"],
+  .dark [data-slot="sidebar-group-label"],
+  [data-slot="sidebar-container"],
+  [data-slot="sidebar-content"],
+  [data-slot="sidebar-group-label"],
+  [data-slot="sidebar-item"],
+  [data-slot="sidebar-item"] *,
+  [data-slot="sidebar-item"] span,
+  [data-slot="sidebar-item"] div {
+    transition-property: background-color, color, border-color !important;
+    transition-duration: 200ms !important;
+    transition-timing-function: ease-in-out !important;
+  }
+
+  .dark .card-header {
+    border-bottom: 1px solid rgba(3, 75, 110, 0.3);
+  }
+
+  /* Accent lines for visual separation in dark mode */
+  .dark .border-t,
+  .dark .border-b,
+  .dark .border-l,
+  .dark .border-r,
+  .dark .border {
+    border-color: rgba(3, 75, 110, 0.3);
+  }
+
+  /* Table styling for dark mode */
+  .dark table tr {
+    border-color: rgba(3, 75, 110, 0.3);
+  }
+
+  .dark table th,
+  .dark table td {
+    border-color: rgba(3, 75, 110, 0.3);
+  }
+
+  /* Custom card styles for dark mode */
+  .dark .bg-card {
+    background-color: oklch(0.12 0 0);
+    transition: background-color 200ms ease-in-out !important;
+  }
+
+  /* Ensure background class transitions properly */
+  .bg-background {
+    transition: background-color 200ms ease-in-out !important;
+  }
+
+  /* Restore sidebar borders with custom colors */
+  [data-slot="sidebar-container"] {
+    border-right: 1px solid var(--sidebar-border) !important;
+  }
+
+  .dark [data-slot="sidebar-container"] {
+    border-right: 1px solid rgba(3, 75, 110, 0.3) !important;
+  }
+
+  /* Light mode sidebar styling with brand color */
+  [data-slot="sidebar-container"] [data-slot="sidebar-item"] {
+    color: var(--sidebar-foreground);
+    transition: all 200ms ease-in-out !important;
+  }
+
+  [data-slot="sidebar-container"] [data-slot="sidebar-item"]:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  [data-slot="sidebar-container"]
+    [data-slot="sidebar-item"][data-active="true"] {
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+  }
+
+  [data-slot="sidebar-container"] [data-slot="sidebar-group-label"] {
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 200ms ease-in-out !important;
+  }
+
+  /* Force consistent transitions for all sidebar elements */
+  [data-slot="sidebar-container"] *,
+  [data-slot="sidebar-container"] *::before,
+  [data-slot="sidebar-container"] *::after {
+    transition: all 200ms ease-in-out !important;
+  }
+
+  /* Target the specific border in the sidebar layout component */
+  .dark .mt-auto.border-t {
+    border-top-color: rgba(3, 75, 110, 0.3) !important;
+  }
+
+  /* Light mode sidebar user section */
+  [data-slot="sidebar-container"] .mt-auto.border-t {
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Fix header borders in dark mode - only bottom border */
+  .dark header {
+    border: none !important;
+    border-bottom: 1px solid rgba(3, 75, 110, 0.3) !important;
+  }
+
+  /* Hover effects for dark mode */
+  .dark .hover\:bg-accent:hover {
+    background-color: rgba(3, 75, 110, 0.2);
+    border-color: rgba(3, 75, 110, 0.3);
+  }
+
+  /* Button hover effects for dark mode */
+  .dark button:hover,
+  .dark .button:hover {
+    box-shadow: 0 0 8px rgba(3, 75, 110, 0.2);
+  }
+
+  /* Primary button styling */
+  .dark .bg-primary,
+  .dark .text-primary,
+  .dark .border-primary {
+    background-color: #034b6e;
+    color: oklch(0.98 0 0);
+    border-color: rgba(3, 75, 110, 0.5);
+  }
+
+  /* Fix SVG icons to use stroke instead of fill for text-primary */
+  .dark .text-primary svg,
+  .dark svg.text-primary {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* Ensure all Lucide React icons use stroke by default */
+  .dark svg[data-lucide],
+  .dark [data-lucide] svg {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* Apply the same fix to light mode and all text color classes */
+  .text-primary svg,
+  svg.text-primary,
+  .text-secondary svg,
+  svg.text-secondary,
+  .text-accent svg,
+  svg.text-accent {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* More specific targeting for Lucide React icons */
+  .lucide.text-primary,
+  .lucide.text-secondary,
+  .lucide.text-accent,
+  [class*="lucide"].text-primary,
+  [class*="lucide"].text-secondary,
+  [class*="lucide"].text-accent {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* Universal fix for all SVG elements with text color classes */
+  svg[class*="text-primary"],
+  svg[class*="text-secondary"],
+  svg[class*="text-accent"],
+  .text-primary svg,
+  .text-secondary svg,
+  .text-accent svg {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* Ensure all SVG icons with text color classes use stroke-only rendering */
+  *[class*="text-primary"] svg,
+  *[class*="text-secondary"] svg,
+  *[class*="text-accent"] svg,
+  svg[class*="text-primary"],
+  svg[class*="text-secondary"],
+  svg[class*="text-accent"] {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+  }
+
+  /* Add subtle glow to primary elements in dark mode */
+  .dark .bg-primary {
+    box-shadow: none;
+  }
+
+  /* Sidebar item hover */
+  .dark [data-slot="sidebar-item"]:hover {
+    background-color: rgba(3, 75, 110, 0.2);
+    border-color: rgba(3, 75, 110, 0.3);
+  }
+
+  /* Input focus styling */
+  .dark input:focus,
+  .dark textarea:focus,
+  .dark select:focus {
+    border-color: rgba(3, 75, 110, 0.5);
+    box-shadow: 0 0 0 1px rgba(3, 75, 110, 0.2);
+  }
+
+  /* Link styling */
+  .dark a {
+    color: #0ea5e9;
+  }
+
+  .dark a:hover {
+    color: #38bdf8;
+    text-decoration: none;
+  }
+
+  /* Keep underlines only for regular links, not buttons or navigation */
+  .dark
+    a:not(button):not([role="button"]):not([class*="btn"]):not(
+      [class*="nav"]
+    ):not([data-slot="sidebar-item"]):not([data-sidebar]):hover {
+    text-decoration: underline;
+  }
+
+  /* Explicitly remove underlines from all sidebar links */
+  .dark [data-slot="sidebar-container"] a:hover,
+  .dark [data-sidebar] a:hover,
+  .dark [data-slot="sidebar-item"] a:hover,
+  .dark [data-slot="sidebar-group"] a:hover,
+  .dark [data-sidebar="sidebar-item"] a:hover,
+  .dark [data-sidebar="menu-item"] a:hover,
+  .dark [data-sidebar="sidebar"] a:hover {
+    text-decoration: none !important;
   }
 }
 
