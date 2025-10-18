@@ -1,57 +1,70 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
-import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme/theme-provider";
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
-  const [checked, setChecked] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Initialize the switch state based on the current theme
+  // Initialize the component after mounting to prevent hydration mismatch
   useEffect(() => {
-    if (theme === "dark") {
-      setChecked(true);
-    } else if (theme === "light") {
-      setChecked(false);
-    } else {
-      // If system theme, check the current system preference
-      const isDarkMode = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setChecked(isDarkMode);
-    }
-  }, [theme]);
+    setMounted(true);
+  }, []);
+
+  // Determine if dark mode is active
+  const isDark = theme === "dark";
 
   // Handle theme change when switch is toggled
-  const handleThemeChange = (value: boolean) => {
-    setChecked(value);
-    setTheme(value ? "dark" : "light");
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark");
   };
 
+  // Prevent hydration mismatch by rendering a placeholder during SSR
+  if (!mounted) {
+    return <div className="w-16 h-6" />;
+  }
+
   return (
-    <div className="relative flex items-center space-x-3">
+    <div className="flex items-center space-x-3">
+      {/* Sun icon */}
       <Sun
-        className={`size-4 transition-all duration-200 ease-in-out ${
-          checked
+        className={`size-4 transition-all duration-300 ease-in-out ${
+          isDark
             ? "text-muted-foreground opacity-50 scale-90"
             : "text-amber-500 opacity-100 scale-110"
         }`}
       />
-      <div className="relative">
-        <Switch
-          checked={checked}
-          onCheckedChange={handleThemeChange}
-          aria-label="Toggle theme"
-          className="transition-transform duration-200 ease-in-out"
+
+      {/* Custom switch */}
+      <button
+        onClick={toggleTheme}
+        className={`
+          relative w-12 h-6 rounded-full p-0.5 transition-colors duration-300 ease-in-out
+          ${isDark ? "bg-[#034b6e]" : "bg-amber-400"}
+        `}
+        aria-label="Toggle theme"
+      >
+        {/* Track */}
+        <span className="sr-only">Toggle theme</span>
+
+        {/* Thumb with animated movement */}
+        <span
+          className="block h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-300 ease-in-out"
+          style={{
+            transform: isDark ? "translateX(24px)" : "translateX(0)",
+            willChange: "transform",
+          }}
         />
-      </div>
+      </button>
+
+      {/* Moon icon */}
       <Moon
-        className={`size-4 transition-all duration-200 ease-in-out ${
-          checked
-            ? "text-sky-400 opacity-100 scale-110"
+        className={`size-4 transition-all duration-300 ease-in-out ${
+          isDark
+            ? "text-[#0ea5e9] opacity-100 scale-110"
             : "text-muted-foreground opacity-50 scale-90"
         }`}
       />

@@ -2,7 +2,7 @@
 
 import { SearchIcon } from "lucide-react";
 
-import { CustomThemeSwitch } from "@/components/theme/custom-theme-switch";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface HeaderProps {
@@ -33,7 +33,7 @@ export function Header({ onOpenSearch, className = "" }: HeaderProps) {
       </div>
 
       <div className="flex items-center">
-        <CustomThemeSwitch />
+        <ThemeSwitcher />
       </div>
     </header>
   );

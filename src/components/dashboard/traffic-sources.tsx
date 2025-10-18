@@ -1,48 +1,37 @@
+import { TrafficSource } from "@/types/dashboard";
+
 interface TrafficSourcesProps {
-  data: {
-    source: string;
-    percentage: number;
-    change: number;
-  }[];
+  sources?: TrafficSource[];
 }
 
-export function TrafficSources({ data }: TrafficSourcesProps) {
+export function TrafficSources({ sources }: TrafficSourcesProps) {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium">Traffic Sources</h3>
-      <div className="space-y-3">
-        {data.map((item, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center justify-between text-sm">
-              <span>{item.source}</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{item.percentage}%</span>
-                <span
-                  className={`text-xs ${
-                    item.change > 0
-                      ? "text-green-500"
-                      : item.change < 0
-                      ? "text-red-500"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {item.change > 0 ? "+" : ""}
-                  {item.change}%
-                </span>
-              </div>
-            </div>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full"
-                style={{ width: `${item.percentage}%` }}
-              ></div>
+      {sources?.map((source, index) => (
+        <div key={index} className="space-y-1">
+          <div className="flex items-center justify-between text-sm">
+            <div className="font-medium">{source.name}</div>
+            <div className="flex items-center gap-2">
+              <span>{source.percentage}%</span>
+              <span
+                className={
+                  source.change.startsWith("+")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }
+              >
+                {source.change}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
+          <div className="h-2 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full bg-primary"
+              style={{ width: `${source.percentage}%` }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
-
-
-

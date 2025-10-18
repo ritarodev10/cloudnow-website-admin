@@ -6,7 +6,7 @@ import { GlobalSearch } from "@/components/global-search";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Footer } from "./footer";
 import { Header } from "./header";
-import { Sidebar } from "./sidebar";
+import { Sidebar } from "./sidebar/sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

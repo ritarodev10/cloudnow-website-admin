@@ -1,0 +1,220 @@
+---
+alwaysApply: true
+description: API integration patterns and component refactoring guidelines
+---
+
+# API Integration Patterns and Component Refactoring
+
+## Component Architecture Rules
+
+When creating pages or components that will likely need API integration, **ALWAYS** follow this refactoring pattern:
+
+### 1. Separate Types from Data
+
+**Create dedicated type files** in `/src/types/` for:
+
+- All TypeScript interfaces and types
+- API response types
+- Component prop types
+- Data transformation types
+
+**Example Structure:**
+
+```
+src/types/
+├── index.ts              # Main types file with all interfaces
+├── api.ts               # API-specific types (future)
+└── components.ts        # Component-specific types (future)
+```
+
+### 2. Separate Data from Components
+
+**Create dedicated data files** in `/src/data/` for:
+
+- Sample/mock data
+- Data transformation functions
+- API integration hooks (future)
+
+**Example Structure:**
+
+```
+src/data/
+├── blog-posts.ts          # Blog post data and functions
+├── dashboard-stats.ts     # Dashboard statistics
+├── user-management.ts    # User data and functions
+└── api-hooks.ts          # Custom hooks for API calls
+```
+
+### 3. Component Separation Pattern
+
+**Break down complex pages into smaller, reusable components:**
+
+```
+src/components/[feature]/
+├── [feature]-search.tsx      # Search functionality
+├── [feature]-table.tsx       # Data table
+├── [feature]-row.tsx         # Table row component
+├── [feature]-stats.tsx       # Statistics display
+└── [feature]-footer.tsx      # Table footer
+```
+
+### 4. Data File Template
+
+**Every data file should include:**
+
+```typescript
+import { FeatureItem } from "@/types";
+
+// Sample data (replace with API calls later)
+export const featureItems: FeatureItem[] = [
+  // ... sample data
+];
+
+// Data transformation functions
+export const calculateFeatureStats = (items: FeatureItem[]) => {
+  return {
+    // ... calculated stats
+  };
+};
+
+// Future API integration hooks
+export const useFeatureItems = () => {
+  // TODO: Replace with actual API call
+  return { data: featureItems, loading: false, error: null };
+};
+```
+
+### 5. Component Props Pattern
+
+**Components should accept data as props:**
+
+```typescript
+interface ComponentProps {
+  data: DataType[];
+  onEdit?: (item: DataType) => void;
+  onDelete?: (item: DataType) => void;
+  loading?: boolean;
+  error?: string;
+}
+```
+
+### 6. Page Component Structure
+
+**Main page components should:**
+
+```typescript
+export default function FeaturePage() {
+  // State management
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Data processing
+  const filteredData = data.filter(/* filter logic */);
+  const stats = calculateStats(data);
+
+  // Event handlers
+  const handleEdit = (item) => {
+    /* TODO: API call */
+  };
+  const handleDelete = (item) => {
+    /* TODO: API call */
+  };
+
+  return (
+    <PageTitle title="Feature" description="...">
+      <FeatureSearch onSearchChange={setSearchTerm} />
+      <FeatureTable data={filteredData} onEdit={handleEdit} />
+      <FeatureStats stats={stats} />
+    </PageTitle>
+  );
+}
+```
+
+## API Integration Preparation
+
+### 1. Type Safety
+
+- Define comprehensive TypeScript interfaces
+- Include optional fields for API responses
+- Add loading and error states
+
+### 2. Data Flow
+
+- Separate data fetching from UI components
+- Use custom hooks for API calls
+- Implement proper error handling
+
+### 3. State Management
+
+- Use React state for local UI state
+- Consider React Query for server state
+- Implement optimistic updates
+
+### 4. Component Reusability
+
+- Make components pure (props in, JSX out)
+- Avoid side effects in presentational components
+- Use callback props for user interactions
+
+## File Organization Rules
+
+### Types Files (`/src/types/`)
+
+- One main file (`index.ts`) that re-exports from module files
+- Module-specific type files (e.g., `dashboard.ts`, `blog.ts`, `sidebar.ts`)
+- Each module has its own dedicated type file
+- Export all types from main index file for backward compatibility
+- Use `LucideIcon` type for icon props
+
+**Example Structure:**
+
+```
+src/types/
+├── index.ts              # Re-exports from module files
+├── dashboard.ts          # Dashboard-specific types
+├── blog.ts              # Blog-specific types
+└── sidebar.ts           # Sidebar-specific types
+```
+
+### Data Files (`/src/data/`)
+
+- One file per feature/domain
+- Import types from `/src/types/`
+- Export sample data and utility functions
+- Include TODO comments for API integration points
+
+### Component Files (`/src/components/[feature]/`)
+
+- One component per file
+- Import types from `/src/types/`
+- Descriptive file names (kebab-case)
+- Export default component and any related types
+
+### Page Files (`/src/app/`)
+
+- Import and compose smaller components
+- Import types from `/src/types/`
+- Handle state management and event handlers
+- Keep business logic minimal
+
+## Migration Checklist
+
+When refactoring existing pages:
+
+- [ ] Extract types into `/src/types/index.ts`
+- [ ] Extract data into `/src/data/[feature].ts`
+- [ ] Create TypeScript interfaces
+- [ ] Break down into smaller components
+- [ ] Add event handler props
+- [ ] Implement proper prop drilling
+- [ ] Add TODO comments for API integration
+- [ ] Test component reusability
+
+## Benefits of This Pattern
+
+1. **API Ready**: Easy to replace mock data with API calls
+2. **Reusable**: Components can be used in multiple contexts
+3. **Testable**: Pure components are easier to test
+4. **Maintainable**: Clear separation of concerns
+5. **Scalable**: Pattern works for any feature size
+
+Remember: **Always refactor before API integration. It's much easier to change mock data than to restructure components later.**

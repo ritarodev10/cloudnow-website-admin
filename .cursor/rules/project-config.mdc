@@ -32,5 +32,46 @@ Key configuration details:
 - `/src/components` - Reusable components
   - `/src/components/ui` - UI components (shadcn/ui based)
   - `/src/components/icons` - Icon components
+  - `/src/components/layout` - Layout components
+    - `/src/components/layout/header.tsx` - Header component
+    - `/src/components/layout/footer.tsx` - Footer component
+    - `/src/components/layout/dashboard-layout.tsx` - Main dashboard layout
+    - `/src/components/layout/sidebar/` - Sidebar-related components
+      - `/src/components/layout/sidebar/sidebar.tsx` - Main sidebar component
+      - `/src/components/layout/sidebar/sidebar-group.tsx` - Sidebar group component
+      - `/src/components/layout/sidebar/sidebar-menu-button.tsx` - Menu button component
+      - `/src/components/layout/sidebar/sidebar-user-section.tsx` - User section component
 - `/src/lib` - Utility functions
 - `/src/hooks` - Custom React hooks
+- `/src/types` - TypeScript type definitions
+- `/src/data` - Data configuration files
+
+## Component Organization Rules
+
+### Folder Structure Guidelines
+
+1. **Feature-Based Organization**: Group related components in feature folders
+
+   - Example: All sidebar components go in `/src/components/layout/sidebar/`
+   - Layout components go in `/src/components/layout/`
+
+2. **Hierarchical Nesting**: Use subfolders for complex features
+
+   - `/src/components/layout/sidebar/` for all sidebar-specific components
+   - Keep components flat within feature folders when possible
+
+3. **Clear Separation**: Separate concerns by folder
+
+   - `/src/components/ui/` - Generic UI components (shadcn/ui)
+   - `/src/components/layout/` - Layout-specific components
+   - `/src/components/layout/sidebar/` - Sidebar-specific components
+
+4. **Import Path Updates**: When moving components, update all import paths
+   - Use relative imports within feature folders: `../sidebar-group`
+   - Use absolute imports for external dependencies: `@/components/ui/sidebar`
+
+### Naming Conventions
+
+- Use kebab-case for folder names: `sidebar-group.tsx`
+- Use PascalCase for component names: `SidebarGroupComponent`
+- Use descriptive folder names that reflect the feature: `sidebar`, `layout`, `dashboard`

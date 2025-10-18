@@ -1,20 +1,17 @@
+import { SubmissionItem as SubmissionItemType } from "@/types/dashboard";
+
 interface SubmissionItemProps {
-  name: string;
-  type: string;
-  timestamp: string;
+  submission: SubmissionItemType;
 }
 
-export function SubmissionItem({ name, type, timestamp }: SubmissionItemProps) {
+export function SubmissionItem({ submission }: SubmissionItemProps) {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex items-center justify-between">
       <div>
-        <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{type}</p>
+        <p className="font-medium">{submission.name}</p>
+        <p className="text-sm text-muted-foreground">{submission.type}</p>
       </div>
-      <p className="text-xs text-muted-foreground">{timestamp}</p>
+      <div className="text-sm text-muted-foreground">{submission.time}</div>
     </div>
   );
 }
-
-
-
