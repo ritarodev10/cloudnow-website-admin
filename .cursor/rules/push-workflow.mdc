@@ -32,27 +32,13 @@ alwaysApply: false
 npm run pre-push && git add . && git commit -m "Your commit message" && git push origin main
 ```
 
-## Pre-Push Build Check
+## Build Validation Process
 
-Before pushing any code changes, **ALWAYS** run the build process to ensure the project is deployable:
-
-```bash
-npm run pre-push
-```
-
-This command will:
+### What `npm run pre-push` Does:
 
 1. Run TypeScript type checking (`npm run type-check`)
 2. Run ESLint with zero warnings allowed (`npm run lint`)
 3. Build the project (`npm run build`)
-
-## Build Validation Process
-
-### Required Steps Before Push:
-
-1. **Type Check**: `npm run type-check` - Ensures no TypeScript errors
-2. **Lint Check**: `npm run lint` - Ensures code quality and style consistency
-3. **Build Check**: `npm run build` - Ensures the project compiles successfully
 
 ### If Build Fails:
 
@@ -62,62 +48,9 @@ This command will:
 - Ensure all imports are correct
 - Verify all components are properly exported
 
-### Available Scripts:
-
-- `npm run type-check` - TypeScript compilation check
-- `npm run lint` - ESLint code quality check
-- `npm run build` - Production build
-- `npm run pre-push` - Complete validation pipeline
-
-### Git Commands:
-
-- `git add .` - Stage all changes
-- `git commit -m "message"` - Commit changes with message
-- `git push origin main` - Push to main branch
-- `git status` - Check current git status
-
-## Project Structure Requirements
-
-### Import Paths:
-
-- Use `@/components/` for component imports
-- Use `@/lib/` for utility imports
-- Use `@/data/` for data imports
-- Use `@/types/` for type imports
-
-### Component Organization:
-
-- Layout components in `/src/components/layout/`
-- UI components in `/src/components/ui/`
-- Dashboard components in `/src/components/dashboard/`
-- Theme components in `/src/components/theme/`
-
-### File Naming:
-
-- Use kebab-case for file names
-- Use PascalCase for component names
-- Use descriptive names that reflect functionality
-
-## Common Build Issues to Check:
-
-1. **Import Errors**: Verify all import paths are correct
-2. **Type Errors**: Ensure all TypeScript types are properly defined
-3. **Missing Exports**: Check that all components are properly exported
-4. **Unused Imports**: Remove any unused imports
-5. **Component Props**: Ensure all required props are provided
-
-## Deployment Safety:
-
-- Never push code that fails the build process
-- Always test locally before pushing
-- Ensure all new features are properly integrated
-- Verify that existing functionality still works
-- Use descriptive commit messages
-- Push to the correct branch (usually `main`)
-
 ## Quick Reference:
 
-**Complete workflow in one command:**
+**One-command workflow:**
 
 ```bash
 npm run pre-push && git add . && git commit -m "feat: add new feature" && git push origin main
@@ -138,5 +71,12 @@ git commit -m "feat: add new feature"
 # 4. Push to repository
 git push origin main
 ```
+
+## Deployment Safety:
+
+- Never push code that fails the build process
+- Always test locally before pushing
+- Use descriptive commit messages
+- Push to the correct branch (usually `main`)
 
 Remember: **A failed build means a failed deployment. Always build first, push second.**
