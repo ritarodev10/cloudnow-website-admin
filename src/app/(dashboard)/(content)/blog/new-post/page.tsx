@@ -18,6 +18,7 @@ import { BlogPostForm } from "@/components/blog/new-post/blog-post-form";
 import { BlogPostSidebar } from "@/components/blog/new-post/blog-post-sidebar";
 import { BlogPostActions } from "@/components/blog/new-post/blog-post-actions";
 import { BlogPostPreview } from "@/components/blog/new-post/blog-post-preview";
+import { JsonImport } from "@/components/blog/new-post/json-import";
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function NewPostPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [useJsonImport, setUseJsonImport] = useState(false);
 
   // Auto-generate slug when title changes
   useEffect(() => {
@@ -72,6 +74,24 @@ export default function NewPostPage() {
 
   const handleContentChange = (content: string) => {
     handleInputChange("content", content);
+  };
+
+  const handleJsonImport = (importedData: BlogPostFormData) => {
+    setFormData(importedData);
+    setUseJsonImport(false);
+    setErrors({});
+    
+    // Update content stats for imported data
+    const stats = getContentStats(importedData.content);
+    setEditorState((prev) => ({
+      ...prev,
+      ...stats,
+      isDirty: true,
+    }));
+  };
+
+  const handleCancelJsonImport = () => {
+    setUseJsonImport(false);
   };
 
   const handleSave = useCallback(
@@ -167,33 +187,46 @@ export default function NewPostPage() {
           isSaving={isSaving}
           hasContent={!!formData.content}
           hasTitle={!!formData.title}
+          useJsonImport={useJsonImport}
           onTogglePreview={() => setShowPreview(!showPreview)}
           onSave={() => handleSave()}
           onPublish={handlePublish}
+          onToggleJsonImport={() => setUseJsonImport(!useJsonImport)}
         />
       }
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-4">
-          <BlogPostForm
-            formData={formData}
-            errors={errors}
-            onInputChange={handleInputChange}
-            onContentChange={handleContentChange}
-          />
+          {useJsonImport ? (
+            <JsonImport
+              onImport={handleJsonImport}
+              onCancel={handleCancelJsonImport}
+            />
+          ) : (
+            <>
+              <BlogPostForm
+                formData={formData}
+                errors={errors}
+                onInputChange={handleInputChange}
+                onContentChange={handleContentChange}
+              />
 
-          {/* Preview */}
-          {showPreview && <BlogPostPreview content={formData.content} />}
+              {/* Preview */}
+              {showPreview && <BlogPostPreview content={formData.content} />}
+            </>
+          )}
         </div>
 
         {/* Sidebar */}
-        <BlogPostSidebar
-          formData={formData}
-          editorState={editorState}
-          errors={errors}
-          onInputChange={handleInputChange}
-        />
+        {!useJsonImport && (
+          <BlogPostSidebar
+            formData={formData}
+            editorState={editorState}
+            errors={errors}
+            onInputChange={handleInputChange}
+          />
+        )}
       </div>
     </PageTitle>
   );

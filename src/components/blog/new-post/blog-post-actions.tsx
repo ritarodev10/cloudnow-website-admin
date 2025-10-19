@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, Eye, Globe } from "lucide-react";
+import { Save, Eye, Globe, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,9 +9,11 @@ interface BlogPostActionsProps {
   isSaving: boolean;
   hasContent: boolean;
   hasTitle: boolean;
+  useJsonImport: boolean;
   onTogglePreview: () => void;
   onSave: () => void;
   onPublish: () => void;
+  onToggleJsonImport: () => void;
 }
 
 export function BlogPostActions({
@@ -19,12 +21,22 @@ export function BlogPostActions({
   isSaving,
   hasContent,
   hasTitle,
+  useJsonImport,
   onTogglePreview,
   onSave,
   onPublish,
+  onToggleJsonImport,
 }: BlogPostActionsProps) {
   return (
     <div className="flex items-center gap-2">
+      <Button
+        variant={useJsonImport ? "default" : "outline"}
+        onClick={onToggleJsonImport}
+        className="gap-2"
+      >
+        <FileText className="h-4 w-4" />
+        {useJsonImport ? "Form Mode" : "JSON Import"}
+      </Button>
       <Button
         variant="outline"
         onClick={onTogglePreview}
