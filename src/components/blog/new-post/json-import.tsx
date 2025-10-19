@@ -93,22 +93,22 @@ export function JsonImport({ onImport, onCancel }: JsonImportProps) {
   };
 
   return (
-    <Card className="bg-gray-950 border-gray-800">
-      <CardHeader className="bg-gray-900 border-b border-gray-800">
-        <CardTitle className="flex items-center gap-2 text-gray-100">
-          <FileText className="h-5 w-5 text-blue-400" />
-          JSON Editor
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          JSON Import
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-300">JSON Data</label>
+            <label className="text-sm font-medium">JSON Data</label>
             <Button
               variant="outline"
               size="sm"
               onClick={generateSampleJson}
-              className="gap-2 bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
+              className="gap-2"
             >
               <FileText className="size-4" />
               Sample JSON
@@ -118,7 +118,7 @@ export function JsonImport({ onImport, onCancel }: JsonImportProps) {
             value={jsonInput}
             onChange={(e) => setJsonInput(e.target.value)}
             placeholder="Paste your JSON data here..."
-            className="font-mono text-sm min-h-[600px] bg-gray-900 text-gray-100 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 resize-none rounded-lg p-4"
+            className="font-mono text-sm min-h-[500px] bg-gray-900 text-gray-100 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20 resize-none"
           />
         </div>
 
@@ -131,27 +131,23 @@ export function JsonImport({ onImport, onCancel }: JsonImportProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1 bg-gray-800 border-gray-700 text-gray-300">
-              <CheckCircle className="size-3 text-green-400" />
+            <Badge variant="outline" className="gap-1">
+              <CheckCircle className="size-3" />
               Required: title, content
             </Badge>
-            <Badge variant="outline" className="gap-1 bg-gray-800 border-gray-700 text-gray-300">
-              <CheckCircle className="size-3 text-green-400" />
+            <Badge variant="outline" className="gap-1">
+              <CheckCircle className="size-3" />
               Optional: slug, excerpt, status, etc.
             </Badge>
           </div>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={onCancel}
-              className="bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-            >
+            <Button variant="outline" onClick={onCancel}>
               Cancel
             </Button>
             <Button
               onClick={validateAndParseJson}
               disabled={isValidating}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              className="gap-2"
             >
               <Upload className="size-4" />
               {isValidating ? "Validating..." : "Import JSON"}
