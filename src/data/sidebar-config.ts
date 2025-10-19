@@ -17,6 +17,7 @@ import {
   UsersIcon,
   TagIcon,
   FolderIcon,
+  PlusIcon,
 } from "lucide-react";
 
 import { SidebarConfig } from "@/types/sidebar";
@@ -47,6 +48,13 @@ export const sidebarConfig: SidebarConfig = {
           icon: FileTextIcon,
           isAvailable: true,
           submenu: [
+            {
+              id: "blog-new",
+              label: "New Post",
+              href: "/blog/new-post",
+              icon: PlusIcon,
+              isAvailable: true,
+            },
             {
               id: "blog-all",
               label: "All Posts",
