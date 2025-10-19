@@ -37,7 +37,7 @@ export function BlogPostForm({
   onContentChange,
 }: BlogPostFormProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Basic Information */}
       <Card>
         <CardHeader>

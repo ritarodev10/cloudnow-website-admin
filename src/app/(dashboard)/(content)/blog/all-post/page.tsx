@@ -59,7 +59,7 @@ export default function AllPostsPage() {
         </Button>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle>Manage Blog Posts</CardTitle>
@@ -96,4 +96,3 @@ export default function AllPostsPage() {
     </PageTitle>
   );
 }
-

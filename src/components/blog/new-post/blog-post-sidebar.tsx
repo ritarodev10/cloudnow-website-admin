@@ -45,7 +45,7 @@ export function BlogPostSidebar({
   onInputChange,
 }: BlogPostSidebarProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Status & Settings */}
       <Card>
         <CardHeader>
