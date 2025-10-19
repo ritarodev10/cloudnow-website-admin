@@ -59,38 +59,40 @@ export default function AllPostsPage() {
         </Button>
       }
     >
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Manage Blog Posts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BlogSearch
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onFilterClick={handleFilter}
-          />
+      <div className="space-y-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle>Manage Blog Posts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BlogSearch
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onFilterClick={handleFilter}
+            />
 
-          <BlogTable
-            posts={filteredPosts}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+            <BlogTable
+              posts={filteredPosts}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
 
-          <BlogTableFooter
-            filteredCount={filteredPosts.length}
-            totalCount={blogPosts.length}
-          />
-        </CardContent>
-      </Card>
+            <BlogTableFooter
+              filteredCount={filteredPosts.length}
+              totalCount={blogPosts.length}
+            />
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Blog Stats</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BlogStatsCard stats={stats} />
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle>Blog Stats</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BlogStatsCard stats={stats} />
+          </CardContent>
+        </Card>
+      </div>
     </PageTitle>
   );
 }

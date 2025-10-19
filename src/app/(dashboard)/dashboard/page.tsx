@@ -22,7 +22,7 @@ export default function DashboardPage() {
       title="Dashboard Overview"
       description="Welcome to your CloudNow admin dashboard. Here's what's happening with your website."
     >
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
         {dashboardStats.map((stat, index) => (
           <div key={index} className="lg:col-span-1">
             <StatCard
@@ -40,7 +40,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">
         <div className="md:col-span-2 lg:col-span-4">
           <VisitorChart />
         </div>
@@ -63,7 +63,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Latest Visitors</CardTitle>
