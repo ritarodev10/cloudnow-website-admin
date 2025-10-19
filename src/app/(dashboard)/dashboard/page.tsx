@@ -4,15 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageTitle } from "@/components/ui/page-title";
 import { ActivityItem } from "@/components/dashboard/activity-item";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { SubmissionItem } from "@/components/dashboard/submission-item";
 import { VisitorTable } from "@/components/dashboard/visitor-table";
 import { TrafficSources } from "@/components/dashboard/traffic-sources";
+import { AdminWorkHours } from "@/components/dashboard/admin-work-hours";
+import { VisitorChart } from "@/components/dashboard/visitor-chart";
 
-import { dashboardStats } from "@/data/dashboard-stats";
-import { recentActivities } from "@/data/dashboard-activities";
-import { latestSubmissions } from "@/data/dashboard-submissions";
-import { latestVisitors } from "@/data/dashboard-visitors";
-import { trafficSources } from "@/data/dashboard-traffic";
+import {
+  dashboardStats,
+  recentActivities,
+  latestVisitors,
+  trafficSources,
+} from "@/data/dashboard-data";
 
 export default function DashboardPage() {
   return (
@@ -20,48 +22,48 @@ export default function DashboardPage() {
       title="Dashboard Overview"
       description="Welcome to your CloudNow admin dashboard. Here's what's happening with your website."
     >
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
         {dashboardStats.map((stat, index) => (
-          <StatCard
-            key={index}
-            title={stat.title}
-            value={stat.value}
-            description={stat.description}
-            icon={stat.icon}
-          />
+          <div key={index} className="lg:col-span-1">
+            <StatCard
+              title={stat.title}
+              value={stat.value}
+              description={stat.description}
+              icon={stat.icon}
+              iconColor={stat.iconColor}
+              change={stat.change}
+            />
+          </div>
         ))}
+        <div className="md:col-span-2 lg:col-span-2">
+          <AdminWorkHours />
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {recentActivities.map((activity, index) => (
-              <ActivityItem
-                key={index}
-                icon={activity.icon}
-                title={activity.title}
-                time={activity.time}
-              />
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Latest Submissions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {latestSubmissions.map((submission, index) => (
-              <SubmissionItem key={index} submission={submission} />
-            ))}
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+        <div className="md:col-span-2 lg:col-span-4">
+          <VisitorChart />
+        </div>
+        <div className="md:col-span-2 lg:col-span-2">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentActivities.map((activity, index) => (
+                <ActivityItem
+                  key={index}
+                  icon={activity.icon}
+                  title={activity.title}
+                  time={activity.time}
+                />
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Latest Visitors</CardTitle>

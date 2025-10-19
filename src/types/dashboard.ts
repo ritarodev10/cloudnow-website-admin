@@ -6,6 +6,11 @@ export interface DashboardStat {
   value: string;
   description: string;
   icon: LucideIcon;
+  iconColor?: string;
+  change?: {
+    value: string;
+    trend: "up" | "down";
+  };
 }
 
 export interface ActivityItem {

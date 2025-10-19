@@ -1,13 +1,7 @@
 "use client";
 
 import { SidebarGroup } from "@/types/sidebar";
-import {
-  SidebarGroup as SidebarGroupUI,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-} from "@/components/ui/sidebar";
-import { SidebarMenuButtonComponent } from "./sidebar-menu-button";
+import { SidebarMenuButton } from "./sidebar-menu-button";
 
 interface SidebarGroupProps {
   group: SidebarGroup;
@@ -15,15 +9,17 @@ interface SidebarGroupProps {
 
 export function SidebarGroupComponent({ group }: SidebarGroupProps) {
   return (
-    <SidebarGroupUI>
-      {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {group.items.map((item) => (
-            <SidebarMenuButtonComponent key={item.id} item={item} />
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroupUI>
+    <div className="mb-4">
+      {group.label && (
+        <div className="px-3 py-2 text-xs font-medium text-sidebar-foreground/60 uppercase tracking-wider">
+          {group.label}
+        </div>
+      )}
+      <div className="space-y-1">
+        {group.items.map((item) => (
+          <SidebarMenuButton key={item.id} item={item} />
+        ))}
+      </div>
+    </div>
   );
 }

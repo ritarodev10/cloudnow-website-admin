@@ -15,6 +15,8 @@ import {
   SettingsIcon,
   StarIcon,
   UsersIcon,
+  TagIcon,
+  FolderIcon,
 } from "lucide-react";
 
 import { SidebarConfig } from "@/types/sidebar";
@@ -41,28 +43,58 @@ export const sidebarConfig: SidebarConfig = {
         {
           id: "blog-posts",
           label: "Blog Posts",
-          href: "/content/blog-posts",
+          href: "/blog",
           icon: FileTextIcon,
           isAvailable: true,
+          submenu: [
+            {
+              id: "blog-all",
+              label: "All Posts",
+              href: "/blog",
+              icon: FileTextIcon,
+              isAvailable: true,
+            },
+            {
+              id: "blog-categories",
+              label: "Categories",
+              href: "/blog/categories",
+              icon: FolderIcon,
+              isAvailable: true,
+            },
+            {
+              id: "blog-tags",
+              label: "Tags",
+              href: "/blog/tags",
+              icon: TagIcon,
+              isAvailable: true,
+            },
+            {
+              id: "blog-comments",
+              label: "Comments",
+              href: "/blog/comments",
+              icon: MessageSquareTextIcon,
+              isAvailable: true,
+            },
+          ],
         },
         {
           id: "services",
           label: "Services",
-          href: "/content/services",
+          href: "/services",
           icon: BriefcaseIcon,
           isAvailable: false,
         },
         {
           id: "testimonials",
           label: "Testimonials",
-          href: "/content/testimonials",
+          href: "/testimonials",
           icon: QuoteIcon,
           isAvailable: false,
         },
         {
           id: "faqs",
           label: "FAQs",
-          href: "/content/faqs",
+          href: "/faqs",
           icon: MessageSquareTextIcon,
           isAvailable: false,
         },

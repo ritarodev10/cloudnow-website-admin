@@ -8,6 +8,7 @@ export interface SidebarMenuItem {
   icon: LucideIcon;
   isAvailable: boolean;
   badge?: number;
+  submenu?: SidebarMenuItem[];
 }
 
 export interface SidebarGroup {

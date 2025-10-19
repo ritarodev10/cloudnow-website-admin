@@ -40,7 +40,7 @@ export function ComingSoon({ title, message }: ComingSoonProps) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setProgress(65); // Animate to 65% progress
+      setProgress(10); // Animate to 65% progress
     }, 300);
 
     return () => clearTimeout(timer);

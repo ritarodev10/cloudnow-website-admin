@@ -3,19 +3,27 @@
 import { SearchIcon } from "lucide-react";
 
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "./sidebar/sidebar-trigger";
 
 interface HeaderProps {
   onOpenSearch?: () => void;
+  onToggleSidebar?: () => void;
   className?: string;
 }
 
-export function Header({ onOpenSearch, className = "" }: HeaderProps) {
+export function Header({
+  onOpenSearch,
+  onToggleSidebar,
+  className = "",
+}: HeaderProps) {
   return (
     <header
       className={`bg-card/80 backdrop-blur-md sticky top-0 z-50 flex h-13.75 items-center gap-4 border-b border-border/50 px-4 py-2 sm:px-6 ${className}`}
     >
-      <SidebarTrigger className="[&_svg]:!size-5" />
+      <SidebarTrigger
+        onClick={onToggleSidebar || (() => {})}
+        className="[&_svg]:!size-5"
+      />
 
       <div className="flex-1 flex items-center">
         <button

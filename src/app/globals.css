@@ -252,26 +252,7 @@
     box-shadow: none;
   }
 
-  /* Ensure all elements transition at the same speed */
-  .dark,
-  .dark *,
-  .dark [class*="bg-"],
-  .dark [class*="text-"],
-  .dark [class*="border-"],
-  .dark [data-slot="sidebar-container"],
-  .dark [data-slot="sidebar-content"],
-  .dark [data-slot="sidebar-group-label"],
-  [data-slot="sidebar-container"],
-  [data-slot="sidebar-content"],
-  [data-slot="sidebar-group-label"],
-  [data-slot="sidebar-item"],
-  [data-slot="sidebar-item"] *,
-  [data-slot="sidebar-item"] span,
-  [data-slot="sidebar-item"] div {
-    transition-property: background-color, color, border-color !important;
-    transition-duration: 200ms !important;
-    transition-timing-function: ease-in-out !important;
-  }
+  /* Let components handle their own transitions */
 
   .dark .card-header {
     border-bottom: 1px solid rgba(3, 75, 110, 0.3);
@@ -316,11 +297,7 @@
     border-right: 1px solid rgba(3, 75, 110, 0.3) !important;
   }
 
-  /* Light mode sidebar styling with brand color */
-  [data-slot="sidebar-container"] [data-slot="sidebar-item"] {
-    color: var(--sidebar-foreground);
-    transition: all 200ms ease-in-out !important;
-  }
+  /* Let sidebar items handle their own transitions */
 
   [data-slot="sidebar-container"]
     [data-slot="sidebar-item"][data-active="true"] {
@@ -330,15 +307,13 @@
 
   [data-slot="sidebar-container"] [data-slot="sidebar-group-label"] {
     color: rgba(255, 255, 255, 0.7);
-    transition: all 200ms ease-in-out !important;
   }
 
-  /* Force consistent transitions for all sidebar elements */
-  [data-slot="sidebar-container"] *,
-  [data-slot="sidebar-container"] *::before,
-  [data-slot="sidebar-container"] *::after {
-    transition: all 200ms ease-in-out !important;
-  }
+  /* Let shadcn/ui handle sidebar element transitions automatically */
+
+  /* Let shadcn/ui handle main content transitions automatically */
+
+  /* Let shadcn/ui handle sidebar transitions automatically */
 
   /* Target the specific border in the sidebar layout component */
   .dark .mt-auto.border-t {
@@ -446,10 +421,7 @@
     box-shadow: none;
   }
 
-  /* Sidebar item styling - no hover effects */
-  .dark [data-slot="sidebar-item"] {
-    transition: all 200ms ease-in-out !important;
-  }
+  /* Let sidebar items handle their own transitions */
 
   /* Input focus styling */
   .dark input:focus,
