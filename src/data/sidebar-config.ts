@@ -58,7 +58,7 @@ export const sidebarConfig: SidebarConfig = {
             {
               id: "blog-all",
               label: "All Posts",
-              href: "/blog",
+              href: "/blog/all-post",
               icon: FileTextIcon,
               isAvailable: true,
             },
