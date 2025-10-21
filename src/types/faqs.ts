@@ -15,6 +15,7 @@ export interface FAQ {
   answer: string;
   categories: FAQCategory[];
   isVisible: boolean;
+  groupId: string; // Required - each FAQ belongs to exactly one group
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,7 @@ export interface FAQFormData {
   answer: string;
   categories: FAQCategory[];
   isVisible: boolean;
+  groupId: string; // Required - FAQ must belong to a group
 }
 
 export interface FAQGroupFormData {

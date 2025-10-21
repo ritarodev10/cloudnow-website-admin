@@ -19,6 +19,7 @@ export const faqs: FAQ[] = [
     answer: "CloudNow provides comprehensive cloud solutions including cloud migration, cloud consulting, DevOps automation, cloud security, Microsoft Solutions, hosting services, backup & recovery, and IT consulting. We help businesses transition to the cloud and optimize their cloud infrastructure.",
     categories: ["General", "Cloud Services"],
     isVisible: true,
+    groupId: "group_1",
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15")
   },
@@ -28,6 +29,7 @@ export const faqs: FAQ[] = [
     answer: "The duration of a cloud migration depends on several factors including the size of your infrastructure, complexity of applications, and data volume. Typically, small to medium businesses can expect 2-6 months, while enterprise migrations may take 6-18 months. We provide detailed timelines during our initial consultation.",
     categories: ["Cloud Services", "Implementation"],
     isVisible: true,
+    groupId: "group_1",
     createdAt: new Date("2024-01-20"),
     updatedAt: new Date("2024-01-20")
   },
@@ -37,6 +39,7 @@ export const faqs: FAQ[] = [
     answer: "We implement enterprise-grade security measures including multi-factor authentication, encryption at rest and in transit, regular security audits, compliance with industry standards (SOC 2, ISO 27001), and 24/7 security monitoring. Our security team conducts regular penetration testing and vulnerability assessments.",
     categories: ["Security", "Technical Support"],
     isVisible: true,
+    groupId: "group_3",
     createdAt: new Date("2024-02-01"),
     updatedAt: new Date("2024-02-01")
   },
@@ -46,6 +49,7 @@ export const faqs: FAQ[] = [
     answer: "Yes, we provide 24/7 technical support for all our cloud services. Our support team includes certified cloud engineers who can help with technical issues, performance optimization, and emergency response. Support is available via phone, email, and our customer portal.",
     categories: ["Technical Support"],
     isVisible: true,
+    groupId: "group_1",
     createdAt: new Date("2024-02-10"),
     updatedAt: new Date("2024-02-10")
   },
@@ -55,6 +59,7 @@ export const faqs: FAQ[] = [
     answer: "We offer flexible pricing models including pay-as-you-go, reserved instances, and enterprise agreements. Pricing depends on the services you need, usage volume, and support level. Contact our sales team for a customized quote based on your specific requirements.",
     categories: ["Billing"],
     isVisible: true,
+    groupId: "group_1",
     createdAt: new Date("2024-02-15"),
     updatedAt: new Date("2024-02-15")
   },
@@ -64,6 +69,7 @@ export const faqs: FAQ[] = [
     answer: "Absolutely! We specialize in Microsoft 365 migrations including email migration, SharePoint setup, Teams deployment, and Azure AD configuration. Our certified Microsoft engineers ensure a smooth transition with minimal downtime and comprehensive training for your team.",
     categories: ["Implementation"],
     isVisible: true,
+    groupId: "group_2",
     createdAt: new Date("2024-02-20"),
     updatedAt: new Date("2024-02-20")
   },
@@ -73,6 +79,7 @@ export const faqs: FAQ[] = [
     answer: "In the unlikely event of a data breach, we have a comprehensive incident response plan. We immediately notify affected clients, implement containment measures, conduct forensic analysis, and work with legal and compliance teams. We also provide credit monitoring services and support throughout the recovery process.",
     categories: ["Security"],
     isVisible: false,
+    groupId: "group_3",
     createdAt: new Date("2024-02-25"),
     updatedAt: new Date("2024-02-25")
   },
@@ -82,6 +89,7 @@ export const faqs: FAQ[] = [
     answer: "Yes, we offer comprehensive training programs for your team including cloud fundamentals, specific platform training (AWS, Azure, Google Cloud), security best practices, and DevOps methodologies. Training can be delivered on-site, remotely, or through our learning management system.",
     categories: ["Implementation", "Technical Support"],
     isVisible: true,
+    groupId: "group_4",
     createdAt: new Date("2024-03-01"),
     updatedAt: new Date("2024-03-01")
   }
@@ -92,8 +100,8 @@ export const generateFaqId = (): string => {
   return `faq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-export const getFaqById = (id: string): FAQ | undefined => {
-  return faqs.find(faq => faq.id === id);
+export const getFaqsByGroupId = (groupId: string): FAQ[] => {
+  return faqs.filter(faq => faq.groupId === groupId);
 };
 
 export const getFaqsByCategory = (category: FAQCategory): FAQ[] => {
@@ -199,6 +207,10 @@ export const validateFaqForm = (data: FAQFormData): Record<string, string> => {
 
   if (!data.categories || data.categories.length === 0) {
     errors.categories = "At least one category must be selected";
+  }
+
+  if (!data.groupId) {
+    errors.groupId = "FAQ must belong to a group";
   }
 
   return errors;

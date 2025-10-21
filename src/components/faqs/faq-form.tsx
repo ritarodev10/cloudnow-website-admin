@@ -20,18 +20,20 @@ import { X } from "lucide-react";
 
 interface FAQFormProps {
   faq?: FAQ;
+  groupId: string; // Required - FAQ must belong to a group
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: FAQFormData) => void;
   loading?: boolean;
 }
 
-export function FAQForm({ faq, open, onOpenChange, onSubmit, loading = false }: FAQFormProps) {
+export function FAQForm({ faq, groupId, open, onOpenChange, onSubmit, loading = false }: FAQFormProps) {
   const [formData, setFormData] = useState<FAQFormData>({
     question: faq?.question || "",
     answer: faq?.answer || "",
     categories: faq?.categories || [],
     isVisible: faq?.isVisible ?? true,
+    groupId: groupId, // Always use the provided groupId
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -70,6 +72,7 @@ export function FAQForm({ faq, open, onOpenChange, onSubmit, loading = false }: 
       answer: faq?.answer || "",
       categories: faq?.categories || [],
       isVisible: faq?.isVisible ?? true,
+      groupId: groupId, // Always use the provided groupId
     });
     setErrors({});
     onOpenChange(false);

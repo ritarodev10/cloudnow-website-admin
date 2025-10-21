@@ -4,16 +4,11 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusIcon, HelpCircleIcon, FolderIcon, SearchIcon, X } from "lucide-react";
+import { PlusIcon, HelpCircleIcon, SearchIcon, X } from "lucide-react";
 import { PageTitle } from "@/components/ui/page-title";
-import { FAQForm } from "@/components/faqs/faq-form";
-import { FAQTable } from "@/components/faqs/faq-table";
-import { FAQFilters } from "@/components/faqs/faq-filters";
-import { FAQSearch } from "@/components/faqs/faq-search";
 import { FAQGroupForm } from "@/components/faqs/faq-group-form";
 import { FAQGroupsTable } from "@/components/faqs/faq-groups-table";
-import { GroupFAQsPreview } from "@/components/faqs/group-faqs-preview";
+import { GroupFAQsModal } from "@/components/faqs/group-faqs-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,44 +19,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FAQ, FAQGroup, FAQFormData, FAQGroupFormData, FAQFilters as FAQFiltersType } from "@/types/faqs";
-import { faqs, filterFaqs, sortFaqs, generateFaqId } from "@/data/faqs";
-import { faqGroups, generateGroupId, duplicateGroup, getFaqsByGroupId } from "@/data/faq-groups";
+import { FAQ, FAQGroup, FAQGroupFormData } from "@/types/faqs";
+import { faqs } from "@/data/faqs";
+import { faqGroups, generateGroupId, duplicateGroup } from "@/data/faq-groups";
 
 export default function FAQsPage() {
-  // State for FAQs
-  const [faqsData, setFaqsData] = useState<FAQ[]>(faqs);
-  const [faqFilters, setFaqFilters] = useState<FAQFiltersType>({
-    search: "",
-    categories: [],
-    visibility: "all",
-    sortBy: "date",
-    sortOrder: "desc",
-  });
-
   // State for groups
   const [groupsData, setGroupsData] = useState<FAQGroup[]>(faqGroups);
   const [groupSearchQuery, setGroupSearchQuery] = useState("");
 
+  // State for FAQs (managed within groups)
+  const [faqsData, setFaqsData] = useState<FAQ[]>(faqs);
+
   // Modal states
-  const [isFaqFormOpen, setIsFaqFormOpen] = useState(false);
   const [isGroupFormOpen, setIsGroupFormOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [editingFaq, setEditingFaq] = useState<FAQ | undefined>();
+  const [isFaqsModalOpen, setIsFaqsModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<FAQGroup | undefined>();
-  const [previewGroup, setPreviewGroup] = useState<FAQGroup | undefined>();
-  const [deletingFaq, setDeletingFaq] = useState<FAQ | undefined>();
+  const [selectedGroup, setSelectedGroup] = useState<FAQGroup | undefined>();
   const [deletingGroup, setDeletingGroup] = useState<FAQGroup | undefined>();
 
   // Loading states
   const [isLoading, setIsLoading] = useState(false);
-
-  // Filtered and sorted FAQs
-  const filteredFaqs = useMemo(() => {
-    let filtered = filterFaqs(faqsData, faqFilters);
-    filtered = sortFaqs(filtered, faqFilters.sortBy, faqFilters.sortOrder);
-    return filtered;
-  }, [faqsData, faqFilters]);
 
   // Filtered groups based on search
   const filteredGroups = useMemo(() => {
@@ -79,7 +57,7 @@ export default function FAQsPage() {
       }
 
       // Search in FAQ content within the group
-      const groupFaqs = getFaqsByGroupId(group.id);
+      const groupFaqs = faqsData.filter(faq => faq.groupId === group.id);
       return groupFaqs.some(
         (faq) =>
           faq.question.toLowerCase().includes(lowercaseQuery) ||
@@ -87,75 +65,7 @@ export default function FAQsPage() {
           faq.categories.some((category: string) => category.toLowerCase().includes(lowercaseQuery))
       );
     });
-  }, [groupsData, groupSearchQuery]);
-
-  // FAQ handlers
-  const handleAddFaq = () => {
-    setEditingFaq(undefined);
-    setIsFaqFormOpen(true);
-  };
-
-  const handleEditFaq = (faq: FAQ) => {
-    setEditingFaq(faq);
-    setIsFaqFormOpen(true);
-  };
-
-  const handleFaqSubmit = async (formData: FAQFormData) => {
-    setIsLoading(true);
-    try {
-      if (editingFaq) {
-        // Update existing FAQ
-        setFaqsData((prev) =>
-          prev.map((f) =>
-            f.id === editingFaq.id
-              ? {
-                  ...f,
-                  ...formData,
-                  updatedAt: new Date(),
-                }
-              : f
-          )
-        );
-      } else {
-        // Create new FAQ
-        const newFaq: FAQ = {
-          id: generateFaqId(),
-          ...formData,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        setFaqsData((prev) => [...prev, newFaq]);
-      }
-      setIsFaqFormOpen(false);
-      setEditingFaq(undefined);
-    } catch (error) {
-      console.error("Failed to save FAQ:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteFaq = (faq: FAQ) => {
-    setDeletingFaq(faq);
-  };
-
-  const confirmDeleteFaq = () => {
-    if (deletingFaq) {
-      setFaqsData((prev) => prev.filter((f) => f.id !== deletingFaq.id));
-      setDeletingFaq(undefined);
-    }
-  };
-
-  const handleToggleFaqVisibility = (faq: FAQ) => {
-    setFaqsData((prev) =>
-      prev.map((f) => (f.id === faq.id ? { ...f, isVisible: !f.isVisible, updatedAt: new Date() } : f))
-    );
-  };
-
-  const handleViewFaqGroups = (faq: FAQ) => {
-    // This could open a modal showing which groups contain this FAQ
-    console.log("View groups for FAQ:", faq.question);
-  };
+  }, [groupsData, groupSearchQuery, faqsData]);
 
   // Group handlers
   const handleAddGroup = () => {
@@ -166,6 +76,11 @@ export default function FAQsPage() {
   const handleEditGroup = (group: FAQGroup) => {
     setEditingGroup(group);
     setIsGroupFormOpen(true);
+  };
+
+  const handleGroupClick = (group: FAQGroup) => {
+    setSelectedGroup(group);
+    setIsFaqsModalOpen(true);
   };
 
   const handleGroupSubmit = async (formData: FAQGroupFormData) => {
@@ -210,6 +125,9 @@ export default function FAQsPage() {
 
   const confirmDeleteGroup = () => {
     if (deletingGroup) {
+      // Remove FAQs that belong to this group
+      setFaqsData((prev) => prev.filter((faq) => faq.groupId !== deletingGroup.id));
+      // Remove the group
       setGroupsData((prev) => prev.filter((g) => g.id !== deletingGroup.id));
       setDeletingGroup(undefined);
     }
@@ -223,111 +141,122 @@ export default function FAQsPage() {
   };
 
   const handlePreviewGroup = (group: FAQGroup) => {
-    setPreviewGroup(group);
-    setIsPreviewOpen(true);
+    // For now, just open the modal (same as clicking the group)
+    handleGroupClick(group);
+  };
+
+  // FAQ handlers (called from the modal)
+  const handleFaqCreate = (faq: FAQ) => {
+    setFaqsData((prev) => [...prev, faq]);
+    // Update group's faqIds and order
+    setGroupsData((prev) =>
+      prev.map((g) =>
+        g.id === faq.groupId
+          ? {
+              ...g,
+              faqIds: [...g.faqIds, faq.id],
+              order: [...g.order, faq.id],
+              updatedAt: new Date(),
+            }
+          : g
+      )
+    );
+  };
+
+  const handleFaqUpdate = (faq: FAQ) => {
+    setFaqsData((prev) =>
+      prev.map((f) => (f.id === faq.id ? faq : f))
+    );
+  };
+
+  const handleFaqDelete = (faqId: string) => {
+    const faq = faqsData.find(f => f.id === faqId);
+    if (faq) {
+      setFaqsData((prev) => prev.filter((f) => f.id !== faqId));
+      // Update group's faqIds and order
+      setGroupsData((prev) =>
+        prev.map((g) =>
+          g.id === faq.groupId
+            ? {
+                ...g,
+                faqIds: g.faqIds.filter((id) => id !== faqId),
+                order: g.order.filter((id) => id !== faqId),
+                updatedAt: new Date(),
+              }
+            : g
+        )
+      );
+    }
+  };
+
+  const handleFaqReorder = (groupId: string, newOrder: string[]) => {
+    setGroupsData((prev) =>
+      prev.map((g) =>
+        g.id === groupId
+          ? {
+              ...g,
+              order: newOrder,
+              updatedAt: new Date(),
+            }
+          : g
+      )
+    );
   };
 
   return (
     <PageTitle
-      title="FAQs Management"
-      description="Manage frequently asked questions and create reusable FAQ groups for your pages"
+      title="FAQ Groups Management"
+      description="Manage FAQ groups and their content. Click on a group to view and manage its FAQs."
     >
       <div className="space-y-6">
-        {/* Main Content */}
-        <Tabs defaultValue="faqs" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="faqs" className="flex items-center gap-2">
-              <HelpCircleIcon className="h-4 w-4" />
-              FAQs ({filteredFaqs.length})
-            </TabsTrigger>
-            <TabsTrigger value="groups" className="flex items-center gap-2">
-              <FolderIcon className="h-4 w-4" />
-              Groups ({filteredGroups.length})
-            </TabsTrigger>
-          </TabsList>
-
-          {/* FAQs Tab */}
-          <TabsContent value="faqs" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <FAQSearch filters={faqFilters} onFiltersChange={setFaqFilters} />
-              <Button onClick={handleAddFaq}>
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Add FAQ
+        {/* Header with Search and Add Group */}
+        <div className="flex items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search groups by name, description, usage paths, or FAQ content..."
+              value={groupSearchQuery}
+              onChange={(e) => setGroupSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {groupSearchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                onClick={() => setGroupSearchQuery("")}
+              >
+                <X className="h-3 w-3" />
               </Button>
-            </div>
+            )}
+          </div>
+          <Button onClick={handleAddGroup}>
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Create Group
+          </Button>
+        </div>
 
-            <FAQFilters filters={faqFilters} onFiltersChange={setFaqFilters} />
-
-            <Card>
-              <CardHeader>
-                <CardTitle>FAQs ({filteredFaqs.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FAQTable
-                  faqs={filteredFaqs}
-                  onEdit={handleEditFaq}
-                  onDelete={handleDeleteFaq}
-                  onToggleVisibility={handleToggleFaqVisibility}
-                  onViewGroups={handleViewFaqGroups}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Groups Tab */}
-          <TabsContent value="groups" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search groups by name, description, usage paths, or FAQ content..."
-                  value={groupSearchQuery}
-                  onChange={(e) => setGroupSearchQuery(e.target.value)}
-                  className="pl-10 pr-10"
-                />
-                {groupSearchQuery && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
-                    onClick={() => setGroupSearchQuery("")}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                )}
-              </div>
-              <Button onClick={handleAddGroup}>
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Create Group
-              </Button>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>FAQ Groups ({filteredGroups.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FAQGroupsTable
-                  groups={filteredGroups}
-                  onEdit={handleEditGroup}
-                  onDelete={handleDeleteGroup}
-                  onDuplicate={handleDuplicateGroup}
-                  onPreview={handlePreviewGroup}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        {/* Groups Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <HelpCircleIcon className="h-5 w-5" />
+              FAQ Groups ({filteredGroups.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FAQGroupsTable
+              groups={filteredGroups}
+              onEdit={handleEditGroup}
+              onDelete={handleDeleteGroup}
+              onDuplicate={handleDuplicateGroup}
+              onPreview={handlePreviewGroup}
+              onGroupClick={handleGroupClick}
+            />
+          </CardContent>
+        </Card>
 
         {/* Modals */}
-        <FAQForm
-          faq={editingFaq}
-          open={isFaqFormOpen}
-          onOpenChange={setIsFaqFormOpen}
-          onSubmit={handleFaqSubmit}
-          loading={isLoading}
-        />
-
         <FAQGroupForm
           group={editingGroup}
           open={isGroupFormOpen}
@@ -336,37 +265,25 @@ export default function FAQsPage() {
           loading={isLoading}
         />
 
-        {previewGroup && <GroupFAQsPreview group={previewGroup} open={isPreviewOpen} onOpenChange={setIsPreviewOpen} />}
+        {selectedGroup && (
+          <GroupFAQsModal
+            group={selectedGroup}
+            open={isFaqsModalOpen}
+            onOpenChange={setIsFaqsModalOpen}
+            onFaqCreate={handleFaqCreate}
+            onFaqUpdate={handleFaqUpdate}
+            onFaqDelete={handleFaqDelete}
+            onFaqReorder={handleFaqReorder}
+          />
+        )}
 
-        {/* Delete Confirmations */}
-        <AlertDialog open={!!deletingFaq} onOpenChange={() => setDeletingFaq(undefined)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete FAQ</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete the FAQ &ldquo;{deletingFaq?.question}&rdquo;? This action cannot be
-                undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={confirmDeleteFaq}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
+        {/* Delete Confirmation */}
         <AlertDialog open={!!deletingGroup} onOpenChange={() => setDeletingGroup(undefined)}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Group</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete the group &ldquo;{deletingGroup?.name}&rdquo;? This action cannot be
-                undone.
+                Are you sure you want to delete the group &ldquo;{deletingGroup?.name}&rdquo;? This will also delete all FAQs in this group. This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

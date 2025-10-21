@@ -12,9 +12,10 @@ interface FAQGroupsTableProps {
   onDelete: (group: FAQGroup) => void;
   onDuplicate: (group: FAQGroup) => void;
   onPreview: (group: FAQGroup) => void;
+  onGroupClick: (group: FAQGroup) => void; // New handler for row clicks
 }
 
-export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPreview }: FAQGroupsTableProps) {
+export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPreview, onGroupClick }: FAQGroupsTableProps) {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
@@ -46,7 +47,11 @@ export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPrevie
             </TableRow>
           ) : (
             groups.map((group) => (
-              <TableRow key={group.id}>
+              <TableRow 
+                key={group.id} 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => onGroupClick(group)}
+              >
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
                     <FolderIcon className="h-4 w-4 text-muted-foreground" />
@@ -89,19 +94,46 @@ export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPrevie
                 <TableCell className="text-muted-foreground">{formatDate(group.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => onPreview(group)} title="Preview Group">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPreview(group);
+                      }} 
+                      title="Preview Group"
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => onDuplicate(group)} title="Duplicate Group">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDuplicate(group);
+                      }} 
+                      title="Duplicate Group"
+                    >
                       <Copy className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => onEdit(group)} title="Edit">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(group);
+                      }} 
+                      title="Edit"
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete(group)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(group);
+                      }}
                       title="Delete"
                       className="text-destructive hover:text-destructive"
                     >
