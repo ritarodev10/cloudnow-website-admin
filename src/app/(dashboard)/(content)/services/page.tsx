@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
@@ -21,9 +22,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Service, ServiceFormData, ServiceFilters } from "@/types";
-import { services, calculateServiceStats, filterServices, sortServices, generateServiceId } from "@/data/services";
+import {
+  services,
+  calculateServiceStats,
+  filterServices,
+  sortServices,
+  generateServiceId,
+  generateSlug,
+} from "@/data/services";
 
 export default function ServicesPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<ServiceFilters>({
     search: "",
@@ -72,14 +81,18 @@ export default function ServicesPage() {
 
   // Handle add new service
   const handleAddService = () => {
-    setEditingService(undefined);
-    setIsFormOpen(true);
+    router.push("/services/new");
   };
 
-  // Handle edit service
+  // Handle edit service metadata
   const handleEditService = (service: Service) => {
     setEditingService(service);
     setIsFormOpen(true);
+  };
+
+  // Handle edit service page
+  const handleEditServicePage = (service: Service) => {
+    router.push(`/services/${service.id}/edit`);
   };
 
   // Handle delete service
@@ -117,7 +130,15 @@ export default function ServicesPage() {
         // Add new service
         const newService: Service = {
           id: generateServiceId(),
+          slug: generateSlug(formData.title),
           ...formData,
+          pageContent: {
+            blocks: [],
+            metadata: {
+              lastEditedAt: new Date(),
+              version: 1,
+            },
+          },
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -192,6 +213,7 @@ export default function ServicesPage() {
             <ServicesTable
               services={filteredServices}
               onEdit={handleEditService}
+              onEditPage={handleEditServicePage}
               onDelete={handleDeleteService}
               onToggleFeatured={handleToggleFeatured}
             />

@@ -1,0 +1,61 @@
+{
+  "collectionName": "components_shared_seos",
+  "info": {
+    "displayName": "SEO",
+    "description": "SEO meta information for pages and content"
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "required": false,
+      "maxLength": 60,
+      "minLength": 10
+    },
+    "metaDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 160,
+      "minLength": 50
+    },
+    "keywords": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "metaImage": {
+      "type": "string",
+      "required": false
+    },
+    "canonicalURL": {
+      "type": "string",
+      "required": false
+    },
+    "ogTitle": {
+      "type": "string",
+      "required": false,
+      "maxLength": 60
+    },
+    "ogDescription": {
+      "type": "text",
+      "required": false,
+      "maxLength": 160
+    },
+    "ogImage": {
+      "type": "string",
+      "required": false
+    },
+    "twitterCard": {
+      "type": "enumeration",
+      "enum": ["summary", "summary_large_image", "app", "player"],
+      "default": "summary_large_image",
+      "required": false
+    },
+    "robots": {
+      "type": "enumeration",
+      "enum": ["index,follow", "noindex,follow", "index,nofollow", "noindex,nofollow"],
+      "default": "index,follow",
+      "required": false
+    }
+  }
+}

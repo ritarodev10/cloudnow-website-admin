@@ -1,94 +1,195 @@
-import { Service, ServiceFormData, ServiceStats, ServiceFilters, ServiceCategory } from "@/types";
+import { Service, ServiceFormData, ServiceStats, ServiceFilters, ServiceCategory, PageContent } from "@/types";
+
+// Generate slug from title
+export const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .trim();
+};
+
+// Generate unique ID for new services
+export const generateServiceId = (): string => {
+  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+};
 
 // Sample services data based on the image
 export const services: Service[] = [
   {
     id: "1",
     title: "IT Consulting",
+    slug: "it-consulting",
     description: "Transform your business with our tailored IT consulting services designed for your unique needs.",
     category: "IT Consulting",
     status: "active",
     featured: true,
+    pageContent: {
+      blocks: [
+        {
+          id: "hero_1",
+          type: "hero",
+          category: "header",
+          props: {
+            title: "IT Consulting Services",
+            subtitle: "Transform your business with expert IT solutions",
+            description: "We provide comprehensive IT consulting services to help your business thrive in the digital age.",
+            ctaText: "Get Started",
+            ctaLink: "#contact"
+          },
+          order: 0
+        }
+      ],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
   },
   {
     id: "2",
     title: "Hosting Services",
+    slug: "hosting-services",
     description: "Discover how our hosting services enhance performance, security, and scalability for your business needs.",
     category: "Hosting Services",
     status: "active",
     featured: true,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-16"),
     updatedAt: new Date("2024-01-16"),
   },
   {
     id: "3",
     title: "Microsoft Azure",
+    slug: "microsoft-azure",
     description: "Microsoft Azure offers scalable solutions that drive innovation and efficiency for modern businesses.",
     category: "Microsoft Solutions",
     status: "active",
     featured: false,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-17"),
     updatedAt: new Date("2024-01-17"),
   },
   {
     id: "4",
     title: "Cloud Solutions",
+    slug: "cloud-solutions",
     description: "Unlock efficiency and scalability with our tailored cloud solutions for seamless migration and optimization.",
     category: "Cloud Solutions",
     status: "active",
     featured: true,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-18"),
     updatedAt: new Date("2024-01-18"),
   },
   {
     id: "5",
     title: "Backup as a Service (BaaS)",
+    slug: "backup-as-a-service",
     description: "Ensure your business continuity with our comprehensive Backup as a Service solutions tailored for you.",
     category: "Backup & Recovery",
     status: "active",
     featured: false,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-19"),
     updatedAt: new Date("2024-01-19"),
   },
   {
     id: "6",
     title: "Microsoft 365",
+    slug: "microsoft-365",
     description: "Microsoft 365 transforms the way businesses operate, offering seamless collaboration and productivity tools.",
     category: "Microsoft Solutions",
     status: "active",
     featured: false,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-20"),
     updatedAt: new Date("2024-01-20"),
   },
   {
     id: "7",
     title: "Professional Services",
+    slug: "professional-services",
     description: "Expert-led solutions for your business needs, ensuring high availability and performance.",
     category: "Professional Services",
     status: "active",
     featured: false,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-21"),
     updatedAt: new Date("2024-01-21"),
   },
   {
     id: "8",
     title: "Cybersecurity",
+    slug: "cybersecurity",
     description: "Protect your critical data and assets with our comprehensive cybersecurity solutions tailored for your business.",
     category: "Cybersecurity",
     status: "active",
     featured: true,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-22"),
     updatedAt: new Date("2024-01-22"),
   },
   {
     id: "9",
     title: "Veeam Backup & Disaster Recovery",
+    slug: "veeam-backup-disaster-recovery",
     description: "Veeam Backup & Disaster Recovery ensures your business data is secure, accessible, and easily recoverable.",
     category: "Backup & Recovery",
     status: "active",
     featured: false,
+    pageContent: {
+      blocks: [],
+      metadata: {
+        lastEditedAt: new Date(),
+        version: 1
+      }
+    },
     createdAt: new Date("2024-01-23"),
     updatedAt: new Date("2024-01-23"),
   },
@@ -166,8 +267,18 @@ export const filterServices = (services: Service[], filters: ServiceFilters): Se
 // Sort services
 export const sortServices = (services: Service[], field: keyof Service, direction: "asc" | "desc"): Service[] => {
   return [...services].sort((a, b) => {
-    let aValue: string | boolean | Date | number = a[field];
-    let bValue: string | boolean | Date | number = b[field];
+    let aValue: any = a[field];
+    let bValue: any = b[field];
+
+    // Skip sorting for complex types like PageContent
+    if (field === "pageContent") {
+      return 0;
+    }
+
+    // Handle undefined values
+    if (aValue === undefined && bValue === undefined) return 0;
+    if (aValue === undefined) return direction === "asc" ? 1 : -1;
+    if (bValue === undefined) return direction === "asc" ? -1 : 1;
 
     // Handle date fields
     if (field === "createdAt" || field === "updatedAt") {
@@ -187,11 +298,6 @@ export const sortServices = (services: Service[], field: keyof Service, directio
       return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     }
   });
-};
-
-// Generate unique ID for new services
-export const generateServiceId = (): string => {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
 };
 
 // Validate service form data
@@ -219,6 +325,38 @@ export const validateServiceForm = (data: ServiceFormData): Record<string, strin
   }
 
   return errors;
+};
+
+// Page content helpers
+export const createEmptyPageContent = (): PageContent => {
+  return {
+    blocks: [],
+    metadata: {
+      lastEditedAt: new Date(),
+      version: 1
+    }
+  };
+};
+
+export const getServiceBySlug = (slug: string): Service | undefined => {
+  return services.find(service => service.slug === slug);
+};
+
+export const getServiceById = (id: string): Service | undefined => {
+  return services.find(service => service.id === id);
+};
+
+export const updateServicePageContent = (serviceId: string, pageContent: PageContent): Service | undefined => {
+  const serviceIndex = services.findIndex(service => service.id === serviceId);
+  if (serviceIndex === -1) return undefined;
+  
+  services[serviceIndex] = {
+    ...services[serviceIndex],
+    pageContent,
+    updatedAt: new Date()
+  };
+  
+  return services[serviceIndex];
 };
 
 // Future API integration hooks (placeholder)

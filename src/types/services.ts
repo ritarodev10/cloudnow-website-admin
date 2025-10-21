@@ -1,10 +1,14 @@
+import { PageContent } from "./service-page-builder";
+
 export interface Service {
   id: string;
   title: string;
+  slug: string;
   description: string;
   category: ServiceCategory;
   status: ServiceStatus;
   featured: boolean;
+  pageContent?: PageContent;
   createdAt: Date;
   updatedAt: Date;
 }

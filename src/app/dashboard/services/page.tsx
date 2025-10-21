@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
@@ -21,9 +22,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Service, ServiceFormData, ServiceFilters } from "@/types";
-import { services, calculateServiceStats, filterServices, sortServices, generateServiceId } from "@/data/services";
+import {
+  services,
+  calculateServiceStats,
+  filterServices,
+  sortServices,
+  generateServiceId,
+  generateSlug,
+} from "@/data/services";
 
 export default function ServicesPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<ServiceFilters>({
     search: "",
@@ -92,6 +101,11 @@ export default function ServicesPage() {
     setServicesData((prev) => prev.map((s) => (s.id === service.id ? { ...s, featured: !s.featured } : s)));
   };
 
+  // Handle edit service page
+  const handleEditServicePage = (service: Service) => {
+    router.push(`/services/${service.id}/edit`);
+  };
+
   // Handle form submission
   const handleFormSubmit = async (formData: ServiceFormData) => {
     setIsLoading(true);
@@ -118,6 +132,7 @@ export default function ServicesPage() {
         const newService: Service = {
           id: generateServiceId(),
           ...formData,
+          slug: generateSlug(formData.title),
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -194,6 +209,7 @@ export default function ServicesPage() {
               onEdit={handleEditService}
               onDelete={handleDeleteService}
               onToggleFeatured={handleToggleFeatured}
+              onEditPage={handleEditServicePage}
             />
           </CardContent>
         </Card>
@@ -231,7 +247,3 @@ export default function ServicesPage() {
     </PageTitle>
   );
 }
-
-
-
-

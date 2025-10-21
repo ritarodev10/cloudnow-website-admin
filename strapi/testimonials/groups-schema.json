@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonial_groups",
+  "info": {
+    "singularName": "testimonial-group",
+    "pluralName": "testimonial-groups",
+    "displayName": "Testimonial Group",
+    "description": "Reusable groups of testimonials for page builder"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "maxLength": 100,
+      "minLength": 2
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "testimonials": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::testimonial.testimonial",
+      "inversedBy": "groups"
+    },
+    "order": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "usagePaths": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "publishedAt": {
+      "type": "datetime",
+      "required": false
+    }
+  }
+}

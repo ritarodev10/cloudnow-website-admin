@@ -3,7 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontalIcon, EditIcon, TrashIcon, StarIcon } from "lucide-react";
+import { MoreHorizontalIcon, EditIcon, TrashIcon, StarIcon, FileTextIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,11 +15,12 @@ import { Service } from "@/types";
 interface ServicesTableProps {
   services: Service[];
   onEdit: (service: Service) => void;
+  onEditPage: (service: Service) => void;
   onDelete: (service: Service) => void;
   onToggleFeatured: (service: Service) => void;
 }
 
-export function ServicesTable({ services, onEdit, onDelete, onToggleFeatured }: ServicesTableProps) {
+export function ServicesTable({ services, onEdit, onEditPage, onDelete, onToggleFeatured }: ServicesTableProps) {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case "active":
@@ -57,6 +58,7 @@ export function ServicesTable({ services, onEdit, onDelete, onToggleFeatured }: 
             <TableHead>Description</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Page Content</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -83,6 +85,17 @@ export function ServicesTable({ services, onEdit, onDelete, onToggleFeatured }: 
                 </Badge>
               </TableCell>
               <TableCell>
+                {service.pageContent?.blocks && service.pageContent.blocks.length > 0 ? (
+                  <Badge variant="outline" className="text-xs">
+                    {service.pageContent.blocks.length} blocks
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="text-xs">
+                    Empty page
+                  </Badge>
+                )}
+              </TableCell>
+              <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -93,7 +106,11 @@ export function ServicesTable({ services, onEdit, onDelete, onToggleFeatured }: 
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onEdit(service)}>
                       <EditIcon className="mr-2 h-4 w-4" />
-                      Edit
+                      Edit Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onEditPage(service)}>
+                      <FileTextIcon className="mr-2 h-4 w-4" />
+                      Edit Page
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onDelete(service)} className="text-destructive">
                       <TrashIcon className="mr-2 h-4 w-4" />
@@ -109,7 +126,3 @@ export function ServicesTable({ services, onEdit, onDelete, onToggleFeatured }: 
     </div>
   );
 }
-
-
-
-
