@@ -336,7 +336,7 @@ export default function FAQsPage() {
           loading={isLoading}
         />
 
-        <GroupFAQsPreview group={previewGroup!} open={isPreviewOpen} onOpenChange={setIsPreviewOpen} />
+        {previewGroup && <GroupFAQsPreview group={previewGroup} open={isPreviewOpen} onOpenChange={setIsPreviewOpen} />}
 
         {/* Delete Confirmations */}
         <AlertDialog open={!!deletingFaq} onOpenChange={() => setDeletingFaq(undefined)}>

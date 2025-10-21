@@ -14,6 +14,8 @@ interface GroupFAQsPreviewProps {
 }
 
 export function GroupFAQsPreview({ group, open, onOpenChange }: GroupFAQsPreviewProps) {
+  if (!group) return null;
+  
   const groupFaqs = getFaqsByGroupId(group.id);
 
   return (
