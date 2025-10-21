@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusIcon, HelpCircleIcon, SearchIcon, X } from "lucide-react";
 import { PageTitle } from "@/components/ui/page-title";
-import { FAQGroupForm } from "@/components/faqs/faq-group-form";
 import { FAQGroupsTable } from "@/components/faqs/faq-groups-table";
-import { GroupFAQsModal } from "@/components/faqs/group-faqs-modal";
+import { GroupManagementModal } from "@/components/faqs/group-management-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FAQ, FAQGroup, FAQGroupFormData } from "@/types/faqs";
+import { FAQ, FAQGroup } from "@/types/faqs";
 import { faqs } from "@/data/faqs";
 import { faqGroups, generateGroupId, duplicateGroup } from "@/data/faq-groups";
 
@@ -32,14 +31,10 @@ export default function FAQsPage() {
   const [faqsData, setFaqsData] = useState<FAQ[]>(faqs);
 
   // Modal states
-  const [isGroupFormOpen, setIsGroupFormOpen] = useState(false);
-  const [isFaqsModalOpen, setIsFaqsModalOpen] = useState(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<FAQGroup | undefined>();
-  const [selectedGroup, setSelectedGroup] = useState<FAQGroup | undefined>();
   const [deletingGroup, setDeletingGroup] = useState<FAQGroup | undefined>();
 
-  // Loading states
-  const [isLoading, setIsLoading] = useState(false);
 
   // Filtered groups based on search
   const filteredGroups = useMemo(() => {
@@ -57,7 +52,7 @@ export default function FAQsPage() {
       }
 
       // Search in FAQ content within the group
-      const groupFaqs = faqsData.filter(faq => faq.groupId === group.id);
+      const groupFaqs = faqsData.filter((faq) => faq.groupId === group.id);
       return groupFaqs.some(
         (faq) =>
           faq.question.toLowerCase().includes(lowercaseQuery) ||
@@ -70,52 +65,64 @@ export default function FAQsPage() {
   // Group handlers
   const handleAddGroup = () => {
     setEditingGroup(undefined);
-    setIsGroupFormOpen(true);
+    setIsGroupModalOpen(true);
   };
 
   const handleEditGroup = (group: FAQGroup) => {
     setEditingGroup(group);
-    setIsGroupFormOpen(true);
+    setIsGroupModalOpen(true);
   };
 
   const handleGroupClick = (group: FAQGroup) => {
-    setSelectedGroup(group);
-    setIsFaqsModalOpen(true);
+    setEditingGroup(group);
+    setIsGroupModalOpen(true);
   };
 
-  const handleGroupSubmit = async (formData: FAQGroupFormData) => {
-    setIsLoading(true);
+  const handleGroupSave = async (groupData: { name: string; description?: string; isActive: boolean }, faqs: FAQ[]) => {
     try {
       if (editingGroup) {
         // Update existing group
+        const updatedGroup: FAQGroup = {
+          ...editingGroup,
+          ...groupData,
+          faqIds: faqs.map(faq => faq.id),
+          order: faqs.map(faq => faq.id),
+          updatedAt: new Date(),
+        };
+        
         setGroupsData((prev) =>
-          prev.map((g) =>
-            g.id === editingGroup.id
-              ? {
-                  ...g,
-                  ...formData,
-                  updatedAt: new Date(),
-                }
-              : g
-          )
+          prev.map((g) => (g.id === editingGroup.id ? updatedGroup : g))
         );
+        
+        // Update FAQs
+        setFaqsData((prev) => {
+          // Remove old FAQs for this group
+          const withoutOldFaqs = prev.filter(faq => faq.groupId !== editingGroup.id);
+          // Add updated FAQs
+          return [...withoutOldFaqs, ...faqs];
+        });
       } else {
         // Create new group
         const newGroup: FAQGroup = {
           id: generateGroupId(),
-          ...formData,
+          ...groupData,
+          faqIds: faqs.map(faq => faq.id),
+          order: faqs.map(faq => faq.id),
           usagePaths: [],
           createdAt: new Date(),
           updatedAt: new Date(),
         };
+        
         setGroupsData((prev) => [...prev, newGroup]);
+        
+        // Add new FAQs
+        setFaqsData((prev) => [...prev, ...faqs]);
       }
-      setIsGroupFormOpen(false);
+      
+      setIsGroupModalOpen(false);
       setEditingGroup(undefined);
     } catch (error) {
       console.error("Failed to save group:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -145,62 +152,10 @@ export default function FAQsPage() {
     handleGroupClick(group);
   };
 
-  // FAQ handlers (called from the modal)
-  const handleFaqCreate = (faq: FAQ) => {
-    setFaqsData((prev) => [...prev, faq]);
-    // Update group's faqIds and order
-    setGroupsData((prev) =>
-      prev.map((g) =>
-        g.id === faq.groupId
-          ? {
-              ...g,
-              faqIds: [...g.faqIds, faq.id],
-              order: [...g.order, faq.id],
-              updatedAt: new Date(),
-            }
-          : g
-      )
-    );
-  };
-
-  const handleFaqUpdate = (faq: FAQ) => {
-    setFaqsData((prev) =>
-      prev.map((f) => (f.id === faq.id ? faq : f))
-    );
-  };
-
-  const handleFaqDelete = (faqId: string) => {
-    const faq = faqsData.find(f => f.id === faqId);
-    if (faq) {
-      setFaqsData((prev) => prev.filter((f) => f.id !== faqId));
-      // Update group's faqIds and order
-      setGroupsData((prev) =>
-        prev.map((g) =>
-          g.id === faq.groupId
-            ? {
-                ...g,
-                faqIds: g.faqIds.filter((id) => id !== faqId),
-                order: g.order.filter((id) => id !== faqId),
-                updatedAt: new Date(),
-              }
-            : g
-        )
-      );
-    }
-  };
-
-  const handleFaqReorder = (groupId: string, newOrder: string[]) => {
-    setGroupsData((prev) =>
-      prev.map((g) =>
-        g.id === groupId
-          ? {
-              ...g,
-              order: newOrder,
-              updatedAt: new Date(),
-            }
-          : g
-      )
-    );
+  // Get FAQs for the editing group
+  const getGroupFaqs = (group?: FAQGroup): FAQ[] => {
+    if (!group) return [];
+    return faqsData.filter(faq => faq.groupId === group.id);
   };
 
   return (
@@ -256,26 +211,14 @@ export default function FAQsPage() {
           </CardContent>
         </Card>
 
-        {/* Modals */}
-        <FAQGroupForm
+        {/* Combined Group Management Modal */}
+        <GroupManagementModal
           group={editingGroup}
-          open={isGroupFormOpen}
-          onOpenChange={setIsGroupFormOpen}
-          onSubmit={handleGroupSubmit}
-          loading={isLoading}
+          open={isGroupModalOpen}
+          onOpenChange={setIsGroupModalOpen}
+          onSave={handleGroupSave}
+          existingFaqs={getGroupFaqs(editingGroup)}
         />
-
-        {selectedGroup && (
-          <GroupFAQsModal
-            group={selectedGroup}
-            open={isFaqsModalOpen}
-            onOpenChange={setIsFaqsModalOpen}
-            onFaqCreate={handleFaqCreate}
-            onFaqUpdate={handleFaqUpdate}
-            onFaqDelete={handleFaqDelete}
-            onFaqReorder={handleFaqReorder}
-          />
-        )}
 
         {/* Delete Confirmation */}
         <AlertDialog open={!!deletingGroup} onOpenChange={() => setDeletingGroup(undefined)}>
@@ -283,7 +226,8 @@ export default function FAQsPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Group</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete the group &ldquo;{deletingGroup?.name}&rdquo;? This will also delete all FAQs in this group. This action cannot be undone.
+                Are you sure you want to delete the group &ldquo;{deletingGroup?.name}&rdquo;? This will also delete all
+                FAQs in this group. This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
