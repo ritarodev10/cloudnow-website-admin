@@ -2,6 +2,7 @@
 export * from "./dashboard";
 export * from "./blog";
 export * from "./sidebar";
+export * from "./services";
 
 // Re-export Strapi blog types with explicit naming to avoid conflicts
 export type {

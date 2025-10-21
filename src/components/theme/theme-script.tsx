@@ -6,19 +6,16 @@ interface ThemeScriptProps {
 
 // This script runs before the React app is hydrated
 // It prevents the flash of incorrect theme
-export function ThemeScript({
-  storageKey = "cloudnow-ui-theme",
-}: ThemeScriptProps) {
+export function ThemeScript({ storageKey = "cloudnow-ui-theme" }: ThemeScriptProps) {
   const themeScript = `
     (function() {
       try {
         const storageKey = '${storageKey}';
         const savedTheme = localStorage.getItem(storageKey);
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         let theme = 'light';
         
-        if (savedTheme === 'dark' || (savedTheme === 'system' && systemPrefersDark) || (!savedTheme && systemPrefersDark)) {
+        if (savedTheme === 'dark') {
           theme = 'dark';
           document.documentElement.classList.add('dark');
         } else {
@@ -34,6 +31,3 @@ export function ThemeScript({
 
   return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
 }
-
-
-

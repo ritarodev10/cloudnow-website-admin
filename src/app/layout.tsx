@@ -30,10 +30,8 @@ export default function RootLayout({
       <head>
         <ThemeScript storageKey="cloudnow-ui-theme" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider defaultTheme="system" storageKey="cloudnow-ui-theme">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider defaultTheme="light" storageKey="cloudnow-ui-theme">
           {children}
         </ThemeProvider>
       </body>

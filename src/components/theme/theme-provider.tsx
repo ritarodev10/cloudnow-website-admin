@@ -16,7 +16,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "light",
   setTheme: () => null,
 };
 
@@ -24,7 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
@@ -39,16 +39,10 @@ export function ThemeProvider({
         setTheme(savedTheme);
       } else {
         // If no saved theme, check system preference
-        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-          .matches
-          ? "dark"
-          : "light";
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
         // Update the DOM to match the system preference
-        document.documentElement.classList.toggle(
-          "dark",
-          systemTheme === "dark"
-        );
+        document.documentElement.classList.toggle("dark", systemTheme === "dark");
       }
     } catch (error) {
       console.error("Failed to initialize theme:", error);
@@ -64,10 +58,7 @@ export function ThemeProvider({
 
     // Apply the appropriate theme
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
       root.classList.add(systemTheme);
       root.style.colorScheme = systemTheme;
@@ -88,9 +79,7 @@ export function ThemeProvider({
       // Update when system theme changes
       const listener = (event: MediaQueryListEvent) => {
         document.documentElement.classList.toggle("dark", event.matches);
-        document.documentElement.style.colorScheme = event.matches
-          ? "dark"
-          : "light";
+        document.documentElement.style.colorScheme = event.matches ? "dark" : "light";
       };
 
       mediaQuery.addEventListener("change", listener);
@@ -104,10 +93,7 @@ export function ThemeProvider({
       try {
         localStorage?.setItem(storageKey, theme);
       } catch (error) {
-        console.error(
-          "Failed to save theme preference to localStorage:",
-          error
-        );
+        console.error("Failed to save theme preference to localStorage:", error);
       }
       setTheme(theme);
     },
@@ -123,8 +109,7 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider");
+  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
 
   return context;
 };

@@ -2,6 +2,15 @@
 @import "tw-animate-css";
 
 @layer utilities {
+  /* High z-index dialog for global search */
+  [data-slot="dialog-overlay"] {
+    z-index: 80 !important;
+  }
+
+  [data-slot="dialog-content"] {
+    z-index: 80 !important;
+  }
+
   /* Ultra-sleek sidebar scrollbar styles */
   .scrollbar-thin {
     scrollbar-width: thin;
@@ -186,8 +195,7 @@
 
   body {
     @apply bg-background text-foreground;
-    transition: background-color 200ms ease-in-out, color 200ms ease-in-out,
-      border-color 200ms ease-in-out !important;
+    transition: background-color 200ms ease-in-out, color 200ms ease-in-out, border-color 200ms ease-in-out !important;
     overscroll-behavior: none;
   }
 
@@ -222,9 +230,8 @@
   div,
   nav,
   aside {
-    transition: background-color var(--theme-transition),
-      border-color var(--theme-transition), color var(--theme-transition),
-      fill var(--theme-transition), stroke var(--theme-transition),
+    transition: background-color var(--theme-transition), border-color var(--theme-transition),
+      color var(--theme-transition), fill var(--theme-transition), stroke var(--theme-transition),
       opacity var(--theme-transition);
   }
 
@@ -241,8 +248,7 @@
   .card,
   .bg-card,
   [class*="bg-card"] {
-    transition: background-color 200ms ease-in-out, color 200ms ease-in-out,
-      border-color 200ms ease-in-out !important;
+    transition: background-color 200ms ease-in-out, color 200ms ease-in-out, border-color 200ms ease-in-out !important;
   }
 
   /* Dark mode card styling */
@@ -299,8 +305,7 @@
 
   /* Let sidebar items handle their own transitions */
 
-  [data-slot="sidebar-container"]
-    [data-slot="sidebar-item"][data-active="true"] {
+  [data-slot="sidebar-container"] [data-slot="sidebar-item"][data-active="true"] {
     background-color: rgba(255, 255, 255, 0.15);
     font-weight: 500;
   }
@@ -443,9 +448,9 @@
 
   /* Keep underlines only for regular links, not buttons or navigation */
   .dark
-    a:not(button):not([role="button"]):not([class*="btn"]):not(
-      [class*="nav"]
-    ):not([data-slot="sidebar-item"]):not([data-sidebar]):hover {
+    a:not(button):not([role="button"]):not([class*="btn"]):not([class*="nav"]):not([data-slot="sidebar-item"]):not(
+      [data-sidebar]
+    ):hover {
     text-decoration: underline;
   }
 
