@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "faqs",
+  "info": {
+    "singularName": "faq",
+    "pluralName": "faqs",
+    "displayName": "FAQ",
+    "description": "Frequently asked questions"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "answer": {
+      "type": "text",
+      "required": true,
+      "maxLength": 2000
+    },
+    "categories": {
+      "type": "enumeration",
+      "enum": [
+        "General",
+        "Cloud Services",
+        "Billing",
+        "Technical Support",
+        "Security",
+        "Implementation",
+        "Other"
+      ],
+      "multiple": true,
+      "required": true
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::faq-group.faq-group",
+      "inversedBy": "faqs"
+    },
+    "order": {
+      "type": "integer",
+      "required": false,
+      "default": 0
+    },
+    "publishedAt": {
+      "type": "datetime",
+      "required": false
+    }
+  }
+}
