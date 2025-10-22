@@ -28,18 +28,7 @@ import {
 import { FAQ, FAQGroup, FAQCategory } from "@/types/faqs";
 import { faqCategories, generateFaqId, validateFaqForm } from "@/data/faqs";
 import { generateGroupId } from "@/data/faq-groups";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  ChevronUp, 
-  ChevronDown, 
-  X,
-  Save,
-  XCircle
-} from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, ChevronUp, ChevronDown, X, Save, XCircle } from "lucide-react";
 
 interface GroupManagementModalProps {
   group?: FAQGroup; // undefined for create mode
@@ -88,7 +77,7 @@ function FAQCard({
     const newCategories = editData.categories.includes(category)
       ? editData.categories.filter((c) => c !== category)
       : [...editData.categories, category];
-    setEditData(prev => ({ ...prev, categories: newCategories }));
+    setEditData((prev) => ({ ...prev, categories: newCategories }));
   };
 
   const handleSave = () => {
@@ -128,7 +117,7 @@ function FAQCard({
             <Input
               id={`question-${faq.id}`}
               value={editData.question}
-              onChange={(e) => setEditData(prev => ({ ...prev, question: e.target.value }))}
+              onChange={(e) => setEditData((prev) => ({ ...prev, question: e.target.value }))}
               placeholder="Enter the frequently asked question"
               className={errors.question ? "border-destructive" : ""}
             />
@@ -141,7 +130,7 @@ function FAQCard({
             <textarea
               id={`answer-${faq.id}`}
               value={editData.answer}
-              onChange={(e) => setEditData(prev => ({ ...prev, answer: e.target.value }))}
+              onChange={(e) => setEditData((prev) => ({ ...prev, answer: e.target.value }))}
               placeholder="Enter the answer to the question..."
               rows={4}
               className={`flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
@@ -175,7 +164,7 @@ function FAQCard({
             <Switch
               id={`visible-${faq.id}`}
               checked={editData.isVisible}
-              onCheckedChange={(checked) => setEditData(prev => ({ ...prev, isVisible: checked }))}
+              onCheckedChange={(checked) => setEditData((prev) => ({ ...prev, isVisible: checked }))}
             />
             <Label htmlFor={`visible-${faq.id}`}>Visible to public</Label>
           </div>
@@ -202,22 +191,10 @@ function FAQCard({
         <div className="flex items-start gap-3">
           {/* Reorder Controls */}
           <div className="flex flex-col gap-1 mt-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={onMoveUp}
-              disabled={!canMoveUp}
-            >
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={onMoveUp} disabled={!canMoveUp}>
               <ChevronUp className="h-3 w-3" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={onMoveDown}
-              disabled={!canMoveDown}
-            >
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={onMoveDown} disabled={!canMoveDown}>
               <ChevronDown className="h-3 w-3" />
             </Button>
           </div>
@@ -244,20 +221,10 @@ function FAQCard({
 
           {/* Actions */}
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleVisibility}
-              className="h-8 w-8 p-0"
-            >
+            <Button variant="ghost" size="sm" onClick={onToggleVisibility} className="h-8 w-8 p-0">
               {faq.isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onEdit}
-              className="h-8 w-8 p-0"
-            >
+            <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
               <Edit className="h-4 w-4" />
             </Button>
             <Button
@@ -283,17 +250,17 @@ export function GroupManagementModal({
   existingFaqs = [],
 }: GroupManagementModalProps) {
   const isCreateMode = !group;
-  
+
   // Group state
   const [groupName, setGroupName] = useState(group?.name || "");
   const [groupDescription, setGroupDescription] = useState(group?.description || "");
   const [isActive, setIsActive] = useState(group?.isActive ?? true);
-  
+
   // FAQ state
   const [faqs, setFaqs] = useState<FAQ[]>(existingFaqs);
   const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
   const [deletingFaqId, setDeletingFaqId] = useState<string | null>(null);
-  
+
   // Reset state when modal opens/closes
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
@@ -319,7 +286,7 @@ export function GroupManagementModal({
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setFaqs(prev => [...prev, newFaq]);
+    setFaqs((prev) => [...prev, newFaq]);
     setEditingFaqId(newFaq.id);
   };
 
@@ -328,7 +295,7 @@ export function GroupManagementModal({
   };
 
   const handleSaveFaq = (updatedFaq: FAQ) => {
-    setFaqs(prev => prev.map(faq => faq.id === updatedFaq.id ? updatedFaq : faq));
+    setFaqs((prev) => prev.map((faq) => (faq.id === updatedFaq.id ? updatedFaq : faq)));
     setEditingFaqId(null);
   };
 
@@ -342,21 +309,19 @@ export function GroupManagementModal({
 
   const confirmDeleteFaq = () => {
     if (deletingFaqId) {
-      setFaqs(prev => prev.filter(faq => faq.id !== deletingFaqId));
+      setFaqs((prev) => prev.filter((faq) => faq.id !== deletingFaqId));
       setDeletingFaqId(null);
     }
   };
 
   const handleToggleVisibility = (faqId: string) => {
-    setFaqs(prev => prev.map(faq => 
-      faq.id === faqId 
-        ? { ...faq, isVisible: !faq.isVisible, updatedAt: new Date() }
-        : faq
-    ));
+    setFaqs((prev) =>
+      prev.map((faq) => (faq.id === faqId ? { ...faq, isVisible: !faq.isVisible, updatedAt: new Date() } : faq))
+    );
   };
 
   const handleMoveUp = (faqId: string) => {
-    const currentIndex = faqs.findIndex(faq => faq.id === faqId);
+    const currentIndex = faqs.findIndex((faq) => faq.id === faqId);
     if (currentIndex > 0) {
       const newFaqs = [...faqs];
       [newFaqs[currentIndex - 1], newFaqs[currentIndex]] = [newFaqs[currentIndex], newFaqs[currentIndex - 1]];
@@ -365,7 +330,7 @@ export function GroupManagementModal({
   };
 
   const handleMoveDown = (faqId: string) => {
-    const currentIndex = faqs.findIndex(faq => faq.id === faqId);
+    const currentIndex = faqs.findIndex((faq) => faq.id === faqId);
     if (currentIndex < faqs.length - 1) {
       const newFaqs = [...faqs];
       [newFaqs[currentIndex], newFaqs[currentIndex + 1]] = [newFaqs[currentIndex + 1], newFaqs[currentIndex]];
@@ -381,7 +346,7 @@ export function GroupManagementModal({
 
     // Update FAQ groupIds if this is a new group
     const groupId = group?.id || generateGroupId();
-    const faqsWithGroupId = faqs.map(faq => ({
+    const faqsWithGroupId = faqs.map((faq) => ({
       ...faq,
       groupId,
     }));
@@ -401,14 +366,11 @@ export function GroupManagementModal({
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>
-              {isCreateMode ? "Create FAQ Group" : "Edit FAQ Group"}
-            </DialogTitle>
+            <DialogTitle>{isCreateMode ? "Create FAQ Group" : "Edit FAQ Group"}</DialogTitle>
             <DialogDescription>
-              {isCreateMode 
-                ? "Create a new FAQ group and add FAQs to it." 
-                : "Edit the group information and manage its FAQs."
-              }
+              {isCreateMode
+                ? "Create a new FAQ group and add FAQs to it."
+                : "Edit the group information and manage its FAQs."}
             </DialogDescription>
           </DialogHeader>
 
@@ -438,11 +400,7 @@ export function GroupManagementModal({
               </div>
 
               <div className="flex items-center space-x-2">
-                <Switch
-                  id="is-active"
-                  checked={isActive}
-                  onCheckedChange={setIsActive}
-                />
+                <Switch id="is-active" checked={isActive} onCheckedChange={setIsActive} />
                 <Label htmlFor="is-active">Active group</Label>
               </div>
             </div>
@@ -490,9 +448,7 @@ export function GroupManagementModal({
             <Button variant="outline" onClick={() => handleOpenChange(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              {isCreateMode ? "Create Group" : "Update Group"}
-            </Button>
+            <Button onClick={handleSave}>{isCreateMode ? "Create Group" : "Update Group"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

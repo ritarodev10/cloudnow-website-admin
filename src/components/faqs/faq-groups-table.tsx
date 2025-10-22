@@ -4,18 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FAQGroup } from "@/types/faqs";
-import { Edit, Trash2, Copy, Eye, FolderIcon } from "lucide-react";
+import { Edit, Trash2, Copy, FolderIcon } from "lucide-react";
 
 interface FAQGroupsTableProps {
   groups: FAQGroup[];
   onEdit: (group: FAQGroup) => void;
   onDelete: (group: FAQGroup) => void;
   onDuplicate: (group: FAQGroup) => void;
-  onPreview: (group: FAQGroup) => void;
-  onGroupClick: (group: FAQGroup) => void; // New handler for row clicks
+  onGroupClick: (group: FAQGroup) => void; // Handler for row clicks
 }
 
-export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPreview, onGroupClick }: FAQGroupsTableProps) {
+export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onGroupClick }: FAQGroupsTableProps) {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
@@ -94,17 +93,6 @@ export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onPrevie
                 <TableCell className="text-muted-foreground">{formatDate(group.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPreview(group);
-                      }} 
-                      title="Preview Group"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 

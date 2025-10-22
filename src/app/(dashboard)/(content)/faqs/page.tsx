@@ -35,7 +35,6 @@ export default function FAQsPage() {
   const [editingGroup, setEditingGroup] = useState<FAQGroup | undefined>();
   const [deletingGroup, setDeletingGroup] = useState<FAQGroup | undefined>();
 
-
   // Filtered groups based on search
   const filteredGroups = useMemo(() => {
     if (!groupSearchQuery.trim()) return groupsData;
@@ -85,19 +84,17 @@ export default function FAQsPage() {
         const updatedGroup: FAQGroup = {
           ...editingGroup,
           ...groupData,
-          faqIds: faqs.map(faq => faq.id),
-          order: faqs.map(faq => faq.id),
+          faqIds: faqs.map((faq) => faq.id),
+          order: faqs.map((faq) => faq.id),
           updatedAt: new Date(),
         };
-        
-        setGroupsData((prev) =>
-          prev.map((g) => (g.id === editingGroup.id ? updatedGroup : g))
-        );
-        
+
+        setGroupsData((prev) => prev.map((g) => (g.id === editingGroup.id ? updatedGroup : g)));
+
         // Update FAQs
         setFaqsData((prev) => {
           // Remove old FAQs for this group
-          const withoutOldFaqs = prev.filter(faq => faq.groupId !== editingGroup.id);
+          const withoutOldFaqs = prev.filter((faq) => faq.groupId !== editingGroup.id);
           // Add updated FAQs
           return [...withoutOldFaqs, ...faqs];
         });
@@ -106,19 +103,19 @@ export default function FAQsPage() {
         const newGroup: FAQGroup = {
           id: generateGroupId(),
           ...groupData,
-          faqIds: faqs.map(faq => faq.id),
-          order: faqs.map(faq => faq.id),
+          faqIds: faqs.map((faq) => faq.id),
+          order: faqs.map((faq) => faq.id),
           usagePaths: [],
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-        
+
         setGroupsData((prev) => [...prev, newGroup]);
-        
+
         // Add new FAQs
         setFaqsData((prev) => [...prev, ...faqs]);
       }
-      
+
       setIsGroupModalOpen(false);
       setEditingGroup(undefined);
     } catch (error) {
@@ -147,15 +144,10 @@ export default function FAQsPage() {
     }
   };
 
-  const handlePreviewGroup = (group: FAQGroup) => {
-    // For now, just open the modal (same as clicking the group)
-    handleGroupClick(group);
-  };
-
   // Get FAQs for the editing group
   const getGroupFaqs = (group?: FAQGroup): FAQ[] => {
     if (!group) return [];
-    return faqsData.filter(faq => faq.groupId === group.id);
+    return faqsData.filter((faq) => faq.groupId === group.id);
   };
 
   return (
@@ -205,7 +197,6 @@ export default function FAQsPage() {
               onEdit={handleEditGroup}
               onDelete={handleDeleteGroup}
               onDuplicate={handleDuplicateGroup}
-              onPreview={handlePreviewGroup}
               onGroupClick={handleGroupClick}
             />
           </CardContent>
