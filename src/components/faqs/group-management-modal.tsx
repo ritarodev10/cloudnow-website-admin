@@ -84,11 +84,16 @@ function FAQCard({
 
   const handleAddCategory = () => {
     const trimmedCategory = newCategory.trim();
+    console.log("Adding category:", trimmedCategory);
+    console.log("Current categories:", editData.categories);
+    
     if (trimmedCategory && trimmedCategory.length >= 2 && trimmedCategory.length <= 50) {
       // Check if category already exists in current FAQ
       if (!editData.categories.includes(trimmedCategory as FAQCategory)) {
         // Add to current FAQ's categories (will be saved when FAQ is saved)
-        setEditData((prev) => ({ ...prev, categories: [...prev.categories, trimmedCategory as FAQCategory] }));
+        const newCategories = [...editData.categories, trimmedCategory as FAQCategory];
+        console.log("New categories array:", newCategories);
+        setEditData((prev) => ({ ...prev, categories: newCategories }));
       }
       setNewCategory("");
       setIsAddingCategory(false);
@@ -178,18 +183,29 @@ function FAQCard({
           <div className="space-y-2">
             <Label>Categories *</Label>
             <div className="flex flex-wrap gap-2">
-              {faqCategories.map((category) => (
+              {editData.categories.map((category) => (
                 <Badge
                   key={category}
-                  variant={editData.categories.includes(category) ? "default" : "outline"}
+                  variant="default"
                   className="cursor-pointer hover:bg-primary/80"
                   onClick={() => handleCategoryToggle(category)}
                 >
                   {category}
-                  {editData.categories.includes(category) && <X className="ml-1 h-3 w-3" />}
+                  <X className="ml-1 h-3 w-3" />
                 </Badge>
               ))}
               
+              {faqCategories.filter(cat => !editData.categories.includes(cat)).map((category) => (
+                <Badge
+                  key={category}
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary/80"
+                  onClick={() => handleCategoryToggle(category)}
+                >
+                  {category}
+                </Badge>
+              ))}
+
               {/* Add Category Button/Form */}
               {isAddingCategory ? (
                 <div className="flex gap-1">
@@ -232,7 +248,7 @@ function FAQCard({
                 </Badge>
               )}
             </div>
-            
+
             {errors.categories && <p className="text-sm text-destructive">{errors.categories}</p>}
           </div>
 
