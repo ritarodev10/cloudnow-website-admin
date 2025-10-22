@@ -72,12 +72,34 @@ function FAQCard({
     isVisible: faq.isVisible,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [newCategory, setNewCategory] = useState("");
 
   const handleCategoryToggle = (category: FAQCategory) => {
     const newCategories = editData.categories.includes(category)
       ? editData.categories.filter((c) => c !== category)
       : [...editData.categories, category];
     setEditData((prev) => ({ ...prev, categories: newCategories }));
+  };
+
+  const handleAddCategory = () => {
+    const trimmedCategory = newCategory.trim();
+    if (trimmedCategory && trimmedCategory.length >= 2 && trimmedCategory.length <= 50) {
+      // Check if category already exists
+      if (!editData.categories.includes(trimmedCategory as FAQCategory) && !faqCategories.includes(trimmedCategory as FAQCategory)) {
+        // Add to global categories list
+        faqCategories.push(trimmedCategory as FAQCategory);
+        // Add to current FAQ's categories
+        setEditData((prev) => ({ ...prev, categories: [...prev.categories, trimmedCategory as FAQCategory] }));
+      }
+      setNewCategory("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddCategory();
+    }
   };
 
   const handleSave = () => {
@@ -156,6 +178,27 @@ function FAQCard({
                 </Badge>
               ))}
             </div>
+            
+            {/* Add Category Input */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add new category..."
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddCategory}
+                disabled={!newCategory.trim() || newCategory.trim().length < 2}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            
             {errors.categories && <p className="text-sm text-destructive">{errors.categories}</p>}
           </div>
 
