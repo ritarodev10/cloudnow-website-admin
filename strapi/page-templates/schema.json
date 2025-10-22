@@ -1,0 +1,88 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page-templates",
+  "info": {
+    "singularName": "page-template",
+    "pluralName": "page-templates",
+    "displayName": "Page Template",
+    "description": "Predefined page templates for services and other content"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "minLength": 3
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["business", "premium", "minimal", "creative", "ecommerce"],
+      "required": true,
+      "default": "business"
+    },
+    "previewImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "blocks": {
+      "type": "json",
+      "required": true
+    },
+    "tags": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "isDefault": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "usageCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "createdBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
+    "services": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::service.service",
+      "mappedBy": "template"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo",
+      "required": false
+    }
+  }
+}

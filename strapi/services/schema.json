@@ -68,6 +68,24 @@
         }
       }
     },
+    "template": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::page-template.page-template",
+      "required": false
+    },
+    "viewCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "lastEditedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
     "seo": {
       "type": "component",
       "repeatable": false,

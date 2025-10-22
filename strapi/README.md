@@ -30,10 +30,22 @@ This folder contains Strapi CMS schema definitions for the CloudNow website back
   - Relations: post, parentComment, replies
   - Moderation: likes, dislikes, isEdited, editedAt, moderationNotes
 
-### Services
+### Services Module
 - `services/schema.json` - Service pages with page builder content
-  - Fields: title, slug, description, category, status, featured, pageContent, seo
+  - Fields: title, slug, description, category, status, featured, pageContent, template, viewCount, lastEditedBy
+  - Relations: template (many-to-one), lastEditedBy (user)
   - Categories: IT Consulting, Cloud Solutions, Hosting Services, etc.
+
+- `page-templates/schema.json` - Page templates
+  - Fields: name, slug, description, category, previewImage, blocks, tags, isActive, isDefault, usageCount
+  - Relations: services (one-to-many), createdBy (user)
+  - Categories: business, premium, minimal, creative, ecommerce
+
+- `page-blocks/schema.json` - Reusable page blocks
+  - Fields: name, type, category, description, icon, defaultProps, requiredProps, optionalProps
+  - Features: isActive, isBuiltIn, usageCount, sortOrder
+  - Relations: createdBy (user)
+  - Block Types: hero, features, cta, faq, testimonials, stats, pricing, text, image, contact-form, gallery, video
 
 ### Testimonials
 - `testimonials/schema.json` - Individual testimonials
@@ -64,13 +76,17 @@ These schema files can be copied to your Strapi project:
 4. Copy `blog/authors-schema.json` to `src/api/blog-author/content-types/blog-author/schema.json`
 5. Copy `blog/comments-schema.json` to `src/api/blog-comment/content-types/blog-comment/schema.json`
 
+**Services Module:**
+6. Copy `services/schema.json` to `src/api/service/content-types/service/schema.json`
+7. Copy `page-templates/schema.json` to `src/api/page-template/content-types/page-template/schema.json`
+8. Copy `page-blocks/schema.json` to `src/api/page-block/content-types/page-block/schema.json`
+
 **Other Modules:**
-6. Copy `services/schema.json` to `src/api/services/content-types/service/schema.json`
-7. Copy `testimonials/schema.json` to `src/api/testimonials/content-types/testimonial/schema.json`
-8. Copy `testimonials/groups-schema.json` to `src/api/testimonial-groups/content-types/testimonial-group/schema.json`
-9. Copy `faqs/schema.json` to `src/api/faqs/content-types/faq/schema.json`
-10. Copy `faqs/groups-schema.json` to `src/api/faq-groups/content-types/faq-group/schema.json`
-11. Copy `components/shared/seo.json` to `src/components/shared/seo.json`
+9. Copy `testimonials/schema.json` to `src/api/testimonials/content-types/testimonial/schema.json`
+10. Copy `testimonials/groups-schema.json` to `src/api/testimonial-groups/content-types/testimonial-group/schema.json`
+11. Copy `faqs/schema.json` to `src/api/faqs/content-types/faq/schema.json`
+12. Copy `faqs/groups-schema.json` to `src/api/faq-groups/content-types/faq-group/schema.json`
+13. Copy `components/shared/seo.json` to `src/components/shared/seo.json`
 
 ## Notes
 

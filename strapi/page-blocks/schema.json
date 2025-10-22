@@ -1,0 +1,102 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page-blocks",
+  "info": {
+    "singularName": "page-block",
+    "pluralName": "page-blocks",
+    "displayName": "Page Block",
+    "description": "Reusable page blocks for the page builder"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "minLength": 3
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "hero",
+        "features",
+        "cta",
+        "faq",
+        "testimonials",
+        "stats",
+        "pricing",
+        "text",
+        "image",
+        "contact-form",
+        "gallery",
+        "video"
+      ],
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["header", "content", "conversion", "social-proof", "media"],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "icon": {
+      "type": "string",
+      "required": false,
+      "maxLength": 50
+    },
+    "defaultProps": {
+      "type": "json",
+      "required": true
+    },
+    "requiredProps": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "optionalProps": {
+      "type": "json",
+      "required": false,
+      "default": []
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "isBuiltIn": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "usageCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "sortOrder": {
+      "type": "integer",
+      "required": false,
+      "default": 0
+    },
+    "createdBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo",
+      "required": false
+    }
+  }
+}
