@@ -24,15 +24,7 @@
     },
     "categories": {
       "type": "enumeration",
-      "enum": [
-        "General",
-        "Cloud Services",
-        "Billing",
-        "Technical Support",
-        "Security",
-        "Implementation",
-        "Other"
-      ],
+      "enum": ["General", "Cloud Services", "Billing", "Technical Support", "Security", "Implementation", "Other"],
       "multiple": true,
       "required": true
     },

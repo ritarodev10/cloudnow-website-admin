@@ -1,0 +1,95 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog-comments",
+  "info": {
+    "singularName": "blog-comment",
+    "pluralName": "blog-comments",
+    "displayName": "Blog Comment",
+    "description": "Blog post comments and discussions"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "author": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "content": {
+      "type": "text",
+      "required": true,
+      "maxLength": 2000,
+      "minLength": 10
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "approved", "rejected", "spam"],
+      "default": "pending",
+      "required": true
+    },
+    "isSpam": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "ipAddress": {
+      "type": "string",
+      "required": false,
+      "maxLength": 45
+    },
+    "userAgent": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    },
+    "post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::blog-post.blog-post",
+      "inversedBy": "comments"
+    },
+    "parentComment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::blog-comment.blog-comment"
+    },
+    "replies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-comment.blog-comment",
+      "mappedBy": "parentComment"
+    },
+    "likes": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "dislikes": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "isEdited": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "editedAt": {
+      "type": "datetime",
+      "required": false
+    },
+    "moderationNotes": {
+      "type": "text",
+      "required": false,
+      "maxLength": 500
+    }
+  }
+}
