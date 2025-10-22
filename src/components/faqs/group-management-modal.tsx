@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,7 +86,7 @@ function FAQCard({
     const trimmedCategory = newCategory.trim();
     console.log("Adding category:", trimmedCategory);
     console.log("Current categories:", editData.categories);
-    
+
     if (trimmedCategory && trimmedCategory.length >= 2 && trimmedCategory.length <= 50) {
       // Check if category already exists in current FAQ
       if (!editData.categories.includes(trimmedCategory as FAQCategory)) {
@@ -194,17 +194,19 @@ function FAQCard({
                   <X className="ml-1 h-3 w-3" />
                 </Badge>
               ))}
-              
-              {faqCategories.filter(cat => !editData.categories.includes(cat)).map((category) => (
-                <Badge
-                  key={category}
-                  variant="outline"
-                  className="cursor-pointer hover:bg-primary/80"
-                  onClick={() => handleCategoryToggle(category)}
-                >
-                  {category}
-                </Badge>
-              ))}
+
+              {faqCategories
+                .filter((cat) => !editData.categories.includes(cat))
+                .map((category) => (
+                  <Badge
+                    key={category}
+                    variant="outline"
+                    className="cursor-pointer hover:bg-primary/80"
+                    onClick={() => handleCategoryToggle(category)}
+                  >
+                    {category}
+                  </Badge>
+                ))}
 
               {/* Add Category Button/Form */}
               {isAddingCategory ? (
@@ -503,7 +505,7 @@ export function GroupManagementModal({
               {faqs.length === 0 ? (
                 <Card>
                   <CardContent className="text-center py-8 text-muted-foreground">
-                    No FAQs in this group yet. Click "Add FAQ" to get started.
+                    No FAQs in this group yet. Click &quot;Add FAQ&quot; to get started.
                   </CardContent>
                 </Card>
               ) : (

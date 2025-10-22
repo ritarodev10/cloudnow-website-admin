@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FeaturesBlockProps } from "@/types/service-page-builder";
+import Image from "next/image";
 
 interface FeaturesBlockComponentProps {
   props: FeaturesBlockProps;
   isPreview?: boolean;
 }
 
-export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockComponentProps) {
+export function FeaturesBlock({ props }: FeaturesBlockComponentProps) {
   const { title, subtitle, features = [], columns = 3, layout = "grid" } = props;
 
   const gridClasses = {
@@ -17,13 +17,25 @@ export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockCompone
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const renderFeature = (feature: any) => (
+  const renderFeature = (feature: {
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+    image?: string;
+  }) => (
     <Card key={feature.id} className="h-full">
       <CardHeader>
         {feature.icon && <div className="text-4xl mb-4">{feature.icon}</div>}
         {feature.image && (
           <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-            <img src={feature.image} alt={feature.title} className="max-w-full max-h-full object-contain" />
+            <Image
+              src={feature.image}
+              alt={feature.title}
+              width={200}
+              height={128}
+              className="max-w-full max-h-full object-contain"
+            />
           </div>
         )}
         <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -54,7 +66,13 @@ export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockCompone
                   {feature.icon && <div className="text-3xl">{feature.icon}</div>}
                   {feature.image && (
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <img src={feature.image} alt={feature.title} className="max-w-full max-h-full object-contain" />
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={64}
+                        height={64}
+                        className="max-w-full max-h-full object-contain"
+                      />
                     </div>
                   )}
                 </div>
@@ -75,7 +93,13 @@ export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockCompone
                   {feature.icon && <div className="text-5xl mb-4">{feature.icon}</div>}
                   {feature.image && (
                     <div className="w-20 h-20 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <img src={feature.image} alt={feature.title} className="max-w-full max-h-full object-contain" />
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={80}
+                        height={80}
+                        className="max-w-full max-h-full object-contain"
+                      />
                     </div>
                   )}
                   <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
@@ -89,4 +113,3 @@ export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockCompone
     </section>
   );
 }
-

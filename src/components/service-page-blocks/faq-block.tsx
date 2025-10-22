@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FaqBlockProps } from "@/types/service-page-builder";
 import { useState } from "react";
 
@@ -23,7 +22,7 @@ export function FaqBlock({ props, isPreview = false }: FaqBlockComponentProps) {
     setOpenItems(newOpenItems);
   };
 
-  const renderAccordionItem = (faq: any) => {
+  const renderAccordionItem = (faq: { id: string; question: string; answer: string }) => {
     const isOpen = openItems.has(faq.id);
 
     return (
@@ -46,7 +45,7 @@ export function FaqBlock({ props, isPreview = false }: FaqBlockComponentProps) {
     );
   };
 
-  const renderGridItem = (faq: any) => (
+  const renderGridItem = (faq: { id: string; question: string; answer: string }) => (
     <Card key={faq.id} className="h-full">
       <CardHeader>
         <CardTitle className="text-lg">{faq.question}</CardTitle>

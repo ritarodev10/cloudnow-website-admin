@@ -1,4 +1,4 @@
-import { ComponentTemplate, TemplateCategory, PageBlock, PageContent } from "@/types/service-page-builder";
+import { ComponentTemplate, TemplateCategory, PageContent } from "@/types/service-page-builder";
 
 // Predefined page templates
 export const servicePageTemplates: ComponentTemplate[] = [

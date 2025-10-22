@@ -15,11 +15,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TestimonialGroup, TestimonialGroupFormData, Testimonial } from "@/types/testimonials";
 import { testimonials } from "@/data/testimonials";
 import { validateGroupForm } from "@/data/testimonial-groups";
-import { X, GripVertical, UsersIcon } from "lucide-react";
+import { GripVertical } from "lucide-react";
 
 interface TestimonialGroupFormProps {
   group?: TestimonialGroup;
@@ -45,7 +44,7 @@ export function TestimonialGroupForm({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availableTestimonials, setAvailableTestimonials] = useState<Testimonial[]>(testimonials);
+  const [,] = useState<Testimonial[]>(testimonials);
 
   useEffect(() => {
     setFormData({
@@ -284,4 +283,3 @@ export function TestimonialGroupForm({
     </Dialog>
   );
 }
-

@@ -11,7 +11,7 @@ interface TestimonialsBlockComponentProps {
   isPreview?: boolean;
 }
 
-export function TestimonialsBlock({ props, isPreview = false }: TestimonialsBlockComponentProps) {
+export function TestimonialsBlock({ props }: TestimonialsBlockComponentProps) {
   const { groupId, displayStyle = "grid", showGroupName = true, maxItems, title, subtitle } = props;
 
   // Get testimonials from group
@@ -36,7 +36,15 @@ export function TestimonialsBlock({ props, isPreview = false }: TestimonialsBloc
       .slice(0, 2);
   };
 
-  const renderTestimonial = (testimonial: any) => (
+  const renderTestimonial = (testimonial: {
+    id: string;
+    name: string;
+    title: string;
+    company: string;
+    testimony: string;
+    image?: string;
+    rating: number;
+  }) => (
     <Card key={testimonial.id} className="h-full">
       <CardContent className="p-6">
         {testimonial.rating && (
@@ -128,7 +136,9 @@ export function TestimonialsBlock({ props, isPreview = false }: TestimonialsBloc
                         </div>
                       )}
 
-                      <blockquote className="text-gray-600 mb-4 italic text-lg">&ldquo;{testimonial.testimony}&rdquo;</blockquote>
+                      <blockquote className="text-gray-600 mb-4 italic text-lg">
+                        &ldquo;{testimonial.testimony}&rdquo;
+                      </blockquote>
 
                       <div className="font-semibold text-gray-900">{testimonial.name}</div>
                       <div className="text-sm text-gray-600">

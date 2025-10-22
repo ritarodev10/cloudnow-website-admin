@@ -1,12 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ImageBlockProps } from "@/types/service-page-builder";
+import Image from "next/image";
 
 interface ImageBlockComponentProps {
   props: ImageBlockProps;
   isPreview?: boolean;
 }
 
-export function ImageBlock({ props, isPreview = false }: ImageBlockComponentProps) {
+export function ImageBlock({ props }: ImageBlockComponentProps) {
   const { src, alt, caption, alignment = "center", size = "medium", link } = props;
 
   const alignmentClasses = {
@@ -22,7 +23,9 @@ export function ImageBlock({ props, isPreview = false }: ImageBlockComponentProp
     full: "max-w-full",
   };
 
-  const imageElement = <img src={src} alt={alt} className={`w-full h-auto rounded-lg ${sizeClasses[size]}`} />;
+  const imageElement = (
+    <Image src={src} alt={alt} width={800} height={600} className={`w-full h-auto rounded-lg ${sizeClasses[size]}`} />
+  );
 
   return (
     <section className="py-8">
@@ -51,4 +54,3 @@ export function ImageBlock({ props, isPreview = false }: ImageBlockComponentProp
     </section>
   );
 }
-

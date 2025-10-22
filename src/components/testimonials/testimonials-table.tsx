@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,8 +30,6 @@ export function TestimonialsTable({
   onToggleVisibility,
   onViewGroups,
 }: TestimonialsTableProps) {
-  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
-
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`h-3 w-3 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
@@ -85,8 +82,8 @@ export function TestimonialsTable({
               <TableRow
                 key={testimonial.id}
                 className="hover:bg-muted/50"
-                onMouseEnter={() => setHoveredRow(testimonial.id)}
-                onMouseLeave={() => setHoveredRow(null)}
+                onMouseEnter={() => {}}
+                onMouseLeave={() => {}}
               >
                 <TableCell>
                   <Avatar className="h-8 w-8">
@@ -186,4 +183,3 @@ export function TestimonialsTable({
     </div>
   );
 }
-

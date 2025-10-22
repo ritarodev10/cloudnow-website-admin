@@ -6,7 +6,7 @@ interface TextBlockComponentProps {
   isPreview?: boolean;
 }
 
-export function TextBlock({ props, isPreview = false }: TextBlockComponentProps) {
+export function TextBlock({ props }: TextBlockComponentProps) {
   const { content, alignment = "left", fontSize = "medium", backgroundColor } = props;
 
   const alignmentClasses = {

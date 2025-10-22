@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ChevronDownIcon, ChevronRightIcon, SearchIcon } from "lucide-react";
 import { blockRegistry, getBlocksByCategory } from "../service-page-blocks/block-registry";
-import { BlockType, BlockCategory } from "@/types/service-page-builder";
+import { BlockType, BlockCategory, BlockDefinition } from "@/types/service-page-builder";
 
 interface ComponentsPanelProps {
   onAddBlock: (blockType: BlockType) => void;
@@ -51,7 +50,7 @@ export function ComponentsPanel({ onAddBlock, isCollapsed = false, onToggleColla
         block.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return acc;
-  }, {} as Record<BlockCategory, any[]>);
+  }, {} as Record<BlockCategory, BlockDefinition[]>);
 
   if (isCollapsed) {
     return (

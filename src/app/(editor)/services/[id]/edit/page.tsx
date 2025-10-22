@@ -1,5 +1,5 @@
 import { ServicePageEditor } from "@/components/service-page-builder/service-page-editor";
-import { Service, PageContent } from "@/types";
+import { Service } from "@/types";
 
 interface EditServicePageProps {
   params: {
@@ -72,10 +72,9 @@ const mockService: Service = {
   updatedAt: new Date(),
 };
 
-export default function EditServicePage({ params }: EditServicePageProps) {
+export default function EditServicePage({}: EditServicePageProps) {
   // TODO: Fetch service data from API
   const service = mockService;
 
   return <ServicePageEditor service={service} initialContent={service.pageContent} />;
 }
-

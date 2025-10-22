@@ -26,7 +26,7 @@ export interface PageBlock {
   id: string;
   type: BlockType;
   category: BlockCategory;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
   order: number;
 }
 
@@ -54,7 +54,7 @@ export interface BlockDefinition {
   description: string;
   category: BlockCategory;
   icon: string;
-  defaultProps: Record<string, any>;
+  defaultProps: Record<string, unknown>;
   requiredProps: string[];
   optionalProps: string[];
 }
@@ -200,4 +200,4 @@ export type BlockProps =
   | PricingBlockProps
   | TextBlockProps
   | ImageBlockProps
-  | Record<string, any>;
+  | Record<string, unknown>;

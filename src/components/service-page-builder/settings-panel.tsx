@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { XIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { PageBlock, BlockType } from "@/types/service-page-builder";
+import { PageBlock } from "@/types/service-page-builder";
 import { testimonialGroups } from "@/data/testimonial-groups";
 import { blockRegistry } from "@/components/service-page-blocks/block-registry";
 
@@ -18,7 +18,7 @@ interface SettingsPanelProps {
   selectedBlock?: PageBlock;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
-  onUpdateBlock: (blockId: string, props: Record<string, any>) => void;
+  onUpdateBlock: (blockId: string, props: Record<string, unknown>) => void;
 }
 
 export function SettingsPanel({
@@ -27,7 +27,7 @@ export function SettingsPanel({
   onToggleCollapse,
   onUpdateBlock,
 }: SettingsPanelProps) {
-  const [localProps, setLocalProps] = useState<Record<string, any>>({});
+  const [localProps, setLocalProps] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
     if (selectedBlock) {
@@ -35,7 +35,7 @@ export function SettingsPanel({
     }
   }, [selectedBlock]);
 
-  const handlePropChange = (key: string, value: any) => {
+  const handlePropChange = (key: string, value: unknown) => {
     const newProps = { ...localProps, [key]: value };
     setLocalProps(newProps);
 
@@ -44,21 +44,15 @@ export function SettingsPanel({
     }
   };
 
-  const handleArrayItemAdd = (key: string, newItem: any) => {
-    const currentArray = localProps[key] || [];
+  const handleArrayItemAdd = (key: string, newItem: unknown) => {
+    const currentArray = Array.isArray(localProps[key]) ? (localProps[key] as unknown[]) : [];
     const updatedArray = [...currentArray, newItem];
     handlePropChange(key, updatedArray);
   };
 
   const handleArrayItemRemove = (key: string, index: number) => {
-    const currentArray = localProps[key] || [];
-    const updatedArray = currentArray.filter((_: any, i: number) => i !== index);
-    handlePropChange(key, updatedArray);
-  };
-
-  const handleArrayItemUpdate = (key: string, index: number, field: string, value: any) => {
-    const currentArray = localProps[key] || [];
-    const updatedArray = currentArray.map((item: any, i: number) => (i === index ? { ...item, [field]: value } : item));
+    const currentArray = Array.isArray(localProps[key]) ? (localProps[key] as unknown[]) : [];
+    const updatedArray = currentArray.filter((_: unknown, i: number) => i !== index);
     handlePropChange(key, updatedArray);
   };
 
@@ -84,11 +78,11 @@ export function SettingsPanel({
 
   const blockDefinition = blockRegistry[selectedBlock.type];
 
-  const renderInput = (key: string, value: any, type: string = "text") => {
+  const renderInput = (key: string, value: unknown, type: string = "text") => {
     // Special handling for testimonials group selection
     if (key === "groupId" && selectedBlock?.type === "testimonials") {
       return (
-        <Select value={value || ""} onValueChange={(val) => handlePropChange(key, val)}>
+        <Select value={String(value || "")} onValueChange={(val) => handlePropChange(key, val)}>
           <SelectTrigger>
             <SelectValue placeholder="Select testimonial group..." />
           </SelectTrigger>
@@ -111,7 +105,7 @@ export function SettingsPanel({
     // Special handling for display style selection
     if (key === "displayStyle" && selectedBlock?.type === "testimonials") {
       return (
-        <Select value={value || "grid"} onValueChange={(val) => handlePropChange(key, val)}>
+        <Select value={String(value || "grid")} onValueChange={(val) => handlePropChange(key, val)}>
           <SelectTrigger>
             <SelectValue placeholder="Select display style..." />
           </SelectTrigger>
@@ -128,14 +122,14 @@ export function SettingsPanel({
       case "textarea":
         return (
           <Textarea
-            value={value || ""}
+            value={String(value || "")}
             onChange={(e) => handlePropChange(key, e.target.value)}
             placeholder={`Enter ${key}...`}
           />
         );
       case "select":
         return (
-          <Select value={value || ""} onValueChange={(val) => handlePropChange(key, val)}>
+          <Select value={String(value || "")} onValueChange={(val) => handlePropChange(key, val)}>
             <SelectTrigger>
               <SelectValue placeholder={`Select ${key}...`} />
             </SelectTrigger>
@@ -143,12 +137,12 @@ export function SettingsPanel({
           </Select>
         );
       case "boolean":
-        return <Switch checked={value || false} onCheckedChange={(checked) => handlePropChange(key, checked)} />;
+        return <Switch checked={Boolean(value)} onCheckedChange={(checked) => handlePropChange(key, checked)} />;
       case "number":
         return (
           <Input
             type="number"
-            value={value || ""}
+            value={String(value || "")}
             onChange={(e) => handlePropChange(key, parseInt(e.target.value) || 0)}
             placeholder={`Enter ${key}...`}
           />
@@ -156,7 +150,7 @@ export function SettingsPanel({
       default:
         return (
           <Input
-            value={value || ""}
+            value={String(value || "")}
             onChange={(e) => handlePropChange(key, e.target.value)}
             placeholder={`Enter ${key}...`}
           />
@@ -164,7 +158,7 @@ export function SettingsPanel({
     }
   };
 
-  const renderArrayField = (key: string, array: any[]) => {
+  const renderArrayField = (key: string, array: unknown[]) => {
     return (
       <div className="space-y-3">
         {array.map((item, index) => (
@@ -180,10 +174,10 @@ export function SettingsPanel({
                 <TrashIcon className="h-3 w-3" />
               </Button>
             </div>
-            {Object.keys(item).map((field) => (
+            {Object.keys(item as Record<string, unknown>).map((field) => (
               <div key={field} className="mb-2">
                 <Label className="text-xs">{field}</Label>
-                {renderInput(`${key}.${index}.${field}`, item[field])}
+                {renderInput(`${key}.${index}.${field}`, (item as Record<string, unknown>)[field])}
               </div>
             ))}
           </Card>

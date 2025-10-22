@@ -267,8 +267,8 @@ export const filterServices = (services: Service[], filters: ServiceFilters): Se
 // Sort services
 export const sortServices = (services: Service[], field: keyof Service, direction: "asc" | "desc"): Service[] => {
   return [...services].sort((a, b) => {
-    let aValue: any = a[field];
-    let bValue: any = b[field];
+    let aValue: unknown = a[field];
+    let bValue: unknown = b[field];
 
     // Skip sorting for complex types like PageContent
     if (field === "pageContent") {
@@ -292,10 +292,14 @@ export const sortServices = (services: Service[], field: keyof Service, directio
       bValue = bValue.toLowerCase();
     }
 
+    // Convert to comparable types for comparison
+    const aComparable = typeof aValue === "string" ? aValue : typeof aValue === "number" ? aValue : String(aValue);
+    const bComparable = typeof bValue === "string" ? bValue : typeof bValue === "number" ? bValue : String(bValue);
+
     if (direction === "asc") {
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      return aComparable < bComparable ? -1 : aComparable > bComparable ? 1 : 0;
     } else {
-      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      return aComparable > bComparable ? -1 : aComparable < bComparable ? 1 : 0;
     }
   });
 };

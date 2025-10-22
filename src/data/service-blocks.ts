@@ -2,7 +2,7 @@ import { BlockType, BlockDefinition, PageBlock } from "@/types/service-page-buil
 import { blockRegistry } from "@/components/service-page-blocks/block-registry";
 
 // Helper function to create a new block instance
-export const createBlockInstance = (type: BlockType, customProps?: Record<string, any>): PageBlock => {
+export const createBlockInstance = (type: BlockType, customProps?: Record<string, unknown>): PageBlock => {
   const blockDefinition = blockRegistry[type];
   
   return {
@@ -27,7 +27,7 @@ export const duplicateBlock = (block: PageBlock): PageBlock => {
 };
 
 // Helper function to validate block props
-export const validateBlockProps = (type: BlockType, props: Record<string, any>): Record<string, string> => {
+export const validateBlockProps = (type: BlockType, props: Record<string, unknown>): Record<string, string> => {
   const blockDefinition = blockRegistry[type];
   const errors: Record<string, string> = {};
 
@@ -41,7 +41,7 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
   // Type-specific validations
   switch (type) {
     case "hero":
-      if (props.title && props.title.length < 3) {
+      if (props.title && typeof props.title === 'string' && props.title.length < 3) {
         errors.title = "Title must be at least 3 characters";
       }
       break;
@@ -49,13 +49,13 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
     case "features":
       if (props.features && !Array.isArray(props.features)) {
         errors.features = "Features must be an array";
-      } else if (props.features && props.features.length === 0) {
+      } else if (props.features && Array.isArray(props.features) && props.features.length === 0) {
         errors.features = "At least one feature is required";
       }
       break;
     
     case "cta":
-      if (props.buttonText && props.buttonText.length < 2) {
+      if (props.buttonText && typeof props.buttonText === 'string' && props.buttonText.length < 2) {
         errors.buttonText = "Button text must be at least 2 characters";
       }
       break;
@@ -63,7 +63,7 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
     case "faq":
       if (props.faqs && !Array.isArray(props.faqs)) {
         errors.faqs = "FAQs must be an array";
-      } else if (props.faqs && props.faqs.length === 0) {
+      } else if (props.faqs && Array.isArray(props.faqs) && props.faqs.length === 0) {
         errors.faqs = "At least one FAQ is required";
       }
       break;
@@ -71,7 +71,7 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
     case "testimonials":
       if (props.testimonials && !Array.isArray(props.testimonials)) {
         errors.testimonials = "Testimonials must be an array";
-      } else if (props.testimonials && props.testimonials.length === 0) {
+      } else if (props.testimonials && Array.isArray(props.testimonials) && props.testimonials.length === 0) {
         errors.testimonials = "At least one testimonial is required";
       }
       break;
@@ -79,7 +79,7 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
     case "stats":
       if (props.stats && !Array.isArray(props.stats)) {
         errors.stats = "Stats must be an array";
-      } else if (props.stats && props.stats.length === 0) {
+      } else if (props.stats && Array.isArray(props.stats) && props.stats.length === 0) {
         errors.stats = "At least one stat is required";
       }
       break;
@@ -87,19 +87,19 @@ export const validateBlockProps = (type: BlockType, props: Record<string, any>):
     case "pricing":
       if (props.plans && !Array.isArray(props.plans)) {
         errors.plans = "Plans must be an array";
-      } else if (props.plans && props.plans.length === 0) {
+      } else if (props.plans && Array.isArray(props.plans) && props.plans.length === 0) {
         errors.plans = "At least one plan is required";
       }
       break;
     
     case "text":
-      if (props.content && props.content.length < 10) {
+      if (props.content && typeof props.content === 'string' && props.content.length < 10) {
         errors.content = "Content must be at least 10 characters";
       }
       break;
     
     case "image":
-      if (props.src && !isValidUrl(props.src)) {
+      if (props.src && typeof props.src === 'string' && !isValidUrl(props.src)) {
         errors.src = "Please enter a valid image URL";
       }
       break;
@@ -191,7 +191,7 @@ export const addBlockAtPosition = (
 export const updateBlockProps = (
   blocks: PageBlock[], 
   blockId: string, 
-  newProps: Record<string, any>
+  newProps: Record<string, unknown>
 ): PageBlock[] => {
   return blocks.map(block => 
     block.id === blockId ? { ...block, props: { ...block.props, ...newProps } } : block
@@ -235,4 +235,5 @@ export const getPageStatistics = (blocks: PageBlock[]) => {
     }, {} as Record<string, number>)
   };
 };
+
 

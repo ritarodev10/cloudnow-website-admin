@@ -29,6 +29,47 @@ export function ServicePageEditor({ service, initialContent }: ServicePageEditor
   const [isComponentsPanelCollapsed, setIsComponentsPanelCollapsed] = useState(false);
   const [isSettingsPanelCollapsed, setIsSettingsPanelCollapsed] = useState(false);
 
+  const generateBlockId = () => {
+    return `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  const handleSave = useCallback(
+    async (isAutoSave = false) => {
+      setEditorState((prev) => ({ ...prev, isSaving: true }));
+
+      try {
+        const pageContent: PageContent = {
+          blocks: blocks.map((block, index) => ({ ...block, order: index })),
+          metadata: {
+            lastEditedAt: new Date(),
+            version: 1,
+          },
+        };
+
+        // TODO: Replace with actual API call
+        console.log("Saving page content:", pageContent);
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        setEditorState((prev) => ({
+          ...prev,
+          isSaving: false,
+          hasUnsavedChanges: false,
+          lastSaved: new Date(),
+        }));
+
+        if (!isAutoSave) {
+          console.log("Page saved successfully!");
+        }
+      } catch (error) {
+        console.error("Error saving page:", error);
+        setEditorState((prev) => ({ ...prev, isSaving: false }));
+      }
+    },
+    [blocks]
+  );
+
   // Auto-save functionality
   useEffect(() => {
     if (!editorState.hasUnsavedChanges) return;
@@ -38,11 +79,7 @@ export function ServicePageEditor({ service, initialContent }: ServicePageEditor
     }, 30000); // Auto-save every 30 seconds
 
     return () => clearTimeout(autoSaveTimer);
-  }, [editorState.hasUnsavedChanges]);
-
-  const generateBlockId = () => {
-    return `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  };
+  }, [editorState.hasUnsavedChanges, handleSave]);
 
   const addBlock = useCallback(
     (blockType: BlockType) => {
@@ -62,7 +99,7 @@ export function ServicePageEditor({ service, initialContent }: ServicePageEditor
     [blocks.length]
   );
 
-  const updateBlock = useCallback((blockId: string, newProps: Record<string, any>) => {
+  const updateBlock = useCallback((blockId: string, newProps: Record<string, unknown>) => {
     setBlocks((prev) => prev.map((block) => (block.id === blockId ? { ...block, props: newProps } : block)));
     setEditorState((prev) => ({ ...prev, hasUnsavedChanges: true }));
   }, []);
@@ -111,43 +148,6 @@ export function ServicePageEditor({ service, initialContent }: ServicePageEditor
       setEditorState((prev) => ({ ...prev, hasUnsavedChanges: true }));
     },
     [selectedBlockId]
-  );
-
-  const handleSave = useCallback(
-    async (isAutoSave = false) => {
-      setEditorState((prev) => ({ ...prev, isSaving: true }));
-
-      try {
-        const pageContent: PageContent = {
-          blocks: blocks.map((block, index) => ({ ...block, order: index })),
-          metadata: {
-            lastEditedAt: new Date(),
-            version: 1,
-          },
-        };
-
-        // TODO: Replace with actual API call
-        console.log("Saving page content:", pageContent);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        setEditorState((prev) => ({
-          ...prev,
-          isSaving: false,
-          hasUnsavedChanges: false,
-          lastSaved: new Date(),
-        }));
-
-        if (!isAutoSave) {
-          console.log("Page saved successfully!");
-        }
-      } catch (error) {
-        console.error("Error saving page:", error);
-        setEditorState((prev) => ({ ...prev, isSaving: false }));
-      }
-    },
-    [blocks]
   );
 
   const handlePublish = useCallback(async () => {

@@ -44,7 +44,7 @@ export const cloneBlock = (blocks: PageBlock[], blockId: string): PageBlock[] =>
   return addBlockAtPosition(blocks, clonedBlock, insertIndex);
 };
 
-export const updateBlock = (blocks: PageBlock[], blockId: string, newProps: Record<string, any>): PageBlock[] => {
+export const updateBlock = (blocks: PageBlock[], blockId: string, newProps: Record<string, unknown>): PageBlock[] => {
   return updateBlockProps(blocks, blockId, newProps);
 };
 
@@ -207,7 +207,7 @@ export const duplicateBlockWithVariation = (block: PageBlock, variation: "copy" 
 // Batch operations
 export const batchUpdateBlocks = (
   blocks: PageBlock[], 
-  updates: Array<{ blockId: string; props: Record<string, any> }>
+  updates: Array<{ blockId: string; props: Record<string, unknown> }>
 ): PageBlock[] => {
   let updatedBlocks = [...blocks];
   
@@ -240,4 +240,5 @@ export const getPageContentDiff = (oldContent: PageContent, newContent: PageCont
   
   return { added, removed, modified };
 };
+
 

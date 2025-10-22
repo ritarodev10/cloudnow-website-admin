@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ServicePageEditor } from "@/components/service-page-builder/service-page-editor";
 import { TemplateSelector } from "@/components/service-page-builder/template-selector";
-import { ComponentTemplate, TemplateCategory, PageContent, PageBlock } from "@/types/service-page-builder";
+import { ComponentTemplate, TemplateCategory, PageContent } from "@/types/service-page-builder";
 
 // Mock template data - replace with actual API call
 const mockTemplates: ComponentTemplate[] = [
@@ -129,7 +129,7 @@ const mockTemplateCategories: TemplateCategory[] = [
 export default function NewServicePage() {
   const router = useRouter();
   const [showTemplateSelector, setShowTemplateSelector] = useState(true);
-  const [selectedTemplate, setSelectedTemplate] = useState<ComponentTemplate | null>(null);
+  const [, setSelectedTemplate] = useState<ComponentTemplate | null>(null);
   const [initialContent, setInitialContent] = useState<PageContent | undefined>();
 
   const handleSelectTemplate = (template: ComponentTemplate) => {
@@ -182,4 +182,3 @@ export default function NewServicePage() {
 
   return <ServicePageEditor initialContent={initialContent} />;
 }
-

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, ArrowLeftIcon } from "lucide-react";
 import { ComponentTemplate, TemplateCategory } from "@/types/service-page-builder";
+import Image from "next/image";
 
 interface TemplateSelectorProps {
   templates: ComponentTemplate[];
@@ -105,9 +106,11 @@ export function TemplateSelector({
             >
               <div className="aspect-video bg-gray-100 rounded-t-lg flex items-center justify-center">
                 {template.thumbnail ? (
-                  <img
+                  <Image
                     src={template.thumbnail}
                     alt={template.name}
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover rounded-t-lg"
                   />
                 ) : (
@@ -167,4 +170,3 @@ export function TemplateSelector({
     </div>
   );
 }
-

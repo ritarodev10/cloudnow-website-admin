@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { StatsBlockProps } from "@/types/service-page-builder";
 
 interface StatsBlockComponentProps {
@@ -7,7 +5,7 @@ interface StatsBlockComponentProps {
   isPreview?: boolean;
 }
 
-export function StatsBlock({ props, isPreview = false }: StatsBlockComponentProps) {
+export function StatsBlock({ props }: StatsBlockComponentProps) {
   const { title, subtitle, stats = [], layout = "horizontal", columns = 3 } = props;
 
   const gridClasses = {
@@ -16,7 +14,7 @@ export function StatsBlock({ props, isPreview = false }: StatsBlockComponentProp
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const renderStat = (stat: any) => (
+  const renderStat = (stat: { id: string; label: string; value: string; description?: string; icon?: string }) => (
     <div key={stat.id} className="text-center">
       {stat.icon && <div className="text-4xl mb-4">{stat.icon}</div>}
       <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{stat.value}</div>
@@ -41,4 +39,3 @@ export function StatsBlock({ props, isPreview = false }: StatsBlockComponentProp
     </section>
   );
 }
-

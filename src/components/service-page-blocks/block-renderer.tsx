@@ -28,21 +28,21 @@ export function BlockRenderer({ block, isPreview = false }: BlockRendererProps) 
 
   switch (type) {
     case "hero":
-      return <HeroBlock props={props as HeroBlockProps} isPreview={isPreview} />;
+      return <HeroBlock props={props as unknown as HeroBlockProps} isPreview={isPreview} />;
     case "features":
-      return <FeaturesBlock props={props as FeaturesBlockProps} isPreview={isPreview} />;
+      return <FeaturesBlock props={props as unknown as FeaturesBlockProps} isPreview={isPreview} />;
     case "cta":
-      return <CtaBlock props={props as CtaBlockProps} isPreview={isPreview} />;
+      return <CtaBlock props={props as unknown as CtaBlockProps} isPreview={isPreview} />;
     case "faq":
-      return <FaqBlock props={props as FaqBlockProps} isPreview={isPreview} />;
+      return <FaqBlock props={props as unknown as FaqBlockProps} isPreview={isPreview} />;
     case "testimonials":
-      return <TestimonialsBlock props={props as ServiceTestimonialsBlockProps} isPreview={isPreview} />;
+      return <TestimonialsBlock props={props as unknown as ServiceTestimonialsBlockProps} isPreview={isPreview} />;
     case "stats":
-      return <StatsBlock props={props as StatsBlockProps} isPreview={isPreview} />;
+      return <StatsBlock props={props as unknown as StatsBlockProps} isPreview={isPreview} />;
     case "text":
-      return <TextBlock props={props as TextBlockProps} isPreview={isPreview} />;
+      return <TextBlock props={props as unknown as TextBlockProps} isPreview={isPreview} />;
     case "image":
-      return <ImageBlock props={props as ImageBlockProps} isPreview={isPreview} />;
+      return <ImageBlock props={props as unknown as ImageBlockProps} isPreview={isPreview} />;
     default:
       return (
         <div className="p-8 text-center text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
