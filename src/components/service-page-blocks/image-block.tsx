@@ -51,3 +51,4 @@ export function ImageBlock({ props, isPreview = false }: ImageBlockComponentProp
     </section>
   );
 }
+

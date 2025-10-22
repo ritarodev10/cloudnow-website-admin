@@ -235,3 +235,4 @@ export const getPageStatistics = (blocks: PageBlock[]) => {
     }, {} as Record<string, number>)
   };
 };
+

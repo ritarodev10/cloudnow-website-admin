@@ -92,3 +92,4 @@ export function HeroBlock({ props, isPreview = false }: HeroBlockComponentProps)
     </section>
   );
 }
+

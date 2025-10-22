@@ -78,3 +78,4 @@ export default function EditServicePage({ params }: EditServicePageProps) {
 
   return <ServicePageEditor service={service} initialContent={service.pageContent} />;
 }
+

@@ -236,3 +236,4 @@ For issues or questions regarding this schema:
 2. Review lifecycle hooks for custom behavior
 3. Validate data structure matches expected format
 4. Check API permissions and authentication
+

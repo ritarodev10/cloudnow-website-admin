@@ -145,3 +145,4 @@ async function updateServiceStats() {
     strapi.log.error("Failed to update service stats:", error);
   }
 }
+

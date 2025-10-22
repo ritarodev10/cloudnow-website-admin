@@ -203,3 +203,4 @@ export function TestimonialsFilters({ filters, onFiltersChange }: TestimonialsFi
     </Card>
   );
 }
+

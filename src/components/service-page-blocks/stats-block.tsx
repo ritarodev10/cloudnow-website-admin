@@ -41,3 +41,4 @@ export function StatsBlock({ props, isPreview = false }: StatsBlockComponentProp
     </section>
   );
 }
+

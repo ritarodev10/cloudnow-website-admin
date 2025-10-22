@@ -36,3 +36,4 @@ export function TextBlock({ props, isPreview = false }: TextBlockComponentProps)
     </section>
   );
 }
+

@@ -74,3 +74,4 @@ export function FaqBlock({ props, isPreview = false }: FaqBlockComponentProps) {
     </section>
   );
 }
+

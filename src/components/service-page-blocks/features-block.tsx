@@ -89,3 +89,4 @@ export function FeaturesBlock({ props, isPreview = false }: FeaturesBlockCompone
     </section>
   );
 }
+
