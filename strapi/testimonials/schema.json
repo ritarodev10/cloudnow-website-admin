@@ -64,6 +64,18 @@
       "default": true,
       "required": true
     },
+    "viewCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "lastEditedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
     "group": {
       "type": "relation",
       "relation": "manyToOne",

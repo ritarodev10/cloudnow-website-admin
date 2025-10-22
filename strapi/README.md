@@ -47,12 +47,17 @@ This folder contains Strapi CMS schema definitions for the CloudNow website back
   - Relations: createdBy (user)
   - Block Types: hero, features, cta, faq, testimonials, stats, pricing, text, image, contact-form, gallery, video
 
-### Testimonials
+### Testimonials Module
 - `testimonials/schema.json` - Individual testimonials
-  - Fields: name, title, company, testimony, image, rating, categories, isVisible, group
-  - Categories: Customer Success, Product Review, Service Quality, etc.
+  - Fields: name, title, company, testimony, image, rating, categories, isVisible, viewCount, lastEditedBy
+  - Relations: group (many-to-one), lastEditedBy (user)
+  - Categories: Customer Success, Product Review, Service Quality, Technical Support, Implementation, Partnership, General Feedback
+  - Features: 1-5 star rating system, visibility control, image support
+
 - `testimonials/groups-schema.json` - Testimonial groups
-  - Fields: name, description, testimonials (relation), order, isActive, usagePaths
+  - Fields: name, description, testimonials (relation), order, isActive, usagePaths, viewCount, lastEditedBy
+  - Relations: testimonials (one-to-many), lastEditedBy (user)
+  - Features: Custom ordering, usage path tracking, active/inactive status
 
 ### FAQs
 - `faqs/schema.json` - Individual FAQs
@@ -81,11 +86,13 @@ These schema files can be copied to your Strapi project:
 7. Copy `page-templates/schema.json` to `src/api/page-template/content-types/page-template/schema.json`
 8. Copy `page-blocks/schema.json` to `src/api/page-block/content-types/page-block/schema.json`
 
+**Testimonials Module:**
+9. Copy `testimonials/schema.json` to `src/api/testimonial/content-types/testimonial/schema.json`
+10. Copy `testimonials/groups-schema.json` to `src/api/testimonial-group/content-types/testimonial-group/schema.json`
+
 **Other Modules:**
-9. Copy `testimonials/schema.json` to `src/api/testimonials/content-types/testimonial/schema.json`
-10. Copy `testimonials/groups-schema.json` to `src/api/testimonial-groups/content-types/testimonial-group/schema.json`
-11. Copy `faqs/schema.json` to `src/api/faqs/content-types/faq/schema.json`
-12. Copy `faqs/groups-schema.json` to `src/api/faq-groups/content-types/faq-group/schema.json`
+11. Copy `faqs/schema.json` to `src/api/faq/content-types/faq/schema.json`
+12. Copy `faqs/groups-schema.json` to `src/api/faq-group/content-types/faq-group/schema.json`
 13. Copy `components/shared/seo.json` to `src/components/shared/seo.json`
 
 ## Notes
