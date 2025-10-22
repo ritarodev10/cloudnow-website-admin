@@ -77,7 +77,7 @@ export default function FAQsPage() {
     setIsGroupModalOpen(true);
   };
 
-  const handleGroupSave = async (groupData: { name: string; description?: string; isActive: boolean }, faqs: FAQ[]) => {
+  const handleGroupSave = async (groupData: { name: string; description?: string }, faqs: FAQ[]) => {
     try {
       if (editingGroup) {
         // Update existing group
@@ -86,6 +86,8 @@ export default function FAQsPage() {
           ...groupData,
           faqIds: faqs.map((faq) => faq.id),
           order: faqs.map((faq) => faq.id),
+          // Compute isActive based on usage paths
+          isActive: editingGroup.usagePaths.length > 0,
           updatedAt: new Date(),
         };
 
@@ -105,6 +107,8 @@ export default function FAQsPage() {
           ...groupData,
           faqIds: faqs.map((faq) => faq.id),
           order: faqs.map((faq) => faq.id),
+          // New groups start as inactive (not used anywhere yet)
+          isActive: false,
           usagePaths: [],
           createdAt: new Date(),
           updatedAt: new Date(),

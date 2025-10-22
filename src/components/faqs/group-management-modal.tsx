@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -34,7 +33,7 @@ interface GroupManagementModalProps {
   group?: FAQGroup; // undefined for create mode
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (groupData: { name: string; description?: string; isActive: boolean }, faqs: FAQ[]) => void;
+  onSave: (groupData: { name: string; description?: string }, faqs: FAQ[]) => void;
   existingFaqs?: FAQ[]; // FAQs that belong to this group
 }
 
@@ -254,7 +253,6 @@ export function GroupManagementModal({
   // Group state
   const [groupName, setGroupName] = useState(group?.name || "");
   const [groupDescription, setGroupDescription] = useState(group?.description || "");
-  const [isActive, setIsActive] = useState(group?.isActive ?? true);
 
   // FAQ state
   const [faqs, setFaqs] = useState<FAQ[]>(existingFaqs);
@@ -267,7 +265,6 @@ export function GroupManagementModal({
       // Reset state when closing
       setGroupName(group?.name || "");
       setGroupDescription(group?.description || "");
-      setIsActive(group?.isActive ?? true);
       setFaqs(existingFaqs);
       setEditingFaqId(null);
       setDeletingFaqId(null);
@@ -355,7 +352,6 @@ export function GroupManagementModal({
       {
         name: groupName.trim(),
         description: groupDescription.trim() || undefined,
-        isActive,
       },
       faqsWithGroupId
     );
@@ -397,11 +393,6 @@ export function GroupManagementModal({
                   rows={3}
                   className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch id="is-active" checked={isActive} onCheckedChange={setIsActive} />
-                <Label htmlFor="is-active">Active group</Label>
               </div>
             </div>
 

@@ -46,11 +46,7 @@ export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onGroupC
             </TableRow>
           ) : (
             groups.map((group) => (
-              <TableRow 
-                key={group.id} 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => onGroupClick(group)}
-              >
+              <TableRow key={group.id} className="cursor-pointer hover:bg-muted/50" onClick={() => onGroupClick(group)}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
                     <FolderIcon className="h-4 w-4 text-muted-foreground" />
@@ -93,24 +89,24 @@ export function FAQGroupsTable({ groups, onEdit, onDelete, onDuplicate, onGroupC
                 <TableCell className="text-muted-foreground">{formatDate(group.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         onDuplicate(group);
-                      }} 
+                      }}
                       title="Duplicate Group"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         onEdit(group);
-                      }} 
+                      }}
                       title="Edit"
                     >
                       <Edit className="h-4 w-4" />
