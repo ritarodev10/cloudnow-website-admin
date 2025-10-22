@@ -59,12 +59,17 @@ This folder contains Strapi CMS schema definitions for the CloudNow website back
   - Relations: testimonials (one-to-many), lastEditedBy (user)
   - Features: Custom ordering, usage path tracking, active/inactive status
 
-### FAQs
+### FAQs Module
 - `faqs/schema.json` - Individual FAQs
-  - Fields: question, answer, categories, isVisible, group, order
-  - Categories: General, Cloud Services, Billing, Technical Support, etc.
+  - Fields: question, answer, categories, isVisible, group, order, viewCount, helpfulCount, notHelpfulCount, lastEditedBy
+  - Relations: group (many-to-one), lastEditedBy (user)
+  - Categories: General, Cloud Services, Billing, Technical Support, Security, Implementation, Other
+  - Features: Visibility control, custom ordering, helpfulness tracking
+
 - `faqs/groups-schema.json` - FAQ groups
-  - Fields: name, description, faqs (relation), order, isActive, usagePaths
+  - Fields: name, description, faqs (relation), order, isActive, usagePaths, viewCount, lastEditedBy
+  - Relations: faqs (one-to-many), lastEditedBy (user)
+  - Features: Custom ordering, usage path tracking, active/inactive status
 
 ### Shared Components
 - `components/shared/seo.json` - SEO component
@@ -90,9 +95,11 @@ These schema files can be copied to your Strapi project:
 9. Copy `testimonials/schema.json` to `src/api/testimonial/content-types/testimonial/schema.json`
 10. Copy `testimonials/groups-schema.json` to `src/api/testimonial-group/content-types/testimonial-group/schema.json`
 
-**Other Modules:**
+**FAQs Module:**
 11. Copy `faqs/schema.json` to `src/api/faq/content-types/faq/schema.json`
 12. Copy `faqs/groups-schema.json` to `src/api/faq-group/content-types/faq-group/schema.json`
+
+**Shared Components:**
 13. Copy `components/shared/seo.json` to `src/components/shared/seo.json`
 
 ## Notes

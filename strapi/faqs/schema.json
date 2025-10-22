@@ -44,6 +44,30 @@
       "required": false,
       "default": 0
     },
+    "viewCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "helpfulCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "notHelpfulCount": {
+      "type": "integer",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "lastEditedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": false
+    },
     "publishedAt": {
       "type": "datetime",
       "required": false
