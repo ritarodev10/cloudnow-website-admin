@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Testimonial, TestimonialFormData, TestimonialCategory } from "@/types/testimonials";
 import { testimonialCategories, validateTestimonialForm } from "@/data/testimonials";
-import { Star, X } from "lucide-react";
+import { Star, X, Plus } from "lucide-react";
 
 interface TestimonialFormProps {
   testimonial?: Testimonial;
@@ -40,6 +40,8 @@ export function TestimonialForm({ testimonial, open, onOpenChange, onSubmit, loa
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +50,13 @@ export function TestimonialForm({ testimonial, open, onOpenChange, onSubmit, loa
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
+      // Add any new categories to the global categories list
+      formData.categories.forEach((category) => {
+        if (!testimonialCategories.includes(category)) {
+          testimonialCategories.push(category);
+        }
+      });
+
       onSubmit(formData);
     }
   };
@@ -70,6 +79,36 @@ export function TestimonialForm({ testimonial, open, onOpenChange, onSubmit, loa
       : [...formData.categories, category];
 
     handleInputChange("categories", newCategories);
+  };
+
+  const handleAddCategory = () => {
+    const trimmedCategory = newCategory.trim();
+    console.log("Adding testimonial category:", trimmedCategory);
+    console.log("Current categories:", formData.categories);
+    
+    if (trimmedCategory && trimmedCategory.length >= 2 && trimmedCategory.length <= 50) {
+      // Check if category already exists in current testimonial
+      if (!formData.categories.includes(trimmedCategory as TestimonialCategory)) {
+        // Add to current testimonial's categories (will be saved when testimonial is saved)
+        const newCategories = [...formData.categories, trimmedCategory as TestimonialCategory];
+        console.log("New categories array:", newCategories);
+        handleInputChange("categories", newCategories);
+      }
+      setNewCategory("");
+      setIsAddingCategory(false);
+    }
+  };
+
+  const handleCancelAddCategory = () => {
+    setNewCategory("");
+    setIsAddingCategory(false);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddCategory();
+    }
   };
 
   const handleClose = () => {
@@ -205,17 +244,70 @@ export function TestimonialForm({ testimonial, open, onOpenChange, onSubmit, loa
           <div className="space-y-2">
             <Label>Categories *</Label>
             <div className="flex flex-wrap gap-2">
-              {testimonialCategories.map((category) => (
+              {formData.categories.map((category) => (
                 <Badge
                   key={category}
-                  variant={formData.categories.includes(category) ? "default" : "outline"}
+                  variant="default"
                   className="cursor-pointer hover:bg-primary/80"
                   onClick={() => handleCategoryToggle(category)}
                 >
                   {category}
-                  {formData.categories.includes(category) && <X className="ml-1 h-3 w-3" />}
+                  <X className="ml-1 h-3 w-3" />
                 </Badge>
               ))}
+              
+              {testimonialCategories.filter(cat => !formData.categories.includes(cat)).map((category) => (
+                <Badge
+                  key={category}
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary/80"
+                  onClick={() => handleCategoryToggle(category)}
+                >
+                  {category}
+                </Badge>
+              ))}
+
+              {/* Add Category Button/Form */}
+              {isAddingCategory ? (
+                <div className="flex gap-1">
+                  <Input
+                    placeholder="New category..."
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className="h-6 px-2 text-xs"
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddCategory}
+                    disabled={!newCategory.trim() || newCategory.trim().length < 2}
+                    className="h-6 w-6 p-0"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancelAddCategory}
+                    className="h-6 w-6 p-0"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary/80 border-dashed"
+                  onClick={() => setIsAddingCategory(true)}
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Add
+                </Badge>
+              )}
             </div>
             {errors.categories && <p className="text-sm text-destructive">{errors.categories}</p>}
           </div>
