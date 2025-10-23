@@ -3,7 +3,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CalendarIcon,
@@ -41,13 +40,13 @@ export function TimelineControls({
     }).format(amount);
   };
 
-  const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  // const formatDate = (date: string): string => {
+  //   return new Date(date).toLocaleDateString("en-US", {
+  //     year: "numeric",
+  //     month: "short",
+  //     day: "numeric",
+  //   });
+  // };
 
   const getDateInputValue = (date: string): string => {
     return new Date(date).toISOString().split("T")[0];

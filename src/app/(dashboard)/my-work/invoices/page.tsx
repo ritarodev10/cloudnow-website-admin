@@ -10,7 +10,6 @@ import {
   FileTextIcon,
   DownloadIcon,
   SearchIcon,
-  FilterIcon,
   CalendarIcon,
   DollarSignIcon,
 } from "lucide-react";
@@ -165,7 +164,7 @@ export default function MyInvoicesPage() {
 
               <Select
                 value={statusFilter}
-                onValueChange={(value: any) => setStatusFilter(value)}
+                onValueChange={(value: "all" | "paid" | "unpaid") => setStatusFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Status" />
@@ -179,7 +178,7 @@ export default function MyInvoicesPage() {
 
               <Select
                 value={dateFilter}
-                onValueChange={(value: any) => setDateFilter(value)}
+                onValueChange={(value: string) => setDateFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Date" />

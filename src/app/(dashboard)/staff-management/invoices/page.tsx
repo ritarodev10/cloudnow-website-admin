@@ -231,7 +231,7 @@ export default function InvoiceApprovalPage() {
 
               <Select
                 value={statusFilter}
-                onValueChange={(value: any) => setStatusFilter(value)}
+                onValueChange={(value: "all" | "paid" | "unpaid") => setStatusFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Status" />
@@ -245,7 +245,7 @@ export default function InvoiceApprovalPage() {
 
               <Select
                 value={staffFilter}
-                onValueChange={(value: any) => setStaffFilter(value)}
+                onValueChange={(value: string) => setStaffFilter(value)}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Staff Member" />
@@ -503,9 +503,10 @@ export default function InvoiceApprovalPage() {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      selectedInvoice &&
+                      if (selectedInvoice) {
                         handleRejectInvoice(selectedInvoice.id);
-                      setIsDetailOpen(false);
+                        setIsDetailOpen(false);
+                      }
                     }}
                     className="border-red-500 text-red-600 hover:bg-red-50"
                   >
@@ -513,9 +514,10 @@ export default function InvoiceApprovalPage() {
                   </Button>
                   <Button
                     onClick={() => {
-                      selectedInvoice &&
+                      if (selectedInvoice) {
                         handleApproveInvoice(selectedInvoice.id);
-                      setIsDetailOpen(false);
+                        setIsDetailOpen(false);
+                      }
                     }}
                     className="bg-green-600 hover:bg-green-700"
                   >

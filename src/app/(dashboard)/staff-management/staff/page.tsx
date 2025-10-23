@@ -39,7 +39,7 @@ import {
   MailIcon,
   CalendarIcon,
 } from "lucide-react";
-import { Staff, StaffCategory, StaffRole } from "@/types";
+import { Staff, StaffRole } from "@/types";
 import {
   sampleStaff,
   sampleStaffCategories,
@@ -47,7 +47,6 @@ import {
   getRoleDisplayName,
   getRoleColor,
   formatCurrency,
-  validateHourlyRate,
 } from "@/data/staff-management";
 import { formatDate } from "@/lib/work-log-utils";
 
@@ -138,9 +137,9 @@ export default function StaffManagementPage() {
     setEditingStaff(undefined);
   };
 
-  const handleDeleteStaff = (staffId: string) => {
-    setStaff((prev) => prev.filter((member) => member.id !== staffId));
-  };
+  // const handleDeleteStaff = (staffId: string) => {
+  //   setStaff((prev) => prev.filter((member) => member.id !== staffId));
+  // };
 
   const toggleStaffStatus = (staffId: string) => {
     setStaff((prev) =>
@@ -249,7 +248,7 @@ export default function StaffManagementPage() {
 
               <Select
                 value={roleFilter}
-                onValueChange={(value: any) => setRoleFilter(value)}
+                onValueChange={(value: "all" | "staff" | "supervisor" | "hr" | "admin" | "ceo") => setRoleFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Role" />
@@ -266,7 +265,7 @@ export default function StaffManagementPage() {
 
               <Select
                 value={categoryFilter}
-                onValueChange={(value: any) => setCategoryFilter(value)}
+                onValueChange={(value: string) => setCategoryFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Category" />

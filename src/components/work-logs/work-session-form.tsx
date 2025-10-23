@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/select";
 import { WorkSession } from "@/types";
 import {
-  minutesToTime,
   timeToMinutes,
   validateWorkSession,
 } from "@/lib/work-log-utils";

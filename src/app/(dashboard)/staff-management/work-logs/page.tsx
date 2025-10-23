@@ -24,26 +24,22 @@ import {
 import {
   ClipboardListIcon,
   SearchIcon,
-  FilterIcon,
   CalendarIcon,
   UsersIcon,
   ClockIcon,
   DollarSignIcon,
   EyeIcon,
 } from "lucide-react";
-import { WorkLog, WorkSession } from "@/types";
+import { WorkLog } from "@/types";
 import {
   sampleWorkLogs,
-  sampleWorkSessions,
-  calculateTotalHours,
-  calculateEarnings,
 } from "@/data/work-logs";
 import { sampleStaff } from "@/data/staff-management";
 import { formatDate, formatCurrency } from "@/lib/work-log-utils";
 
 export default function AllWorkLogsPage() {
   // State management
-  const [workLogs, setWorkLogs] = useState<WorkLog[]>(sampleWorkLogs);
+  const [workLogs] = useState<WorkLog[]>(sampleWorkLogs);
   const [searchTerm, setSearchTerm] = useState("");
   const [staffFilter, setStaffFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState("all");
@@ -192,7 +188,7 @@ export default function AllWorkLogsPage() {
 
               <Select
                 value={staffFilter}
-                onValueChange={(value: any) => setStaffFilter(value)}
+                onValueChange={(value: string) => setStaffFilter(value)}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Staff Member" />
@@ -209,7 +205,7 @@ export default function AllWorkLogsPage() {
 
               <Select
                 value={dateFilter}
-                onValueChange={(value: any) => setDateFilter(value)}
+                onValueChange={(value: string) => setDateFilter(value)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Date" />

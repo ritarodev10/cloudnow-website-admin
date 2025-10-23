@@ -93,7 +93,7 @@ export const calculateEarnings = (
 export const formatTimelineData = (
   sessions: WorkSession[]
 ): TimelineBlock[] => {
-  return sessions.map((session, index) => ({
+  return sessions.map((session) => ({
     id: session.id,
     startTime: timeToMinutes(session.startTime),
     endTime: timeToMinutes(session.endTime),
