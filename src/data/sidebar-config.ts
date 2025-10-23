@@ -19,6 +19,8 @@ import {
   TagIcon,
   FolderIcon,
   PlusIcon,
+  ClockIcon,
+  DollarSignIcon,
 } from "lucide-react";
 
 import { SidebarConfig } from "@/types/sidebar";
@@ -199,6 +201,53 @@ export const sidebarConfig: SidebarConfig = {
       ],
     },
     {
+      id: "my-work",
+      label: "My Work",
+      items: [
+        {
+          id: "my-work-logs",
+          label: "My Work Logs",
+          href: "/my-work/logs",
+          icon: ClockIcon,
+          isAvailable: true,
+        },
+        {
+          id: "my-invoices",
+          label: "My Invoices",
+          href: "/my-work/invoices",
+          icon: FileTextIcon,
+          isAvailable: true,
+        },
+      ],
+    },
+    {
+      id: "staff-management",
+      label: "Staff Management",
+      items: [
+        {
+          id: "all-work-logs",
+          label: "All Work Logs",
+          href: "/staff-management/work-logs",
+          icon: ClipboardListIcon,
+          isAvailable: true,
+        },
+        {
+          id: "staff-roles",
+          label: "Staff & Roles",
+          href: "/staff-management/staff",
+          icon: UsersIcon,
+          isAvailable: true,
+        },
+        {
+          id: "invoice-approval",
+          label: "Invoice Approval",
+          href: "/staff-management/invoices",
+          icon: DollarSignIcon,
+          isAvailable: true,
+        },
+      ],
+    },
+    {
       id: "system",
       label: "System",
       items: [
@@ -214,13 +263,6 @@ export const sidebarConfig: SidebarConfig = {
           label: "Integrations",
           href: "/settings/integrations",
           icon: CalendarClockIcon,
-          isAvailable: false,
-        },
-        {
-          id: "staff",
-          label: "Staff",
-          href: "/users/staff",
-          icon: UsersIcon,
           isAvailable: false,
         },
         {

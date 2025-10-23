@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "staff_categories",
+  "info": {
+    "singularName": "staff-category",
+    "pluralName": "staff-categories",
+    "displayName": "Staff Category",
+    "description": "Categories for organizing staff members"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Category name"
+    },
+    "description": {
+      "type": "text",
+      "description": "Category description"
+    },
+    "color": {
+      "type": "string",
+      "required": true,
+      "description": "Hex color code for UI display"
+    },
+    "permissions": {
+      "type": "component",
+      "repeatable": false,
+      "component": "staff.permissions",
+      "required": true,
+      "description": "Permission settings for this category"
+    },
+    "staffMembers": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::staff-member.staff-member",
+      "mappedBy": "category",
+      "description": "Staff members in this category"
+    }
+  }
+}
+
+
+

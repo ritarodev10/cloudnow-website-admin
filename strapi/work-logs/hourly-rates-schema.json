@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hourly_rates",
+  "info": {
+    "singularName": "hourly-rate",
+    "pluralName": "hourly-rates",
+    "displayName": "Hourly Rate",
+    "description": "History of hourly rate changes for staff members"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "staffMember": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::staff-member.staff-member",
+      "required": true,
+      "description": "Staff member this rate applies to"
+    },
+    "rate": {
+      "type": "decimal",
+      "required": true,
+      "min": 0,
+      "description": "Hourly rate amount"
+    },
+    "effectiveDate": {
+      "type": "date",
+      "required": true,
+      "description": "Date when this rate becomes effective"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "description": "Currency code"
+    },
+    "notes": {
+      "type": "text",
+      "description": "Notes about the rate change"
+    }
+  }
+}
+
+
+

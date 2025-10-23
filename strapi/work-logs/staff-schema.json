@@ -1,0 +1,95 @@
+{
+  "kind": "collectionType",
+  "collectionName": "staff_members",
+  "info": {
+    "singularName": "staff-member",
+    "pluralName": "staff-members",
+    "displayName": "Staff Member",
+    "description": "Staff members with roles, categories, and hourly rates"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Full name of the staff member"
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true,
+      "description": "Email address"
+    },
+    "role": {
+      "type": "enumeration",
+      "enum": ["staff", "supervisor", "hr", "admin", "ceo"],
+      "default": "staff",
+      "required": true,
+      "description": "Staff role"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::staff-category.staff-category",
+      "description": "Staff category"
+    },
+    "hourlyRate": {
+      "type": "decimal",
+      "required": true,
+      "min": 0,
+      "description": "Current hourly rate"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the staff member is active"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "Profile picture"
+    },
+    "department": {
+      "type": "string",
+      "description": "Department name"
+    },
+    "position": {
+      "type": "string",
+      "description": "Job position/title"
+    },
+    "hireDate": {
+      "type": "date",
+      "required": true,
+      "description": "Date when the staff member was hired"
+    },
+    "hourlyRates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::hourly-rate.hourly-rate",
+      "mappedBy": "staffMember",
+      "description": "History of hourly rate changes"
+    },
+    "workSessions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::work-session.work-session",
+      "mappedBy": "staffMember",
+      "description": "Work sessions logged by this staff member"
+    },
+    "invoices": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::invoice.invoice",
+      "mappedBy": "staffMember",
+      "description": "Invoices generated for this staff member"
+    }
+  }
+}
+
+
+

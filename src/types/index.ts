@@ -6,6 +6,9 @@ export * from "./services";
 export * from "./service-page-builder";
 export * from "./testimonials";
 export * from "./faqs";
+export * from "./work-logs";
+export * from "./invoices";
+export * from "./staff";
 
 // Re-export Strapi blog types with explicit naming to avoid conflicts
 export type {

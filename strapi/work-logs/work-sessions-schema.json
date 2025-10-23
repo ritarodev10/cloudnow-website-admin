@@ -1,0 +1,81 @@
+{
+  "kind": "collectionType",
+  "collectionName": "work_sessions",
+  "info": {
+    "singularName": "work-session",
+    "pluralName": "work-sessions",
+    "displayName": "Work Session",
+    "description": "Individual work sessions logged by staff members"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "staffId": {
+      "type": "string",
+      "required": true,
+      "description": "ID of the staff member who logged this session"
+    },
+    "staffName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member"
+    },
+    "date": {
+      "type": "date",
+      "required": true,
+      "description": "Date of the work session (YYYY-MM-DD)"
+    },
+    "startTime": {
+      "type": "time",
+      "required": true,
+      "description": "Start time of the session (HH:MM)"
+    },
+    "endTime": {
+      "type": "time",
+      "required": true,
+      "description": "End time of the session (HH:MM)"
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "description": "Description of work performed"
+    },
+    "project": {
+      "type": "string",
+      "description": "Project name or identifier"
+    },
+    "category": {
+      "type": "string",
+      "description": "Work category (Development, Design, Writing, etc.)"
+    },
+    "hourlyRate": {
+      "type": "decimal",
+      "required": true,
+      "description": "Hourly rate for this session"
+    },
+    "totalHours": {
+      "type": "decimal",
+      "required": true,
+      "description": "Total hours worked (calculated)"
+    },
+    "totalEarnings": {
+      "type": "decimal",
+      "required": true,
+      "description": "Total earnings for this session (calculated)"
+    },
+    "isOverlapping": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this session overlaps with another"
+    },
+    "metadata": {
+      "type": "json",
+      "description": "Additional metadata for the session"
+    }
+  }
+}
+
+
+

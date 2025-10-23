@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invoices",
+  "info": {
+    "singularName": "invoice",
+    "pluralName": "invoices",
+    "displayName": "Invoice",
+    "description": "Invoices generated from work logs"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "invoiceNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "description": "Unique invoice number"
+    },
+    "staffId": {
+      "type": "string",
+      "required": true,
+      "description": "ID of the staff member"
+    },
+    "staffName": {
+      "type": "string",
+      "required": true,
+      "description": "Name of the staff member"
+    },
+    "period": {
+      "type": "component",
+      "repeatable": false,
+      "component": "invoice.period",
+      "required": true,
+      "description": "Invoice period (start and end dates)"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "invoice.item",
+      "required": true,
+      "description": "Invoice line items"
+    },
+    "subtotal": {
+      "type": "decimal",
+      "required": true,
+      "description": "Subtotal amount before tax"
+    },
+    "tax": {
+      "type": "decimal",
+      "description": "Tax amount"
+    },
+    "total": {
+      "type": "decimal",
+      "required": true,
+      "description": "Total amount including tax"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["unpaid", "paid", "rejected"],
+      "default": "unpaid",
+      "required": true,
+      "description": "Payment status"
+    },
+    "paidAt": {
+      "type": "datetime",
+      "description": "Date and time when payment was received"
+    },
+    "notes": {
+      "type": "text",
+      "description": "Additional notes or comments"
+    },
+    "workSessions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::work-session.work-session",
+      "mappedBy": "invoice"
+    }
+  }
+}
+
+
+
