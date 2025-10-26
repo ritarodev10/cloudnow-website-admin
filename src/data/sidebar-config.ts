@@ -200,53 +200,10 @@ export const sidebarConfig: SidebarConfig = {
         },
       ],
     },
-    {
-      id: "my-work",
-      label: "My Work",
-      items: [
-        {
-          id: "my-work-logs",
-          label: "My Work Logs",
-          href: "/my-work/logs",
-          icon: ClockIcon,
-          isAvailable: true,
-        },
-        {
-          id: "my-invoices",
-          label: "My Invoices",
-          href: "/my-work/invoices",
-          icon: FileTextIcon,
-          isAvailable: true,
-        },
-      ],
-    },
-    {
-      id: "staff-management",
-      label: "Staff Management",
-      items: [
-        {
-          id: "all-work-logs",
-          label: "All Work Logs",
-          href: "/staff-management/work-logs",
-          icon: ClipboardListIcon,
-          isAvailable: true,
-        },
-        {
-          id: "staff-roles",
-          label: "Staff & Roles",
-          href: "/staff-management/staff",
-          icon: UsersIcon,
-          isAvailable: true,
-        },
-        {
-          id: "invoice-approval",
-          label: "Invoice Approval",
-          href: "/staff-management/invoices",
-          icon: DollarSignIcon,
-          isAvailable: true,
-        },
-      ],
-    },
+    // NOTE: Both My Work and Staff Management modules have been moved to /future/ route group
+    // These modules are completely hidden from sidebar and accessible at:
+    // /future/my-work-logs, /future/my-invoices, /future/work-logs, /future/staff, /future/invoices
+    // They can be re-enabled later by adding them back to sidebar configuration
     {
       id: "system",
       label: "System",

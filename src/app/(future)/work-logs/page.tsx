@@ -6,21 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ClipboardListIcon,
   SearchIcon,
@@ -31,9 +18,7 @@ import {
   EyeIcon,
 } from "lucide-react";
 import { WorkLog } from "@/types";
-import {
-  sampleWorkLogs,
-} from "@/data/work-logs";
+import { sampleWorkLogs } from "@/data/work-logs";
 import { sampleStaff } from "@/data/staff-management";
 import { formatDate, formatCurrency } from "@/lib/work-log-utils";
 
@@ -47,14 +32,11 @@ export default function AllWorkLogsPage() {
 
   // Filter work logs
   const filteredLogs = workLogs.filter((log) => {
-    const matchesSearch = log.staffName
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesSearch = log.staffName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStaff = staffFilter === "all" || log.staffId === staffFilter;
     const matchesDate =
       dateFilter === "all" ||
-      (dateFilter === "today" &&
-        log.date === new Date().toISOString().split("T")[0]) ||
+      (dateFilter === "today" && log.date === new Date().toISOString().split("T")[0]) ||
       (dateFilter === "this-week" &&
         {
           // TODO: Implement week filtering
@@ -65,14 +47,8 @@ export default function AllWorkLogsPage() {
 
   // Calculate totals
   const totalHours = filteredLogs.reduce((sum, log) => sum + log.totalHours, 0);
-  const totalEarnings = filteredLogs.reduce(
-    (sum, log) => sum + log.totalEarnings,
-    0
-  );
-  const totalSessions = filteredLogs.reduce(
-    (sum, log) => sum + log.sessions.length,
-    0
-  );
+  const totalEarnings = filteredLogs.reduce((sum, log) => sum + log.totalEarnings, 0);
+  const totalSessions = filteredLogs.reduce((sum, log) => sum + log.sessions.length, 0);
 
   const handleViewDetails = (staffId: string, date: string) => {
     // TODO: Navigate to detailed view
@@ -90,12 +66,7 @@ export default function AllWorkLogsPage() {
       description="View and manage work logs from all staff members."
       actions={
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() =>
-              setViewMode(viewMode === "table" ? "timeline" : "table")
-            }
-          >
+          <Button variant="outline" onClick={() => setViewMode(viewMode === "table" ? "timeline" : "table")}>
             {viewMode === "table" ? "Timeline View" : "Table View"}
           </Button>
           <Button variant="outline" onClick={handleExportLogs}>
@@ -111,12 +82,8 @@ export default function AllWorkLogsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Hours
-                  </p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {totalHours.toFixed(1)}h
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Hours</p>
+                  <p className="text-2xl font-bold text-blue-600">{totalHours.toFixed(1)}h</p>
                 </div>
                 <ClockIcon className="h-8 w-8 text-blue-500" />
               </div>
@@ -127,12 +94,8 @@ export default function AllWorkLogsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Earnings
-                  </p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {formatCurrency(totalEarnings)}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Earnings</p>
+                  <p className="text-2xl font-bold text-green-600">{formatCurrency(totalEarnings)}</p>
                 </div>
                 <DollarSignIcon className="h-8 w-8 text-green-500" />
               </div>
@@ -144,9 +107,7 @@ export default function AllWorkLogsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Sessions</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {totalSessions}
-                  </p>
+                  <p className="text-2xl font-bold text-purple-600">{totalSessions}</p>
                 </div>
                 <ClipboardListIcon className="h-8 w-8 text-purple-500" />
               </div>
@@ -157,12 +118,8 @@ export default function AllWorkLogsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Staff Members
-                  </p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {filteredLogs.length}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Staff Members</p>
+                  <p className="text-2xl font-bold text-orange-600">{filteredLogs.length}</p>
                 </div>
                 <UsersIcon className="h-8 w-8 text-orange-500" />
               </div>
@@ -186,10 +143,7 @@ export default function AllWorkLogsPage() {
                 </div>
               </div>
 
-              <Select
-                value={staffFilter}
-                onValueChange={(value: string) => setStaffFilter(value)}
-              >
+              <Select value={staffFilter} onValueChange={(value: string) => setStaffFilter(value)}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Staff Member" />
                 </SelectTrigger>
@@ -203,10 +157,7 @@ export default function AllWorkLogsPage() {
                 </SelectContent>
               </Select>
 
-              <Select
-                value={dateFilter}
-                onValueChange={(value: string) => setDateFilter(value)}
-              >
+              <Select value={dateFilter} onValueChange={(value: string) => setDateFilter(value)}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Date" />
                 </SelectTrigger>
@@ -230,9 +181,7 @@ export default function AllWorkLogsPage() {
             {filteredLogs.length === 0 ? (
               <div className="text-center py-8">
                 <ClipboardListIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No work logs found
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No work logs found</h3>
                 <p className="text-gray-500">
                   {searchTerm || staffFilter !== "all" || dateFilter !== "all"
                     ? "Try adjusting your filters to see more results."
@@ -258,9 +207,7 @@ export default function AllWorkLogsPage() {
                       <TableCell>
                         <div>
                           <div className="font-medium">{log.staffName}</div>
-                          <div className="text-sm text-gray-500">
-                            {log.staffId}
-                          </div>
+                          <div className="text-sm text-gray-500">{log.staffId}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -275,21 +222,11 @@ export default function AllWorkLogsPage() {
                           {log.sessions.length !== 1 ? "s" : ""}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-medium">
-                        {log.totalHours.toFixed(1)}h
-                      </TableCell>
+                      <TableCell className="font-medium">{log.totalHours.toFixed(1)}h</TableCell>
                       <TableCell>{formatCurrency(log.hourlyRate)}/hr</TableCell>
-                      <TableCell className="font-medium text-green-600">
-                        {formatCurrency(log.totalEarnings)}
-                      </TableCell>
+                      <TableCell className="font-medium text-green-600">{formatCurrency(log.totalEarnings)}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            handleViewDetails(log.staffId, log.date)
-                          }
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleViewDetails(log.staffId, log.date)}>
                           <EyeIcon className="h-4 w-4 mr-1" />
                           View Details
                         </Button>
@@ -311,21 +248,14 @@ export default function AllWorkLogsPage() {
                   <h3 className="font-medium text-gray-900">Summary</h3>
                   <p className="text-sm text-gray-500">
                     {filteredLogs.length} work log
-                    {filteredLogs.length !== 1 ? "s" : ""} from{" "}
-                    {new Set(filteredLogs.map((log) => log.staffId)).size} staff
-                    member
-                    {new Set(filteredLogs.map((log) => log.staffId)).size !== 1
-                      ? "s"
-                      : ""}
+                    {filteredLogs.length !== 1 ? "s" : ""} from {new Set(filteredLogs.map((log) => log.staffId)).size}{" "}
+                    staff member
+                    {new Set(filteredLogs.map((log) => log.staffId)).size !== 1 ? "s" : ""}
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-gray-900">
-                    {formatCurrency(totalEarnings)}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {totalHours.toFixed(1)} hours total
-                  </div>
+                  <div className="text-lg font-bold text-gray-900">{formatCurrency(totalEarnings)}</div>
+                  <div className="text-sm text-gray-500">{totalHours.toFixed(1)} hours total</div>
                 </div>
               </div>
             </CardContent>

@@ -6,14 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -23,22 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  UsersIcon,
-  PlusIcon,
-  SearchIcon,
-  EditIcon,
-  DollarSignIcon,
-  MailIcon,
-  CalendarIcon,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UsersIcon, PlusIcon, SearchIcon, EditIcon, DollarSignIcon, MailIcon, CalendarIcon } from "lucide-react";
 import { Staff, StaffRole } from "@/types";
 import {
   sampleStaff,
@@ -70,8 +49,7 @@ export default function StaffManagementPage() {
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.position?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === "all" || member.role === roleFilter;
-    const matchesCategory =
-      categoryFilter === "all" || member.category.id === categoryFilter;
+    const matchesCategory = categoryFilter === "all" || member.category.id === categoryFilter;
 
     return matchesSearch && matchesRole && matchesCategory;
   });
@@ -107,9 +85,7 @@ export default function StaffManagementPage() {
       // Update existing staff
       setStaff((prev) =>
         prev.map((member) =>
-          member.id === editingStaff.id
-            ? { ...member, ...formData, updatedAt: new Date().toISOString() }
-            : member
+          member.id === editingStaff.id ? { ...member, ...formData, updatedAt: new Date().toISOString() } : member
         )
       );
     } else {
@@ -173,12 +149,8 @@ export default function StaffManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Staff
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {summary.totalStaff}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Staff</p>
+                  <p className="text-2xl font-bold text-gray-900">{summary.totalStaff}</p>
                 </div>
                 <UsersIcon className="h-8 w-8 text-blue-500" />
               </div>
@@ -190,9 +162,7 @@ export default function StaffManagementPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Active</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {summary.activeStaff}
-                  </p>
+                  <p className="text-2xl font-bold text-green-600">{summary.activeStaff}</p>
                 </div>
                 <UsersIcon className="h-8 w-8 text-green-500" />
               </div>
@@ -203,12 +173,8 @@ export default function StaffManagementPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Categories
-                  </p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {summary.totalCategories}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Categories</p>
+                  <p className="text-2xl font-bold text-purple-600">{summary.totalCategories}</p>
                 </div>
                 <UsersIcon className="h-8 w-8 text-purple-500" />
               </div>
@@ -220,9 +186,7 @@ export default function StaffManagementPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Avg Rate</p>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {formatCurrency(summary.averageHourlyRate)}
-                  </p>
+                  <p className="text-2xl font-bold text-orange-600">{formatCurrency(summary.averageHourlyRate)}</p>
                 </div>
                 <DollarSignIcon className="h-8 w-8 text-orange-500" />
               </div>
@@ -263,10 +227,7 @@ export default function StaffManagementPage() {
                 </SelectContent>
               </Select>
 
-              <Select
-                value={categoryFilter}
-                onValueChange={(value: string) => setCategoryFilter(value)}
-              >
+              <Select value={categoryFilter} onValueChange={(value: string) => setCategoryFilter(value)}>
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -308,9 +269,7 @@ export default function StaffManagementPage() {
                     <TableCell>
                       <div>
                         <div className="font-medium">{member.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {member.position}
-                        </div>
+                        <div className="text-sm text-gray-500">{member.position}</div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -320,9 +279,7 @@ export default function StaffManagementPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getRoleColor(member.role)}>
-                        {getRoleDisplayName(member.role)}
-                      </Badge>
+                      <Badge className={getRoleColor(member.role)}>{getRoleDisplayName(member.role)}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -335,13 +292,9 @@ export default function StaffManagementPage() {
                         {member.category.name}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCurrency(member.hourlyRate)}/hr
-                    </TableCell>
+                    <TableCell className="font-medium">{formatCurrency(member.hourlyRate)}/hr</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={member.isActive ? "default" : "secondary"}
-                      >
+                      <Badge variant={member.isActive ? "default" : "secondary"}>
                         {member.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
@@ -353,18 +306,10 @@ export default function StaffManagementPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditStaff(member)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleEditStaff(member)}>
                           <EditIcon className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleStaffStatus(member.id)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => toggleStaffStatus(member.id)}>
                           {member.isActive ? "Deactivate" : "Activate"}
                         </Button>
                       </div>
@@ -381,13 +326,9 @@ export default function StaffManagementPage() {
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>
-              {editingStaff ? "Edit Staff Member" : "Add Staff Member"}
-            </DialogTitle>
+            <DialogTitle>{editingStaff ? "Edit Staff Member" : "Add Staff Member"}</DialogTitle>
             <DialogDescription>
-              {editingStaff
-                ? "Update staff member information and settings."
-                : "Add a new staff member to the system."}
+              {editingStaff ? "Update staff member information and settings." : "Add a new staff member to the system."}
             </DialogDescription>
           </DialogHeader>
 
@@ -398,9 +339,7 @@ export default function StaffManagementPage() {
                 <Input
                   id="name"
                   value={formData.name || ""}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
@@ -409,9 +348,7 @@ export default function StaffManagementPage() {
                   id="email"
                   type="email"
                   value={formData.email || ""}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, email: e.target.value }))
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                 />
               </div>
             </div>
@@ -450,9 +387,7 @@ export default function StaffManagementPage() {
                 <Label htmlFor="role">Role *</Label>
                 <Select
                   value={formData.role}
-                  onValueChange={(value: StaffRole) =>
-                    setFormData((prev) => ({ ...prev, role: value }))
-                  }
+                  onValueChange={(value: StaffRole) => setFormData((prev) => ({ ...prev, role: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
@@ -471,9 +406,7 @@ export default function StaffManagementPage() {
                 <Select
                   value={formData.category?.id}
                   onValueChange={(value) => {
-                    const category = sampleStaffCategories.find(
-                      (c) => c.id === value
-                    );
+                    const category = sampleStaffCategories.find((c) => c.id === value);
                     setFormData((prev) => ({ ...prev, category }));
                   }}
                 >
@@ -530,9 +463,7 @@ export default function StaffManagementPage() {
             <Button variant="outline" onClick={() => setIsFormOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveStaff}>
-              {editingStaff ? "Update" : "Add"} Staff
-            </Button>
+            <Button onClick={handleSaveStaff}>{editingStaff ? "Update" : "Add"} Staff</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
