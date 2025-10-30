@@ -76,4 +76,4 @@ jobs:
           app-name: "webapp-frontend-cnwebadmin"
           slot-name: "Production"
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1147BA1F46B443BC8CEA349612F5A3C9 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CC5EC7B0873449F98E1D3E64821C0E1C }}
