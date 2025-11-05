@@ -39,15 +39,31 @@ jobs:
         run: |
           rm -rf deployment
           mkdir -p deployment/.next
+          # Copy standalone build (includes its own package.json with correct start script)
           cp -r .next/standalone/* deployment/
+          # Copy static files and server files
           cp -r .next/static deployment/.next/
           cp -r .next/server deployment/.next/ || true
           cp .next/BUILD_ID deployment/.next/ || true
           cp .next/*.json deployment/.next/ || true
+          # Copy public assets
           cp -r public deployment/public || true
-          cp package.json deployment/
+          # Ensure the start script uses node server.js (for standalone builds)
+          # The standalone package.json should already have this, but let's verify
+          if [ -f deployment/server.js ]; then
+            echo "✅ server.js found in deployment"
+            # Update package.json start script to use server.js if it exists
+            if grep -q '"start": "next start"' deployment/package.json; then
+              sed -i 's/"start": "next start"/"start": "node server.js"/' deployment/package.json
+              echo "✅ Updated start script to use node server.js"
+            fi
+          fi
           echo "🧾 Deployment folder content:"
-          ls -R deployment
+          ls -la deployment/
+          echo "🧾 Package.json in deployment:"
+          cat deployment/package.json
+          echo "🧾 Checking for server.js:"
+          ls -la deployment/server.js || echo "⚠️ server.js not found"
 
       - name: Zip artifact for deployment
         run: cd deployment && zip -r ../release.zip . && cd ..
