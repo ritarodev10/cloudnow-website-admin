@@ -48,7 +48,10 @@ export function CommentsTable({
   };
 
   const getStatusBadge = (status: CommentStatus) => {
-    const variants: Record<CommentStatus, "default" | "destructive" | "secondary"> = {
+    const variants: Record<
+      CommentStatus,
+      "default" | "destructive" | "secondary"
+    > = {
       approved: "default",
       pending: "secondary",
       spam: "destructive",
@@ -219,4 +222,3 @@ export function CommentsTable({
     </div>
   );
 }
-

@@ -37,11 +37,33 @@ export function PostsTable({ posts, onEdit, onDelete }: PostsTableProps) {
   };
 
   const getStatusBadge = (status: Post["status"]) => {
-    const variants: Record<Post["status"], { variant: "default" | "secondary" | "destructive" | "outline"; className: string }> = {
-      published: { variant: "default", className: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" },
-      draft: { variant: "secondary", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400" },
-      scheduled: { variant: "outline", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400" },
-      archived: { variant: "outline", className: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400" },
+    const variants: Record<
+      Post["status"],
+      {
+        variant: "default" | "secondary" | "destructive" | "outline";
+        className: string;
+      }
+    > = {
+      published: {
+        variant: "default",
+        className:
+          "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+      },
+      draft: {
+        variant: "secondary",
+        className:
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+      },
+      scheduled: {
+        variant: "outline",
+        className:
+          "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+      },
+      archived: {
+        variant: "outline",
+        className:
+          "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
+      },
     };
 
     const config = variants[status];
@@ -106,7 +128,11 @@ export function PostsTable({ posts, onEdit, onDelete }: PostsTableProps) {
                   {post.tags && post.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {post.tags.slice(0, 3).map((tag, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
+                        <Badge
+                          key={idx}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {tag}
                         </Badge>
                       ))}
@@ -131,7 +157,9 @@ export function PostsTable({ posts, onEdit, onDelete }: PostsTableProps) {
                 </TableCell>
 
                 <TableCell>
-                  <div className="text-sm font-medium">{post.views.toLocaleString()}</div>
+                  <div className="text-sm font-medium">
+                    {post.views.toLocaleString()}
+                  </div>
                 </TableCell>
 
                 <TableCell>
@@ -185,4 +213,3 @@ export function PostsTable({ posts, onEdit, onDelete }: PostsTableProps) {
     </div>
   );
 }
-

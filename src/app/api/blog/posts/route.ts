@@ -18,9 +18,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
 
     // Select posts with category and tags via JOINs
-    let query = supabase
-      .from("posts")
-      .select(`
+    let query = supabase.from("posts").select(`
         *,
         blog_categories!posts_category_id_fkey (
           id,
@@ -79,14 +77,14 @@ export async function GET(request: Request) {
     // Transform the data to include category name and tags array
     const transformedPosts = (data || []).map((row: any) => {
       const post: any = { ...row };
-      
+
       // Extract category name from joined data
       if (row.blog_categories) {
         post.category = row.blog_categories.name;
       } else {
         post.category = null;
       }
-      
+
       // Extract tags array from joined post_tags data
       // Handle different possible structures from Supabase
       post.tags = [];
@@ -111,18 +109,15 @@ export async function GET(request: Request) {
           post.tags = [row.post_tags.blog_tags.name].filter(Boolean);
         }
       }
-      
+
       // Remove the nested objects to keep response clean
       delete post.blog_categories;
       delete post.post_tags;
-      
+
       return post;
     });
 
-    return NextResponse.json(
-      { posts: transformedPosts },
-      { status: 200 }
-    );
+    return NextResponse.json({ posts: transformedPosts }, { status: 200 });
   } catch (error) {
     console.error("[BLOG_POSTS] Unexpected error:", error);
     return NextResponse.json(
@@ -172,7 +167,7 @@ export async function POST(request: Request) {
         .select("id")
         .eq("name", body.category)
         .single();
-      
+
       if (categoryData) {
         categoryId = categoryData.id;
       }
@@ -263,4 +258,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

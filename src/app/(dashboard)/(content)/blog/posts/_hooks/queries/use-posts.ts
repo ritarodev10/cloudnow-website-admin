@@ -6,7 +6,7 @@ import { queryKeys } from "@/lib/query-keys";
 
 async function fetchPosts(filters?: PostFilters): Promise<Post[]> {
   const params = new URLSearchParams();
-  
+
   if (filters?.status) {
     params.append("status", filters.status);
   }
@@ -54,10 +54,11 @@ export function usePosts({
   filters?: PostFilters;
 } = {}) {
   return useQuery({
-    queryKey: queryKeys.posts.list(filters ? (filters as unknown as Record<string, unknown>) : undefined),
+    queryKey: queryKeys.posts.list(
+      filters ? (filters as unknown as Record<string, unknown>) : undefined
+    ),
     queryFn: () => fetchPosts(filters),
     initialData,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
-
