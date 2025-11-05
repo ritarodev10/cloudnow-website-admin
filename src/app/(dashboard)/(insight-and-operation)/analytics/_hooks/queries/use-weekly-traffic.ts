@@ -28,9 +28,16 @@ async function fetchWeeklyTrafficData(
     ? new Date(params.startDate)
     : new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
 
+  // Get client timezone
+  const clientTimezone =
+    typeof Intl !== "undefined" && Intl.DateTimeFormat
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : "UTC";
+
   const queryParams = new URLSearchParams();
   queryParams.set("startDate", startDate.toISOString());
   queryParams.set("endDate", endDate.toISOString());
+  queryParams.set("timezone", clientTimezone);
 
   const url = `/api/analytics/weekly${
     queryParams.toString() ? `?${queryParams.toString()}` : ""
@@ -50,6 +57,12 @@ export function useWeeklyTraffic(
   params?: UseWeeklyTrafficParams,
   options?: Omit<UseQueryOptions<number[][], Error>, "queryKey" | "queryFn">
 ) {
+  // Get client timezone for query key
+  const clientTimezone =
+    typeof Intl !== "undefined" && Intl.DateTimeFormat
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : "UTC";
+
   const {
     data: weeklyDataArray,
     isLoading,
@@ -60,6 +73,7 @@ export function useWeeklyTraffic(
       "weekly-traffic",
       params?.startDate,
       params?.endDate,
+      clientTimezone,
     ],
     queryFn: () => fetchWeeklyTrafficData(params),
     ...options,

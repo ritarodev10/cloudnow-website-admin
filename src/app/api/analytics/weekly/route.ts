@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const timezone = searchParams.get("timezone") || "UTC";
 
     if (!startDate || !endDate) {
       return NextResponse.json(
@@ -57,12 +58,6 @@ export async function GET(request: NextRequest) {
     if (!apiKey) {
       throw new Error("UMAMI_API_KEY environment variable is not set");
     }
-
-    // Get timezone
-    const timezone =
-      typeof Intl !== "undefined" && Intl.DateTimeFormat
-        ? Intl.DateTimeFormat().resolvedOptions().timeZone
-        : "UTC";
 
     // For Umami Cloud, use /v1 prefix
     let endpoint = apiUrl;
