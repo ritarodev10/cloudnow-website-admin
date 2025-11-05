@@ -17,9 +17,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
    - Copy your **anon/public key**
 
 3. Update `.env.local` with your actual values:
+
    ```env
    SUPABASE_URL=https://your-actual-project-id.supabase.co
    SUPABASE_ANON_KEY=your-actual-anon-key-here
+
+   # Umami Analytics API Configuration
+   UMAMI_API_KEY=api_BWL6tIwwZ8e5Zjctr0QQwftXbc2OVILQ
+   UMAMI_WEBSITE_ID=4c0162c3-3a17-4187-a16a-161b50c79bbd
+   UMAMI_API_URL=https://api.umami.is
    ```
 
 ### Running the Development Server

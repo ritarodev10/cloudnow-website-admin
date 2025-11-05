@@ -103,7 +103,7 @@ export const menuConfig: MenuCategory[] = [
       {
         label: "FAQs",
         icon: "ri-question-line",
-        href: "/faqs",
+        href: "/faq",
         badge: { text: 12, variant: "success" },
       },
       {
@@ -201,7 +201,7 @@ export const menuConfig: MenuCategory[] = [
     label: "Insights & Operations",
     items: [
       {
-        label: "Analytics (Umami)",
+        label: "Analytics",
         icon: "ri-bar-chart-line",
         href: "/analytics",
         tabs: [
