@@ -25,6 +25,12 @@ jobs:
           node-version: "22.x"
 
       - name: Install dependencies and build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          UMAMI_API_KEY: ${{ secrets.UMAMI_API_KEY }}
+          UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
+          UMAMI_API_URL: ${{ secrets.UMAMI_API_URL }}
         run: |
           npm install
           npm run build
