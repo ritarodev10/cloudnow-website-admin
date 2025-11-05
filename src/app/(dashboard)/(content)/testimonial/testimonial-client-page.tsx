@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Users, Folder, Search, X } from "lucide-react";
 import { PageTitle } from "@/components/ui/page-title";
 import { TestimonialForm } from "./_components/testimonial-form";
 import { TestimonialsTable } from "./_components/testimonials-table";
@@ -38,6 +37,9 @@ import { useTestimonialStats } from "./_hooks/queries/use-testimonial-stats";
 import { useCreateTestimonial } from "./_hooks/mutations/use-create-testimonial";
 import { useUpdateTestimonial } from "./_hooks/mutations/use-update-testimonial";
 import { useDeleteTestimonial } from "./_hooks/mutations/use-delete-testimonial";
+import { useCreateTestimonialGroup } from "./_hooks/mutations/use-create-testimonial-group";
+import { useUpdateTestimonialGroup } from "./_hooks/mutations/use-update-testimonial-group";
+import { useDeleteTestimonialGroup } from "./_hooks/mutations/use-delete-testimonial-group";
 
 interface TestimonialClientPageProps {
   initialTestimonials: Testimonial[];
@@ -72,6 +74,9 @@ export function TestimonialClientPage({
   const createMutation = useCreateTestimonial();
   const updateMutation = useUpdateTestimonial();
   const deleteMutation = useDeleteTestimonial();
+  const createGroupMutation = useCreateTestimonialGroup();
+  const updateGroupMutation = useUpdateTestimonialGroup();
+  const deleteGroupMutation = useDeleteTestimonialGroup();
 
   const [testimonialFilters, setTestimonialFilters] =
     useState<TestimonialFiltersType>({
@@ -116,7 +121,10 @@ export function TestimonialClientPage({
     isLoadingStats ||
     createMutation.isPending ||
     updateMutation.isPending ||
-    deleteMutation.isPending;
+    deleteMutation.isPending ||
+    createGroupMutation.isPending ||
+    updateGroupMutation.isPending ||
+    deleteGroupMutation.isPending;
 
   // Use stats from React Query
   const computedStats = stats;
@@ -307,12 +315,25 @@ export function TestimonialClientPage({
 
   const handleGroupSubmit = async (formData: TestimonialGroupFormData) => {
     try {
-      // TODO: Implement API call to Supabase
-      console.log("Group submit:", formData);
+      if (editingGroup) {
+        await updateGroupMutation.mutateAsync({
+          id: editingGroup.id,
+          data: formData,
+        });
+      } else {
+        await createGroupMutation.mutateAsync(formData);
+      }
+
+      // Close modal and reset editing state
       setIsGroupFormOpen(false);
       setEditingGroup(undefined);
     } catch (error) {
       console.error("Failed to save group:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to save group. Please try again."
+      );
     }
   };
 
@@ -320,29 +341,20 @@ export function TestimonialClientPage({
     setDeletingGroup(group);
   };
 
-  const confirmDeleteGroup = () => {
+  const confirmDeleteGroup = async () => {
     if (deletingGroup) {
-      // TODO: Implement API call to delete
-      // Note: This should use React Query mutation when groups API is implemented
-      setDeletingGroup(undefined);
+      try {
+        await deleteGroupMutation.mutateAsync(deletingGroup.id);
+        setDeletingGroup(undefined);
+      } catch (error) {
+        console.error("Failed to delete group:", error);
+        alert(
+          error instanceof Error
+            ? error.message
+            : "Failed to delete group. Please try again."
+        );
+      }
     }
-  };
-
-  const handleDuplicateGroup = (group: TestimonialGroup) => {
-    // TODO: Implement with React Query mutation when groups API is ready
-    const duplicatedGroup: TestimonialGroup = {
-      ...group,
-      id: `group_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name: `${group.name} (Copy)`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    // Note: This is temporary - groups will use React Query mutations when implemented
-    console.log("Duplicate group:", duplicatedGroup);
-  };
-
-  const handlePreviewGroup = (group: TestimonialGroup) => {
-    console.log("Preview group:", group.name);
   };
 
   return (
@@ -361,11 +373,11 @@ export function TestimonialClientPage({
               value="testimonials"
               className="flex items-center gap-2"
             >
-              <Users className="h-4 w-4" />
+              <i className="ri-team-line text-sm" />
               Testimonials ({filteredTestimonials.length})
             </TabsTrigger>
             <TabsTrigger value="groups" className="flex items-center gap-2">
-              <Folder className="h-4 w-4" />
+              <i className="ri-folder-line text-sm" />
               Groups ({filteredGroups.length})
             </TabsTrigger>
           </TabsList>
@@ -378,7 +390,7 @@ export function TestimonialClientPage({
                 onFiltersChange={setTestimonialFilters}
               />
               <Button onClick={handleAddTestimonial}>
-                <Plus className="h-4 w-4 mr-2" />
+                <i className="ri-add-line text-sm mr-2" />
                 Add Testimonial
               </Button>
             </div>
@@ -409,7 +421,7 @@ export function TestimonialClientPage({
           <TabsContent value="groups" className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <i className="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search groups by name..."
@@ -424,12 +436,12 @@ export function TestimonialClientPage({
                     className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
                     onClick={() => setGroupSearchQuery("")}
                   >
-                    <X className="h-3 w-3" />
+                    <i className="ri-close-line text-sm" />
                   </Button>
                 )}
               </div>
               <Button onClick={handleAddGroup}>
-                <Plus className="h-4 w-4 mr-2" />
+                <i className="ri-add-line text-sm mr-2" />
                 Create Group
               </Button>
             </div>
@@ -445,8 +457,6 @@ export function TestimonialClientPage({
                   groups={filteredGroups}
                   onEdit={handleEditGroup}
                   onDelete={handleDeleteGroup}
-                  onDuplicate={handleDuplicateGroup}
-                  onPreview={handlePreviewGroup}
                 />
               </CardContent>
             </Card>
@@ -467,7 +477,9 @@ export function TestimonialClientPage({
           open={isGroupFormOpen}
           onOpenChange={setIsGroupFormOpen}
           onSubmit={handleGroupSubmit}
-          loading={isLoading}
+          loading={
+            createGroupMutation.isPending || updateGroupMutation.isPending
+          }
         />
 
         {/* Delete Confirmations */}
@@ -512,7 +524,7 @@ export function TestimonialClientPage({
                       </span>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      All ratings, categories, and metadata associated with this
+                      All ratings, groups, and metadata associated with this
                       testimonial will be permanently deleted.
                     </p>
                   </div>

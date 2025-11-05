@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TestimonialFilters, TestimonialCategory } from "@/types/testimonials";
-import { Filter, X } from "lucide-react";
 
 const testimonialCategories: TestimonialCategory[] = [
   "Customer Success",
@@ -104,7 +103,7 @@ export function TestimonialsFilters({
                 onClick={clearFilters}
                 className="text-xs"
               >
-                <X className="h-3 w-3 mr-1" />
+                <i className="ri-close-line text-sm mr-1" />
                 Clear Filters
               </Button>
             )}
@@ -113,7 +112,7 @@ export function TestimonialsFilters({
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
             >
-              <Filter className="h-4 w-4 mr-2" />
+              <i className="ri-filter-line text-sm mr-2" />
               {isExpanded ? "Collapse" : "Expand"}
             </Button>
           </div>
@@ -122,9 +121,9 @@ export function TestimonialsFilters({
 
       {isExpanded && (
         <CardContent className="space-y-6">
-          {/* Categories */}
+          {/* Groups */}
           <div className="space-y-3">
-            <Label>Categories</Label>
+            <Label>Groups</Label>
             <div className="flex flex-wrap gap-2">
               {testimonialCategories.map((category) => (
                 <Badge
@@ -139,7 +138,7 @@ export function TestimonialsFilters({
                 >
                   {category}
                   {filters.categories.includes(category) && (
-                    <X className="ml-1 h-3 w-3" />
+                    <i className="ri-close-line ml-1 text-sm" />
                   )}
                 </Badge>
               ))}
@@ -227,7 +226,7 @@ export function TestimonialsFilters({
               <div className="flex flex-wrap gap-2 mt-2">
                 {filters.categories.map((category) => (
                   <Badge key={category} variant="secondary" className="text-xs">
-                    Category: {category}
+                    Group: {category}
                   </Badge>
                 ))}
                 {filters.rating && (

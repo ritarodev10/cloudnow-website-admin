@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TestimonialStats } from "@/types/testimonials";
-import { Users, Star, Eye, EyeOff, Folder, Link as LinkIcon } from "lucide-react";
 
 interface TestimonialsStatsProps {
   stats: TestimonialStats;
@@ -19,8 +18,10 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       {/* Total Testimonials */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Testimonials</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">
+            Total Testimonials
+          </CardTitle>
+          <i className="ri-team-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.total}</div>
@@ -32,10 +33,12 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
-          <Star className="h-4 w-4 text-muted-foreground" />
+          <i className="ri-star-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatRating(stats.averageRating)}</div>
+          <div className="text-2xl font-bold">
+            {formatRating(stats.averageRating)}
+          </div>
           <p className="text-xs text-muted-foreground">Out of 5 stars</p>
         </CardContent>
       </Card>
@@ -44,7 +47,7 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Visible</CardTitle>
-          <Eye className="h-4 w-4 text-muted-foreground" />
+          <i className="ri-eye-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.visible}</div>
@@ -56,7 +59,7 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Hidden</CardTitle>
-          <EyeOff className="h-4 w-4 text-muted-foreground" />
+          <i className="ri-eye-off-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.hidden}</div>
@@ -68,7 +71,7 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Groups</CardTitle>
-          <Folder className="h-4 w-4 text-muted-foreground" />
+          <i className="ri-folder-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalGroups}</div>
@@ -87,7 +90,7 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Usage</CardTitle>
-          <LinkIcon className="h-4 w-4 text-muted-foreground" />
+          <i className="ri-links-line text-sm text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.usedGroups}</div>
@@ -104,4 +107,3 @@ export function TestimonialsStats({ stats }: TestimonialsStatsProps) {
     </div>
   );
 }
-

@@ -20,7 +20,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Testimonial } from "@/types/testimonials";
-import { MoreHorizontal, Edit, Eye, EyeOff, Trash2, Star } from "lucide-react";
 
 interface TestimonialsTableProps {
   testimonials: Testimonial[];
@@ -36,14 +35,17 @@ export function TestimonialsTable({
   onToggleVisibility,
 }: TestimonialsTableProps) {
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-3 w-3 ${
-          i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-        }`}
-      />
-    ));
+    return Array.from({ length: 5 }, (_, i) => {
+      const isFilled = i < rating;
+      return (
+        <i
+          key={i}
+          className={`${isFilled ? "ri-star-fill" : "ri-star-line"} text-xs ${
+            isFilled ? "text-yellow-400" : "text-gray-300"
+          }`}
+        />
+      );
+    });
   };
 
   const getInitials = (name: string) => {
@@ -71,7 +73,7 @@ export function TestimonialsTable({
             <TableHead className="w-[60px]">Avatar</TableHead>
             <TableHead>Name & Company</TableHead>
             <TableHead>Rating</TableHead>
-            <TableHead>Categories</TableHead>
+            <TableHead>Groups</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
@@ -82,7 +84,7 @@ export function TestimonialsTable({
             <TableRow>
               <TableCell colSpan={7} className="h-24 text-center">
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <Users className="h-8 w-8 text-muted-foreground" />
+                  <i className="ri-team-line text-2xl text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     No testimonials found
                   </p>
@@ -164,13 +166,13 @@ export function TestimonialsTable({
                         onClick={(e) => e.stopPropagation()}
                       >
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <i className="ri-more-line text-sm" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => onEdit(testimonial)}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <i className="ri-pencil-line mr-2 text-sm" />
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -178,12 +180,12 @@ export function TestimonialsTable({
                       >
                         {testimonial.isVisible ? (
                           <>
-                            <EyeOff className="mr-2 h-4 w-4" />
+                            <i className="ri-eye-off-line mr-2 text-sm" />
                             Hide
                           </>
                         ) : (
                           <>
-                            <Eye className="mr-2 h-4 w-4" />
+                            <i className="ri-eye-line mr-2 text-sm" />
                             Show
                           </>
                         )}
@@ -193,7 +195,7 @@ export function TestimonialsTable({
                         onClick={() => onDelete(testimonial)}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <i className="ri-delete-bin-line mr-2 text-sm" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -23,7 +23,7 @@ export const testimonialFormSchema = z.object({
     .number()
     .min(1, "Rating must be at least 1")
     .max(5, "Rating must be at most 5"),
-  categories: z.array(z.string()).min(1, "At least one category is required"),
+  categories: z.array(z.string()).min(1, "At least one group is required"),
   isVisible: z.boolean(),
 });
 

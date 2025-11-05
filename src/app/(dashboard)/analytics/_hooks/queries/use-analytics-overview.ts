@@ -35,7 +35,7 @@ export function useAnalyticsOverview(
   options?: Omit<UseQueryOptions<AnalyticsOverview, Error>, "queryKey" | "queryFn">
 ) {
   return useQuery<AnalyticsOverview, Error>({
-    queryKey: queryKeys.analytics.overview(params),
+    queryKey: queryKeys.analytics.overview(params as Record<string, unknown>),
     queryFn: () => fetchAnalyticsOverview(params),
     ...options,
   });

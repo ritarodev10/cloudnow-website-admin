@@ -39,7 +39,6 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { testimonialFormSchema } from "./testimonial-form-schema";
 
@@ -265,17 +264,23 @@ export function TestimonialForm({
                             <SelectValue>
                               <div className="flex items-center gap-2.5">
                                 <div className="flex gap-0.5">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={cn(
-                                        "h-4 w-4 transition-colors",
-                                        star <= (field.value || 5)
-                                          ? "fill-amber-400 text-amber-400"
-                                          : "fill-transparent text-muted-foreground/30"
-                                      )}
-                                    />
-                                  ))}
+                                  {[1, 2, 3, 4, 5].map((star) => {
+                                    const isFilled = star <= (field.value || 5);
+                                    return (
+                                      <i
+                                        key={star}
+                                        className={cn(
+                                          isFilled
+                                            ? "ri-star-fill"
+                                            : "ri-star-line",
+                                          "text-sm transition-colors",
+                                          isFilled
+                                            ? "text-amber-400"
+                                            : "text-muted-foreground/30"
+                                        )}
+                                      />
+                                    );
+                                  })}
                                 </div>
                                 <span className="text-sm text-muted-foreground">
                                   {field.value || 5}{" "}
@@ -294,17 +299,23 @@ export function TestimonialForm({
                             >
                               <div className="flex items-center gap-2.5">
                                 <div className="flex gap-0.5">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={cn(
-                                        "h-4 w-4 transition-colors",
-                                        star <= starValue
-                                          ? "fill-amber-400 text-amber-400"
-                                          : "fill-transparent text-muted-foreground/30"
-                                      )}
-                                    />
-                                  ))}
+                                  {[1, 2, 3, 4, 5].map((star) => {
+                                    const isFilled = star <= starValue;
+                                    return (
+                                      <i
+                                        key={star}
+                                        className={cn(
+                                          isFilled
+                                            ? "ri-star-fill"
+                                            : "ri-star-line",
+                                          "text-sm transition-colors",
+                                          isFilled
+                                            ? "text-amber-400"
+                                            : "text-muted-foreground/30"
+                                        )}
+                                      />
+                                    );
+                                  })}
                                 </div>
                                 <span className="text-sm">
                                   {starValue}{" "}
@@ -371,28 +382,27 @@ export function TestimonialForm({
             </div>
             {/* Divider */}
             <div className="border-t border-border/50"></div>
-            {/* Categories */}
+            {/* Groups */}
             <FormField
               control={form.control}
               name="categories"
               render={({ field }) => (
                 <FormItem className="space-y-2.5">
                   <FormLabel className="text-sm font-medium text-foreground/90">
-                    Categories{" "}
-                    <span className="text-destructive ml-0.5">*</span>
+                    Groups <span className="text-destructive ml-0.5">*</span>
                   </FormLabel>
                   <FormControl>
                     <div className="space-y-2.5">
                       {categoriesLoading && (
                         <p className="text-sm text-muted-foreground animate-pulse">
-                          Loading categories...
+                          Loading groups...
                         </p>
                       )}
                       {categoriesError && (
                         <p className="text-sm text-destructive">
                           {categoriesError instanceof Error
                             ? categoriesError.message
-                            : "Failed to load categories"}
+                            : "Failed to load groups"}
                         </p>
                       )}
                       <div className="flex flex-wrap gap-2">

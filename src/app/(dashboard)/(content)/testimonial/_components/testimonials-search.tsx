@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TestimonialFilters } from "@/types/testimonials";
-import { Search, X } from "lucide-react";
 
 interface TestimonialsSearchProps {
   filters: TestimonialFilters;
@@ -35,9 +34,9 @@ export function TestimonialsSearch({
 
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <i className="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground" />
       <Input
-        placeholder="Search by name, company, title, testimony content, or categories..."
+        placeholder="Search by name, company, title, testimony content, or groups..."
         value={searchValue}
         onChange={(e) => handleSearchChange(e.target.value)}
         className="pl-10 pr-10"
@@ -49,7 +48,7 @@ export function TestimonialsSearch({
           className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
           onClick={clearSearch}
         >
-          <X className="h-3 w-3" />
+          <i className="ri-close-line text-sm" />
         </Button>
       )}
     </div>

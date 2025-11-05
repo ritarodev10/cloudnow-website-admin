@@ -19,30 +19,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TestimonialGroup } from "@/types/testimonials";
-import {
-  MoreHorizontal,
-  Edit,
-  Copy,
-  Trash2,
-  Eye,
-  Users,
-  Link as LinkIcon,
-} from "lucide-react";
 
 interface TestimonialGroupsTableProps {
   groups: TestimonialGroup[];
   onEdit: (group: TestimonialGroup) => void;
   onDelete: (group: TestimonialGroup) => void;
-  onDuplicate: (group: TestimonialGroup) => void;
-  onPreview: (group: TestimonialGroup) => void;
 }
 
 export function TestimonialGroupsTable({
   groups,
   onEdit,
   onDelete,
-  onDuplicate,
-  onPreview,
 }: TestimonialGroupsTableProps) {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -71,7 +58,7 @@ export function TestimonialGroupsTable({
             <TableRow>
               <TableCell colSpan={7} className="h-24 text-center">
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <Users className="h-8 w-8 text-muted-foreground" />
+                  <i className="ri-team-line text-2xl text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     No groups found
                   </p>
@@ -100,7 +87,7 @@ export function TestimonialGroupsTable({
 
                 <TableCell>
                   <div className="flex items-center gap-1">
-                    <LinkIcon className="h-3 w-3 text-muted-foreground" />
+                    <i className="ri-links-line text-sm text-muted-foreground" />
                     <span className="text-sm">
                       {group.usagePaths.length > 0 ? (
                         <Badge variant="outline" className="text-xs">
@@ -151,29 +138,21 @@ export function TestimonialGroupsTable({
                         onClick={(e) => e.stopPropagation()}
                       >
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
+                        <i className="ri-more-line text-sm" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => onEdit(group)}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <i className="ri-pencil-line mr-2 text-sm" />
                         Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onPreview(group)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Preview
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDuplicate(group)}>
-                        <Copy className="mr-2 h-4 w-4" />
-                        Duplicate
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => onDelete(group)}
                         className="text-destructive focus:text-destructive"
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <i className="ri-delete-bin-line mr-2 text-sm" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
