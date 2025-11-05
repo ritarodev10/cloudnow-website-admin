@@ -74,7 +74,7 @@ export const menuConfig: MenuCategory[] = [
           },
           {
             label: "All Posts",
-            href: "/blog",
+            href: "/blog/posts",
             tabs: ["Drafts", "Scheduled", "Published", "Archived"],
             badge: { text: 48, variant: "success" },
           },
@@ -86,6 +86,7 @@ export const menuConfig: MenuCategory[] = [
           {
             label: "Tags",
             href: "/blog/tags",
+            badge: { text: 0, variant: "default" },
           },
           {
             label: "Comments",
@@ -177,7 +178,7 @@ export const menuConfig: MenuCategory[] = [
     ],
   },
   {
-    label: "Website Management",
+    label: "Site Management",
     comingSoon: true,
     items: [
       {
@@ -204,20 +205,7 @@ export const menuConfig: MenuCategory[] = [
         label: "Analytics",
         icon: "ri-bar-chart-line",
         href: "/analytics",
-        tabs: [
-          "Overview",
-          "Realtime",
-          "Pages/Routes",
-          "Sources",
-          "Campaigns/UTM",
-          "Events/Conversions",
-          "Funnels",
-          "Geography",
-          "Tech",
-          "Segments",
-          "Exports",
-          "Settings",
-        ],
+        tabs: ["Overview", "Realtime", "Session"],
       },
       {
         label: "System (Control Center)",

@@ -9,6 +9,7 @@ import { SidebarGroup } from "@/components/ui/sidebar-group";
 import { LogoutButton } from "@/components/logout-button";
 import { useTestimonialStore } from "@/stores/testimonial-store";
 import { useTestimonials } from "@/app/(dashboard)/(content)/testimonial/_hooks/queries/use-testimonials";
+import { useTags } from "@/app/(dashboard)/(content)/blog/tags/_hooks/queries/use-tags";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -40,12 +41,15 @@ export function Sidebar({
   const testimonialCount =
     testimonialCountFromStore ?? testimonialsCount ?? null;
 
-  // Create dynamic menu config with testimonial count
-  const dynamicMenuConfig = useMemo(() => {
-    if (testimonialCount === null) {
-      return menuConfig; // Return original config while loading
-    }
+  // Use React Query to get tags count
+  // This subscribes to the cache, so it updates automatically
+  const { data: tagsData } = useTags();
 
+  // Get count from tags data
+  const tagsCount = tagsData ? tagsData.length : null;
+
+  // Create dynamic menu config with testimonial and tags count
+  const dynamicMenuConfig = useMemo(() => {
     return menuConfig.map((category): MenuCategory => {
       if (category.label !== "Content") {
         return category;
@@ -54,7 +58,8 @@ export function Sidebar({
       return {
         ...category,
         items: category.items.map((item) => {
-          if (item.label === "Testimonials" && item.badge) {
+          // Update testimonial count
+          if (item.label === "Testimonials" && item.badge && testimonialCount !== null) {
             return {
               ...item,
               badge: {
@@ -63,11 +68,31 @@ export function Sidebar({
               },
             };
           }
+          
+          // Update tags count in Blog submenu
+          if (item.label === "Blog" && item.submenu) {
+            return {
+              ...item,
+              submenu: item.submenu.map((subItem) => {
+                if (subItem.label === "Tags" && subItem.badge && tagsCount !== null) {
+                  return {
+                    ...subItem,
+                    badge: {
+                      ...subItem.badge,
+                      text: tagsCount,
+                    },
+                  };
+                }
+                return subItem;
+              }),
+            };
+          }
+          
           return item;
         }),
       };
     });
-  }, [testimonialCount]);
+  }, [testimonialCount, tagsCount]);
 
   useEffect(() => {
     const checkMobile = () => {

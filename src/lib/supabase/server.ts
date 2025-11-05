@@ -45,9 +45,6 @@ export async function createClient() {
       },
       setAll(cookiesToSet) {
         try {
-          console.log("[SUPABASE] Setting auth cookies", {
-            count: cookiesToSet.length,
-          });
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options)
           );
@@ -55,37 +52,16 @@ export async function createClient() {
           // The `setAll` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
           // user sessions.
-          console.log(
-            "[SUPABASE] Cookie setAll called from Server Component (expected)",
-            {
-              error: error instanceof Error ? error.message : "Unknown",
-            }
-          );
         }
       },
     },
   });
 
-  // Log user info if available (only log when user is authenticated)
+  // Check user authentication (silently)
   try {
-    const {
-      data: { user },
-      error,
-    } = await client.auth.getUser();
-    if (user) {
-      console.log("[SUPABASE] Authenticated user", {
-        userId: user.id,
-        email: user.email,
-      });
-    } else if (error && error.message !== "Missing or invalid refresh token") {
-      // Only log non-standard errors (missing refresh token is expected for unauthenticated users)
-      console.log("[SUPABASE] Auth check", { error: error.message });
-    }
+    await client.auth.getUser();
   } catch (error) {
     // Ignore errors when checking user - might be expected in some contexts
-    console.log("[SUPABASE] Auth check failed", {
-      error: error instanceof Error ? error.message : "Unknown",
-    });
   }
 
   return client;

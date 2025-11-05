@@ -79,17 +79,20 @@ export function SidebarMenuItem({
   // Determine if this item is coming soon
   const isItemComingSoon = item.comingSoon || categoryComingSoon;
 
-  // Check if current path matches this item or any submenu item
-  const isActive =
-    item.href === pathname ||
-    (hasSubmenu && item.submenu?.some((subItem) => subItem.href === pathname));
+  // Check if current path matches this item directly
+  // For items with submenu, only highlight parent if its href matches directly
+  // (not when a submenu item is active)
+  const isActive = item.href === pathname;
+  
+  // Check if any submenu item is active (for auto-expansion only, not highlighting)
+  const hasActiveSubmenu = hasSubmenu && item.submenu?.some((subItem) => subItem.href === pathname);
 
-  // Auto-expand if active
+  // Auto-expand if active submenu item found
   useEffect(() => {
-    if (isActive && hasSubmenu) {
+    if (hasActiveSubmenu) {
       setIsExpanded(true);
     }
-  }, [isActive, hasSubmenu]);
+  }, [hasActiveSubmenu]);
 
   const handleToggle = () => {
     if (hasSubmenu) {

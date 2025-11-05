@@ -1,5 +1,15 @@
 import { getClient } from "@umami/api-client";
-import { AnalyticsOverview } from "@/types/analytics";
+import {
+  AnalyticsOverview,
+  RealtimeData,
+  SessionsResponse,
+  TimeRange,
+  LocationMetrics,
+  LocationType,
+  LocationMetric,
+  EnvironmentMetrics,
+  EnvironmentType,
+} from "@/types/analytics";
 
 /**
  * Create a configured Umami API client
@@ -170,16 +180,17 @@ export async function getAnalyticsOverview(
             views,
           };
         });
-
-        console.log("[Analytics] Weekly timeSeries:", timeSeries);
-      } else {
-        console.error("[Analytics] Weekly request failed:", weeklyResult.error);
       }
     } else {
       // Use regular pageviews endpoint for 24h with hourly granularity
+      // For custom ranges, use hourly if the range is 7 days or less
       let unit: "hour" | "day" | "month" = "hour";
       if (range === "24h") {
         unit = "hour";
+      } else if (range === "custom") {
+        // For custom ranges, check if the duration is 7 days or less
+        const durationDays = (endAt - startAt) / (1000 * 60 * 60 * 24);
+        unit = durationDays <= 7 ? "hour" : "day";
       } else {
         unit = "day";
       }
@@ -193,16 +204,8 @@ export async function getAnalyticsOverview(
 
       // Transform pageviews to time series format
       if (pageviewsResult.ok && pageviewsResult.data) {
-        console.log(
-          "[Analytics] Pageviews response:",
-          JSON.stringify(pageviewsResult.data, null, 2)
-        );
-
         const pageviews = pageviewsResult.data.pageviews || [];
         const sessions = pageviewsResult.data.sessions || [];
-
-        console.log("[Analytics] Pageviews array:", pageviews);
-        console.log("[Analytics] Sessions array:", sessions);
 
         // Match pageviews and sessions by timestamp
         const timeMap = new Map<
@@ -215,7 +218,6 @@ export async function getAnalyticsOverview(
           // Timestamp is in 'x' field (ISO string), value is in 'y' field
           const timestamp = pv.x || pv.t || pv.timestamp || pv.date || null;
           if (!timestamp) {
-            console.warn("[Analytics] Pageview missing timestamp:", pv);
             return;
           }
 
@@ -249,7 +251,6 @@ export async function getAnalyticsOverview(
           const timestamp =
             sess.x || sess.t || sess.timestamp || sess.date || null;
           if (!timestamp) {
-            console.warn("[Analytics] Session missing timestamp:", sess);
             return;
           }
 
@@ -291,13 +292,6 @@ export async function getAnalyticsOverview(
             visitors: data.visitors,
             views: data.views,
           }));
-
-        console.log("[Analytics] Transformed timeSeries:", timeSeries);
-      } else {
-        console.error(
-          "[Analytics] Pageviews request failed:",
-          pageviewsResult.error
-        );
       }
     }
 
@@ -333,8 +327,6 @@ export async function getAnalyticsOverview(
       timeSeries,
     };
   } catch (error) {
-    console.error("[Analytics] Error fetching overview:", error);
-
     // Return empty data structure on error
     return {
       visitors: { value: 0, change: 0 },
@@ -344,5 +336,348 @@ export async function getAnalyticsOverview(
       visitDuration: { value: 0, change: 0 },
       timeSeries: [],
     };
+  }
+}
+
+/**
+ * Fetch realtime analytics data from Umami API
+ */
+export async function getRealtimeAnalytics(): Promise<RealtimeData> {
+  const apiKey = process.env.UMAMI_API_KEY;
+  const apiUrl = process.env.UMAMI_API_URL || "https://api.umami.is";
+  const websiteId =
+    process.env.UMAMI_WEBSITE_ID || "4c0162c3-3a17-4187-a16a-161b50c79bbd";
+
+  if (!apiKey) {
+    throw new Error("UMAMI_API_KEY environment variable is not set");
+  }
+
+  // For Umami Cloud, use /v1 prefix
+  let endpoint = apiUrl;
+  if (!endpoint.endsWith("/v1") && !endpoint.endsWith("/api")) {
+    if (endpoint.includes("api.umami.is")) {
+      endpoint = endpoint.replace(/\/$/, "") + "/v1";
+    } else {
+      endpoint = endpoint.replace(/\/$/, "") + "/api";
+    }
+  }
+
+  try {
+    // Get timezone - use Intl API if available, otherwise default to UTC
+    const timezone =
+      typeof Intl !== "undefined" && Intl.DateTimeFormat
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : "UTC";
+
+    // Ensure endpoint has protocol
+    let baseUrl = endpoint;
+    if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+      baseUrl = `https://${baseUrl}`;
+    }
+
+    // Make direct fetch call to realtime endpoint with timezone parameter
+    const url = new URL(`${baseUrl}/realtime/${websiteId}`);
+    url.searchParams.set("timezone", timezone);
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "x-umami-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        `Failed to fetch realtime data: ${response.status} ${
+          response.statusText
+        }. ${errorData.error?.message || ""}`
+      );
+    }
+
+    const data = await response.json();
+    return data as RealtimeData;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Fetch sessions data from Umami API
+ */
+export async function getSessions(
+  range: TimeRange = "24h",
+  customStart?: string,
+  customEnd?: string,
+  page: number = 1,
+  pageSize: number = 10
+): Promise<SessionsResponse> {
+  const apiKey = process.env.UMAMI_API_KEY;
+  const apiUrl = process.env.UMAMI_API_URL || "https://api.umami.is";
+  const websiteId =
+    process.env.UMAMI_WEBSITE_ID || "4c0162c3-3a17-4187-a16a-161b50c79bbd";
+
+  if (!apiKey) {
+    throw new Error("UMAMI_API_KEY environment variable is not set");
+  }
+
+  // For Umami Cloud, use /v1 prefix
+  let endpoint = apiUrl;
+  if (!endpoint.endsWith("/v1") && !endpoint.endsWith("/api")) {
+    if (endpoint.includes("api.umami.is")) {
+      endpoint = endpoint.replace(/\/$/, "") + "/v1";
+    } else {
+      endpoint = endpoint.replace(/\/$/, "") + "/api";
+    }
+  }
+
+  try {
+    // Get timezone
+    const timezone =
+      typeof Intl !== "undefined" && Intl.DateTimeFormat
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : "UTC";
+
+    // Calculate date range
+    const { startAt, endAt } = getDateRange(range, customStart, customEnd);
+
+    // Convert timestamps to ISO strings for the API
+    const startDate = new Date(startAt).toISOString();
+    const endDate = new Date(endAt).toISOString();
+
+    // Ensure endpoint has protocol
+    let baseUrl = endpoint;
+    if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+      baseUrl = `https://${baseUrl}`;
+    }
+
+    // Build URL with query parameters
+    const url = new URL(`${baseUrl}/websites/${websiteId}/sessions`);
+    url.searchParams.set("startAt", startAt.toString());
+    url.searchParams.set("endAt", endAt.toString());
+    url.searchParams.set("startDate", startDate);
+    url.searchParams.set("endDate", endDate);
+    url.searchParams.set("unit", range === "24h" ? "hour" : "day");
+    url.searchParams.set("timezone", timezone);
+    url.searchParams.set("pageSize", pageSize.toString());
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "x-umami-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        `Failed to fetch sessions: ${response.status} ${response.statusText}. ${
+          errorData.error?.message || ""
+        }`
+      );
+    }
+
+    const data = await response.json();
+    return data as SessionsResponse;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Fetch location metrics data from Umami API
+ */
+export async function getLocationMetrics(
+  range: TimeRange = "24h",
+  customStart?: string,
+  customEnd?: string,
+  limit: number = 10
+): Promise<LocationMetrics> {
+  const apiKey = process.env.UMAMI_API_KEY;
+  const apiUrl = process.env.UMAMI_API_URL || "https://api.umami.is";
+  const websiteId =
+    process.env.UMAMI_WEBSITE_ID || "4c0162c3-3a17-4187-a16a-161b50c79bbd";
+
+  if (!apiKey) {
+    throw new Error("UMAMI_API_KEY environment variable is not set");
+  }
+
+  // For Umami Cloud, use /v1 prefix
+  let endpoint = apiUrl;
+  if (!endpoint.endsWith("/v1") && !endpoint.endsWith("/api")) {
+    if (endpoint.includes("api.umami.is")) {
+      endpoint = endpoint.replace(/\/$/, "") + "/v1";
+    } else {
+      endpoint = endpoint.replace(/\/$/, "") + "/api";
+    }
+  }
+
+  try {
+    // Get timezone
+    const timezone =
+      typeof Intl !== "undefined" && Intl.DateTimeFormat
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : "UTC";
+
+    // Calculate date range
+    const { startAt, endAt } = getDateRange(range, customStart, customEnd);
+
+    // Determine unit based on range
+    const unit = range === "24h" ? "hour" : "day";
+
+    // Ensure endpoint has protocol
+    let baseUrl = endpoint;
+    if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+      baseUrl = `https://${baseUrl}`;
+    }
+
+    // Fetch metrics for each location type
+    const fetchLocationType = async (
+      type: LocationType
+    ): Promise<LocationMetric[]> => {
+      const url = new URL(`${baseUrl}/websites/${websiteId}/metrics`);
+      url.searchParams.set("startAt", startAt.toString());
+      url.searchParams.set("endAt", endAt.toString());
+      url.searchParams.set("unit", unit);
+      url.searchParams.set("timezone", timezone);
+      url.searchParams.set("type", type);
+      url.searchParams.set("limit", limit.toString());
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "x-umami-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          `Failed to fetch ${type} metrics: ${response.status} ${
+            response.statusText
+          }. ${errorData.error?.message || ""}`
+        );
+      }
+
+      const data = await response.json();
+      // Umami API returns array of { x: locationName, y: visitorCount }
+      return Array.isArray(data) ? data : [];
+    };
+
+    // Fetch all location types in parallel
+    const [countries, regions, cities] = await Promise.all([
+      fetchLocationType("country"),
+      fetchLocationType("region"),
+      fetchLocationType("city"),
+    ]);
+
+    return {
+      countries,
+      regions,
+      cities,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Fetch environment metrics data from Umami API (browsers, OS, devices)
+ */
+export async function getEnvironmentMetrics(
+  range: TimeRange = "24h",
+  customStart?: string,
+  customEnd?: string,
+  limit: number = 10
+): Promise<EnvironmentMetrics> {
+  const apiKey = process.env.UMAMI_API_KEY;
+  const apiUrl = process.env.UMAMI_API_URL || "https://api.umami.is";
+  const websiteId =
+    process.env.UMAMI_WEBSITE_ID || "4c0162c3-3a17-4187-a16a-161b50c79bbd";
+
+  if (!apiKey) {
+    throw new Error("UMAMI_API_KEY environment variable is not set");
+  }
+
+  // For Umami Cloud, use /v1 prefix
+  let endpoint = apiUrl;
+  if (!endpoint.endsWith("/v1") && !endpoint.endsWith("/api")) {
+    if (endpoint.includes("api.umami.is")) {
+      endpoint = endpoint.replace(/\/$/, "") + "/v1";
+    } else {
+      endpoint = endpoint.replace(/\/$/, "") + "/api";
+    }
+  }
+
+  try {
+    // Get timezone
+    const timezone =
+      typeof Intl !== "undefined" && Intl.DateTimeFormat
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : "UTC";
+
+    // Calculate date range
+    const { startAt, endAt } = getDateRange(range, customStart, customEnd);
+
+    // Determine unit based on range
+    const unit = range === "24h" ? "hour" : "day";
+
+    // Ensure endpoint has protocol
+    let baseUrl = endpoint;
+    if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+      baseUrl = `https://${baseUrl}`;
+    }
+
+    // Fetch metrics for each environment type
+    const fetchEnvironmentType = async (
+      type: EnvironmentType
+    ): Promise<LocationMetric[]> => {
+      const url = new URL(`${baseUrl}/websites/${websiteId}/metrics`);
+      url.searchParams.set("startAt", startAt.toString());
+      url.searchParams.set("endAt", endAt.toString());
+      url.searchParams.set("unit", unit);
+      url.searchParams.set("timezone", timezone);
+      url.searchParams.set("type", type);
+      url.searchParams.set("limit", limit.toString());
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "x-umami-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          `Failed to fetch ${type} metrics: ${response.status} ${
+            response.statusText
+          }. ${errorData.error?.message || ""}`
+        );
+      }
+
+      const data = await response.json();
+      // Umami API returns array of { x: name, y: visitorCount }
+      return Array.isArray(data) ? data : [];
+    };
+
+    // Fetch all environment types in parallel
+    const [browsers, os, devices] = await Promise.all([
+      fetchEnvironmentType("channel"),
+      fetchEnvironmentType("os"),
+      fetchEnvironmentType("device"),
+    ]);
+
+    return {
+      browsers,
+      os,
+      devices,
+    };
+  } catch (error) {
+    throw error;
   }
 }

@@ -10,13 +10,14 @@ This guide explains how to set environment variables for the CloudNow Admin appl
 
 The following environment variables are required:
 
-| Variable            | Required    | Description                                        | Where to Get It                                                             |
-| ------------------- | ----------- | -------------------------------------------------- | --------------------------------------------------------------------------- |
-| `SUPABASE_URL`      | ✅ Yes      | Your Supabase project URL                          | [Supabase Dashboard](https://supabase.com/dashboard/project/_/settings/api) |
-| `SUPABASE_ANON_KEY` | ✅ Yes      | Your Supabase anonymous/public key                 | [Supabase Dashboard](https://supabase.com/dashboard/project/_/settings/api) |
-| `UMAMI_API_KEY`     | ✅ Yes      | Umami Analytics API key                            | [Umami Dashboard](https://umami.is)                                         |
-| `UMAMI_WEBSITE_ID`  | ⚠️ Optional | Umami website ID                                   | [Umami Dashboard](https://umami.is)                                         |
-| `UMAMI_API_URL`     | ⚠️ Optional | Umami API URL (defaults to `https://api.umami.is`) | Usually `https://api.umami.is`                                              |
+| Variable                    | Required    | Description                                        | Where to Get It                                                             |
+| --------------------------- | ----------- | -------------------------------------------------- | --------------------------------------------------------------------------- |
+| `SUPABASE_URL`              | ✅ Yes      | Your Supabase project URL                          | [Supabase Dashboard](https://supabase.com/dashboard/project/_/settings/api) |
+| `SUPABASE_ANON_KEY`         | ✅ Yes      | Your Supabase anonymous/public key                 | [Supabase Dashboard](https://supabase.com/dashboard/project/_/settings/api) |
+| `SUPABASE_SERVICE_ROLE_KEY` | ⚠️ Optional | Your Supabase service role key (for auto-confirm)  | [Supabase Dashboard](https://supabase.com/dashboard/project/_/settings/api) |
+| `UMAMI_API_KEY`             | ✅ Yes      | Umami Analytics API key                            | [Umami Dashboard](https://umami.is)                                         |
+| `UMAMI_WEBSITE_ID`          | ⚠️ Optional | Umami website ID                                   | [Umami Dashboard](https://umami.is)                                         |
+| `UMAMI_API_URL`             | ⚠️ Optional | Umami API URL (defaults to `https://api.umami.is`) | Usually `https://api.umami.is`                                              |
 
 ---
 
@@ -39,6 +40,7 @@ Open `.env.local` and add the following:
 # Supabase Configuration
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 
 # Umami Analytics API Configuration
 UMAMI_API_KEY=your-umami-api-key-here
@@ -54,6 +56,7 @@ UMAMI_API_URL=https://api.umami.is
 4. Copy:
    - **Project URL** → Use as `SUPABASE_URL`
    - **anon/public key** → Use as `SUPABASE_ANON_KEY`
+   - **service_role key** → Use as `SUPABASE_SERVICE_ROLE_KEY` (⚠️ Keep this secret! It's used for auto-confirming user emails during signup)
 
 ### Step 4: Get your Umami credentials
 
@@ -86,13 +89,14 @@ Environment variables need to be set as **GitHub Secrets** so they're available 
 
 Click **New repository secret** and add each of the following:
 
-| Secret Name         | Value                     | Example                                   |
-| ------------------- | ------------------------- | ----------------------------------------- |
-| `SUPABASE_URL`      | Your Supabase project URL | `https://xxxxx.supabase.co`               |
-| `SUPABASE_ANON_KEY` | Your Supabase anon key    | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `UMAMI_API_KEY`     | Your Umami API key        | `api_BWL6tIwwZ8e5Zjctr0QQwftXbc2OVILQ`    |
-| `UMAMI_WEBSITE_ID`  | Your Umami website ID     | `4c0162c3-3a17-4187-a16a-161b50c79bbd`    |
-| `UMAMI_API_URL`     | Umami API URL (optional)  | `https://api.umami.is`                    |
+| Secret Name                 | Value                     | Example                                   |
+| --------------------------- | ------------------------- | ----------------------------------------- |
+| `SUPABASE_URL`              | Your Supabase project URL | `https://xxxxx.supabase.co`               |
+| `SUPABASE_ANON_KEY`         | Your Supabase anon key    | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `UMAMI_API_KEY`             | Your Umami API key        | `api_BWL6tIwwZ8e5Zjctr0QQwftXbc2OVILQ`    |
+| `UMAMI_WEBSITE_ID`          | Your Umami website ID     | `4c0162c3-3a17-4187-a16a-161b50c79bbd`    |
+| `UMAMI_API_URL`             | Umami API URL (optional)  | `https://api.umami.is`                    |
 
 ### Step 3: Verify in Workflow File
 
@@ -103,6 +107,7 @@ The workflow file (`.github/workflows/main_webapp-frontend-cnwebadmin.yml`) shou
   env:
     SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
     SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     UMAMI_API_KEY: ${{ secrets.UMAMI_API_KEY }}
     UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
     UMAMI_API_URL: ${{ secrets.UMAMI_API_URL }}
@@ -147,13 +152,14 @@ Even though environment variables are set in GitHub Actions for the build, you a
 
 Add the following application settings:
 
-| Name                | Value                     | Example                                   |
-| ------------------- | ------------------------- | ----------------------------------------- |
-| `SUPABASE_URL`      | Your Supabase project URL | `https://xxxxx.supabase.co`               |
-| `SUPABASE_ANON_KEY` | Your Supabase anon key    | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `UMAMI_API_KEY`     | Your Umami API key        | `api_BWL6tIwwZ8e5Zjctr0QQwftXbc2OVILQ`    |
-| `UMAMI_WEBSITE_ID`  | Your Umami website ID     | `4c0162c3-3a17-4187-a16a-161b50c79bbd`    |
-| `UMAMI_API_URL`     | Umami API URL (optional)  | `https://api.umami.is`                    |
+| Name                        | Value                     | Example                                   |
+| --------------------------- | ------------------------- | ----------------------------------------- |
+| `SUPABASE_URL`              | Your Supabase project URL | `https://xxxxx.supabase.co`               |
+| `SUPABASE_ANON_KEY`         | Your Supabase anon key    | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `UMAMI_API_KEY`             | Your Umami API key        | `api_BWL6tIwwZ8e5Zjctr0QQwftXbc2OVILQ`    |
+| `UMAMI_WEBSITE_ID`          | Your Umami website ID     | `4c0162c3-3a17-4187-a16a-161b50c79bbd`    |
+| `UMAMI_API_URL`             | Umami API URL (optional)  | `https://api.umami.is`                    |
 
 ### Step 4: Save Changes
 
@@ -171,6 +177,7 @@ az webapp config appsettings set \
   --settings \
     SUPABASE_URL="https://xxxxx.supabase.co" \
     SUPABASE_ANON_KEY="your-anon-key" \
+    SUPABASE_SERVICE_ROLE_KEY="your-service-role-key" \
     UMAMI_API_KEY="your-api-key" \
     UMAMI_WEBSITE_ID="your-website-id" \
     UMAMI_API_URL="https://api.umami.is"
@@ -232,6 +239,7 @@ cat .env.local
 
 - [ ] Create `.env.local` file
 - [ ] Add `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+- [ ] Add `SUPABASE_SERVICE_ROLE_KEY` (optional, but recommended for signup auto-confirm)
 - [ ] Add `UMAMI_API_KEY` and `UMAMI_WEBSITE_ID`
 - [ ] Test with `npm run dev`
 
@@ -239,6 +247,7 @@ cat .env.local
 
 - [ ] Add `SUPABASE_URL` to GitHub Secrets
 - [ ] Add `SUPABASE_ANON_KEY` to GitHub Secrets
+- [ ] Add `SUPABASE_SERVICE_ROLE_KEY` to GitHub Secrets (optional, but recommended)
 - [ ] Add `UMAMI_API_KEY` to GitHub Secrets
 - [ ] Add `UMAMI_WEBSITE_ID` to GitHub Secrets (optional)
 - [ ] Add `UMAMI_API_URL` to GitHub Secrets (optional)
@@ -248,6 +257,7 @@ cat .env.local
 
 - [ ] Add `SUPABASE_URL` to Application Settings
 - [ ] Add `SUPABASE_ANON_KEY` to Application Settings
+- [ ] Add `SUPABASE_SERVICE_ROLE_KEY` to Application Settings (optional, but recommended)
 - [ ] Add `UMAMI_API_KEY` to Application Settings
 - [ ] Add `UMAMI_WEBSITE_ID` to Application Settings (optional)
 - [ ] Add `UMAMI_API_URL` to Application Settings (optional)
