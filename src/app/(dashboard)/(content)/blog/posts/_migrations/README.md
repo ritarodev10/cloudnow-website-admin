@@ -107,3 +107,5 @@ The `posts` table includes:
 - Category and tag seed data should be applied before posts seed data to ensure referential integrity
 - The `author_id` in seed data uses a placeholder UUID - update with actual user IDs in production
 
+
+

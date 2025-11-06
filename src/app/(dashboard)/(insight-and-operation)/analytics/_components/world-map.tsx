@@ -175,7 +175,7 @@ export function WorldMapComponent({ timeRange }: WorldMapProps) {
   }
 
   return (
-    <Card className="h-full w-full flex flex-col">
+    <Card className="h-full w-full flex flex-col p-0 overflow-hidden">
       <CardContent className="p-0 flex-1 flex flex-col">
         <div
           ref={mapContainerRef}

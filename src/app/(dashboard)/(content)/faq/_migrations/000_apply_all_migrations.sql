@@ -260,3 +260,5 @@ WHERE NOT EXISTS (SELECT 1 FROM faqs WHERE faqs.id = v.id::uuid);
 -- 3. Verify you're authenticated when making requests
 
 
+
+

@@ -67,3 +67,5 @@ CREATE POLICY "Authenticated users can delete faq_groups"
   USING (true);
 
 
+
+

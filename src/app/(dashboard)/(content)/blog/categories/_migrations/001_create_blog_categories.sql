@@ -37,3 +37,5 @@ CREATE TRIGGER update_blog_categories_updated_at
 -- Note: Post count is calculated dynamically by querying the posts table
 -- where posts.category matches blog_categories.name
 
+
+

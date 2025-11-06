@@ -10,6 +10,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { useTestimonialStore } from "@/stores/testimonial-store";
 import { useTestimonials } from "@/app/(dashboard)/(content)/testimonial/_hooks/queries/use-testimonials";
 import { useTags } from "@/app/(dashboard)/(content)/blog/tags/_hooks/queries/use-tags";
+import { usePostStats } from "@/app/(dashboard)/(content)/blog/posts/_hooks/queries/use-post-stats";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -48,7 +49,14 @@ export function Sidebar({
   // Get count from tags data
   const tagsCount = tagsData ? tagsData.length : null;
 
-  // Create dynamic menu config with testimonial and tags count
+  // Use React Query to get posts stats
+  // This subscribes to the cache, so it updates automatically
+  const { data: postStatsData } = usePostStats();
+
+  // Get total count from posts stats
+  const postsCount = postStatsData ? postStatsData.total : null;
+
+  // Create dynamic menu config with testimonial, tags, and posts count
   const dynamicMenuConfig = useMemo(() => {
     return menuConfig.map((category): MenuCategory => {
       if (category.label !== "Content") {
@@ -69,7 +77,7 @@ export function Sidebar({
             };
           }
           
-          // Update tags count in Blog submenu
+          // Update tags count and posts count in Blog submenu
           if (item.label === "Blog" && item.submenu) {
             return {
               ...item,
@@ -83,6 +91,15 @@ export function Sidebar({
                     },
                   };
                 }
+                if (subItem.label === "All Posts" && subItem.badge && postsCount !== null) {
+                  return {
+                    ...subItem,
+                    badge: {
+                      ...subItem.badge,
+                      text: postsCount,
+                    },
+                  };
+                }
                 return subItem;
               }),
             };
@@ -92,7 +109,7 @@ export function Sidebar({
         }),
       };
     });
-  }, [testimonialCount, tagsCount]);
+  }, [testimonialCount, tagsCount, postsCount]);
 
   useEffect(() => {
     const checkMobile = () => {

@@ -67,3 +67,5 @@ SELECT * FROM (VALUES
 ) AS v(id, name, slug, description, is_active, created_at, updated_at)
 WHERE NOT EXISTS (SELECT 1 FROM blog_categories WHERE blog_categories.id = v.id::uuid);
 
+
+

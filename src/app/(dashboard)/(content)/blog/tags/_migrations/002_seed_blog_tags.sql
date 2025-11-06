@@ -122,3 +122,5 @@ SELECT * FROM (VALUES
 ) AS v(id, name, slug, description, usage_count, created_at, updated_at)
 WHERE NOT EXISTS (SELECT 1 FROM blog_tags WHERE blog_tags.id = v.id::uuid);
 
+
+

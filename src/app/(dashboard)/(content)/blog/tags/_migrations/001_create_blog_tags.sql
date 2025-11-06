@@ -39,3 +39,5 @@ CREATE TRIGGER update_blog_tags_updated_at
 -- 2. Create a trigger or function to update usage_count when posts are created/updated/deleted
 -- 3. Or maintain usage_count manually through application logic
 
+
+

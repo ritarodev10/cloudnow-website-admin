@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FilterButton } from "./filter-button";
 import { TimeRangeSelector } from "./time-range-selector";
 import { Input } from "@/components/ui/input";
 import {
@@ -122,7 +120,6 @@ function getAvatarInitials(sessionId: string): string {
 export function SessionTab() {
   const [timeRange, setTimeRange] = useState<TimeRange>("24h");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeSubTab, setActiveSubTab] = useState<"activity" | "properties">("activity");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
 
@@ -144,11 +141,6 @@ export function SessionTab() {
     console.log("Next period");
   };
 
-  const handleFilter = () => {
-    // TODO: Implement filter functionality
-    console.log("Filter clicked");
-  };
-
   // Filter sessions based on search query
   const filteredSessions = sessions.filter((session) => {
     if (!searchQuery) return true;
@@ -165,8 +157,7 @@ export function SessionTab() {
   if (error) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <FilterButton onClick={handleFilter} />
+        <div className="flex items-center justify-end">
           <TimeRangeSelector
             value={timeRange}
             onChange={setTimeRange}
@@ -183,9 +174,8 @@ export function SessionTab() {
 
   return (
     <div className="space-y-4">
-      {/* Header with Filter and Time Range */}
-      <div className="flex items-center justify-between">
-        <FilterButton onClick={handleFilter} />
+      {/* Header with Time Range */}
+      <div className="flex items-center justify-end">
         <TimeRangeSelector
           value={timeRange}
           onChange={setTimeRange}
@@ -196,108 +186,90 @@ export function SessionTab() {
 
       {/* Main Content Card */}
       <div className="rounded-lg border bg-card p-4 space-y-4">
-        {/* Sub-tabs */}
-        <Tabs value={activeSubTab} onValueChange={(v) => setActiveSubTab(v as "activity" | "properties")}>
-          <TabsList>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
-            <TabsTrigger value="properties">Properties</TabsTrigger>
-          </TabsList>
+        {/* Search Bar */}
+        <div className="relative">
+          <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
 
-          {/* Activity Tab Content */}
-          <TabsContent value="activity" className="space-y-4 mt-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-
-            {/* Sessions Table */}
-            {isLoading ? (
-              <div className="text-center text-muted-foreground py-8">Loading sessions...</div>
-            ) : filteredSessions.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">No sessions found</div>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Session</TableHead>
-                      <TableHead>Visits</TableHead>
-                      <TableHead>Views</TableHead>
-                      <TableHead>Country</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>Browser</TableHead>
-                      <TableHead>OS</TableHead>
-                      <TableHead>Device</TableHead>
-                      <TableHead>Last seen</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSessions.map((session) => (
-                      <TableRow key={session.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar>
-                              <AvatarFallback>
-                                {getAvatarInitials(session.id)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                        </TableCell>
-                        <TableCell>{session.visits}</TableCell>
-                        <TableCell>{session.views}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{getCountryFlag(session.country)}</span>
-                            <span>{session.country}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{session.city}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <i className={getBrowserIcon(session.browser)} />
-                            <span>{formatBrowserName(session.browser)}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <i className={getOSIcon(session.os)} />
-                            <span>{session.os}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <i className={getDeviceIcon(session.device)} />
-                            <span>
-                              {session.device === "desktop"
-                                ? "Laptop"
-                                : session.device.charAt(0).toUpperCase() +
-                                  session.device.slice(1)}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{formatTimeAgo(session.lastAt)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Properties Tab Content */}
-          <TabsContent value="properties" className="space-y-4 mt-4">
-            <div className="text-center text-muted-foreground py-8">
-              Properties view coming soon
-            </div>
-          </TabsContent>
-        </Tabs>
+        {/* Sessions Table */}
+        {isLoading ? (
+          <div className="text-center text-muted-foreground py-8">Loading sessions...</div>
+        ) : filteredSessions.length === 0 ? (
+          <div className="text-center text-muted-foreground py-8">No sessions found</div>
+        ) : (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Session</TableHead>
+                  <TableHead>Visits</TableHead>
+                  <TableHead>Views</TableHead>
+                  <TableHead>Country</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead>Browser</TableHead>
+                  <TableHead>OS</TableHead>
+                  <TableHead>Device</TableHead>
+                  <TableHead>Last seen</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSessions.map((session) => (
+                  <TableRow key={session.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar>
+                          <AvatarFallback>
+                            {getAvatarInitials(session.id)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    </TableCell>
+                    <TableCell>{session.visits}</TableCell>
+                    <TableCell>{session.views}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{getCountryFlag(session.country)}</span>
+                        <span>{session.country}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{session.city}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <i className={getBrowserIcon(session.browser)} />
+                        <span>{formatBrowserName(session.browser)}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <i className={getOSIcon(session.os)} />
+                        <span>{session.os}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <i className={getDeviceIcon(session.device)} />
+                        <span>
+                          {session.device === "desktop"
+                            ? "Laptop"
+                            : session.device.charAt(0).toUpperCase() +
+                              session.device.slice(1)}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{formatTimeAgo(session.lastAt)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </div>
   );

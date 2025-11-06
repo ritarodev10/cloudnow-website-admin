@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { FilterButton } from "./filter-button";
 import { TimeRangeSelector } from "./time-range-selector";
 import { OverviewMetrics } from "./overview-metrics";
 import { TimeSeriesChart } from "./time-series-chart";
@@ -32,16 +31,10 @@ export function OverviewTab() {
     console.log("Next period");
   };
 
-  const handleFilter = () => {
-    // TODO: Implement filter functionality
-    console.log("Filter clicked");
-  };
-
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <FilterButton onClick={handleFilter} />
+        <div className="flex items-center justify-end">
           <TimeRangeSelector
             value={timeRange}
             onChange={setTimeRange}
@@ -59,8 +52,7 @@ export function OverviewTab() {
   if (isLoading || !overview) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <FilterButton onClick={handleFilter} />
+        <div className="flex items-center justify-end">
           <TimeRangeSelector
             value={timeRange}
             onChange={setTimeRange}
@@ -75,9 +67,8 @@ export function OverviewTab() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Filter and Time Range */}
-      <div className="flex items-center justify-between">
-        <FilterButton onClick={handleFilter} />
+      {/* Header with Time Range */}
+      <div className="flex items-center justify-end">
         <TimeRangeSelector
           value={timeRange}
           onChange={setTimeRange}

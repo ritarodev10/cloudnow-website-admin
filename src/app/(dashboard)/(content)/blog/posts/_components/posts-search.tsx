@@ -28,3 +28,5 @@ export function PostsSearch({ filters, onFiltersChange }: PostsSearchProps) {
   );
 }
 
+
+

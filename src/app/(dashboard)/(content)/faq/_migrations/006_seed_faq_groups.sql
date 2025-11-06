@@ -36,3 +36,5 @@ SELECT * FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM faq_groups WHERE faq_groups.id = v.id::uuid);
 
 
+
+

@@ -243,3 +243,5 @@ BEGIN
   WHERE NOT EXISTS (SELECT 1 FROM posts WHERE posts.id = v.id::uuid);
 END $$;
 
+
+

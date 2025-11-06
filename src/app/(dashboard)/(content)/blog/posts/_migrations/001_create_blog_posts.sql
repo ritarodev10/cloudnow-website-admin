@@ -57,3 +57,5 @@ CREATE TRIGGER update_posts_updated_at
 -- Note: Category should reference blog_categories.name
 -- Tags array contains tag names that should reference blog_tags.name
 
+
+

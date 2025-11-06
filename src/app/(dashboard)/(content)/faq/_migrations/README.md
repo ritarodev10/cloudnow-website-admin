@@ -173,3 +173,5 @@ SELECT COUNT(*) FROM faqs;
 - FAQ groups must be created before FAQs due to foreign key relationship
 
 
+
+

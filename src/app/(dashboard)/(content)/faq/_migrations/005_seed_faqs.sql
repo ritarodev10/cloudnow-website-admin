@@ -71,3 +71,5 @@ SELECT * FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM faqs WHERE faqs.id = v.id::uuid);
 
 
+
+

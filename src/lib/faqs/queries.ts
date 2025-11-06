@@ -159,3 +159,5 @@ export async function getFAQsByGroupId(groupId: string): Promise<FAQ[]> {
   return (data || []).map(transformFAQ);
 }
 
+
+

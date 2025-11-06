@@ -1,26 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PostStats } from "@/types/posts";
 import { Activity } from "@/types/activity";
-import { AnalyticsOverview, Visitor } from "@/types/analytics";
+import {
+  AnalyticsOverview,
+  TimeRange,
+  Visitor,
+  Session,
+} from "@/types/analytics";
 import { OverviewMetrics } from "../(insight-and-operation)/analytics/_components/overview-metrics";
 import { TimeSeriesChart } from "../(insight-and-operation)/analytics/_components/time-series-chart";
-import { VisitorsList } from "./_components/visitors-list";
+import { TimeRangeSelector } from "../(insight-and-operation)/analytics/_components/time-range-selector";
+import { usePostStats } from "../(content)/blog/posts/_hooks/queries/use-post-stats";
+import { useAnalyticsOverview } from "../(insight-and-operation)/analytics/_hooks/queries/use-analytics-overview";
+import { useAnalyticsSessions } from "../(insight-and-operation)/analytics/_hooks/queries/use-analytics-sessions";
 
-// Dummy data generators
-function generateDummyPostStats(): PostStats {
-  return {
-    total: 124,
-    published: 89,
-    drafts: 23,
-    scheduled: 8,
-    archived: 4,
-    totalViews: 45230,
-    averageViews: 508,
-  };
-}
-
+// Dummy activities generator (keeping for now since there's no activity API)
 function generateDummyActivities(): Activity[] {
   const activities: Activity[] = [
     {
@@ -101,120 +98,6 @@ function generateDummyActivities(): Activity[] {
   return activities;
 }
 
-function generateDummyAnalytics(): AnalyticsOverview {
-  const now = Date.now();
-  const timeSeries: Array<{
-    timestamp: string;
-    visitors: number;
-    views: number;
-  }> = [];
-
-  // Generate last 7 days of data
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now - i * 24 * 60 * 60 * 1000);
-    timeSeries.push({
-      timestamp: date.toISOString(),
-      visitors: Math.floor(Math.random() * 500) + 200,
-      views: Math.floor(Math.random() * 2000) + 800,
-    });
-  }
-
-  return {
-    visitors: {
-      value: 3420,
-      change: 12.5,
-    },
-    visits: {
-      value: 4850,
-      change: 8.3,
-    },
-    views: {
-      value: 12450,
-      change: 15.2,
-    },
-    bounceRate: {
-      value: 32.5,
-      change: -5.2,
-    },
-    visitDuration: {
-      value: 245, // seconds
-      change: 8.7,
-    },
-    timeSeries,
-  };
-}
-
-function generateDummyVisitors(): Visitor[] {
-  const countries = [
-    "United States",
-    "Canada",
-    "United Kingdom",
-    "Germany",
-    "France",
-    "Australia",
-    "Japan",
-    "Brazil",
-    "India",
-    "Mexico",
-  ];
-  const cities = {
-    "United States": [
-      "New York",
-      "Los Angeles",
-      "Chicago",
-      "San Francisco",
-      "Seattle",
-    ],
-    Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
-    "United Kingdom": [
-      "London",
-      "Manchester",
-      "Birmingham",
-      "Edinburgh",
-      "Liverpool",
-    ],
-    Germany: ["Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne"],
-    France: ["Paris", "Lyon", "Marseille", "Toulouse", "Nice"],
-    Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
-    Japan: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Sapporo"],
-    Brazil: [
-      "São Paulo",
-      "Rio de Janeiro",
-      "Brasília",
-      "Salvador",
-      "Fortaleza",
-    ],
-    India: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai"],
-    Mexico: ["Mexico City", "Guadalajara", "Monterrey", "Puebla", "Tijuana"],
-  };
-  const operatingSystems = ["Windows", "macOS", "Linux", "iOS", "Android"];
-  const pages = ["/", "/about", "/services", "/blog", "/contact", "/careers"];
-
-  const visitors: Visitor[] = [];
-  const now = Date.now();
-
-  for (let i = 0; i < 10; i++) {
-    const country = countries[Math.floor(Math.random() * countries.length)];
-    const countryCities = cities[country as keyof typeof cities] || ["Unknown"];
-    const city =
-      countryCities[Math.floor(Math.random() * countryCities.length)];
-    const os =
-      operatingSystems[Math.floor(Math.random() * operatingSystems.length)];
-    const page = pages[Math.floor(Math.random() * pages.length)];
-
-    visitors.push({
-      id: `visitor-${i + 1}`,
-      timestamp: new Date(now - i * 3 * 60 * 1000 - Math.random() * 60 * 1000), // Last 30 minutes, spaced out
-      country,
-      city,
-      os,
-      page,
-    });
-  }
-
-  return visitors.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-}
-
 function getActivityIcon(type: Activity["type"]): string {
   const iconMap: Record<Activity["type"], string> = {
     post_created: "ri-file-add-line",
@@ -250,23 +133,224 @@ function formatTimeAgo(date: Date): string {
   }
 }
 
+// Country code to name mapping
+const countryCodeToName: Record<string, string> = {
+  US: "United States",
+  CA: "Canada",
+  GB: "United Kingdom",
+  DE: "Germany",
+  FR: "France",
+  AU: "Australia",
+  JP: "Japan",
+  BR: "Brazil",
+  IN: "India",
+  MX: "Mexico",
+  CN: "China",
+  ES: "Spain",
+  IT: "Italy",
+  NL: "Netherlands",
+  KR: "South Korea",
+  SE: "Sweden",
+  NO: "Norway",
+  DK: "Denmark",
+  FI: "Finland",
+  PL: "Poland",
+  RU: "Russia",
+  TR: "Turkey",
+  ZA: "South Africa",
+  AR: "Argentina",
+  CL: "Chile",
+  NZ: "New Zealand",
+  SG: "Singapore",
+  TH: "Thailand",
+  PH: "Philippines",
+  ID: "Indonesia",
+  MY: "Malaysia",
+  VN: "Vietnam",
+  SA: "Saudi Arabia",
+  AE: "United Arab Emirates",
+  IL: "Israel",
+  EG: "Egypt",
+  NG: "Nigeria",
+  KE: "Kenya",
+  GH: "Ghana",
+  PT: "Portugal",
+  GR: "Greece",
+  BE: "Belgium",
+  CH: "Switzerland",
+  AT: "Austria",
+  IE: "Ireland",
+  CZ: "Czech Republic",
+  RO: "Romania",
+  HU: "Hungary",
+  UA: "Ukraine",
+  CO: "Colombia",
+  PE: "Peru",
+  VE: "Venezuela",
+  EC: "Ecuador",
+};
+
+function getCountryFlag(country: string): string {
+  // Handle both country codes (e.g., "US") and full names (e.g., "United States")
+  const countryCode =
+    country.length === 2
+      ? country.toUpperCase()
+      : countryCodeToName[country] || country;
+  const countryName = countryCodeToName[countryCode] || country;
+
+  const countryFlags: Record<string, string> = {
+    "United States": "🇺🇸",
+    Canada: "🇨🇦",
+    "United Kingdom": "🇬🇧",
+    Germany: "🇩🇪",
+    France: "🇫🇷",
+    Australia: "🇦🇺",
+    Japan: "🇯🇵",
+    Brazil: "🇧🇷",
+    India: "🇮🇳",
+    Mexico: "🇲🇽",
+    China: "🇨🇳",
+    Spain: "🇪🇸",
+    Italy: "🇮🇹",
+    Netherlands: "🇳🇱",
+    "South Korea": "🇰🇷",
+    Sweden: "🇸🇪",
+    Norway: "🇳🇴",
+    Denmark: "🇩🇰",
+    Finland: "🇫🇮",
+    Poland: "🇵🇱",
+    Russia: "🇷🇺",
+    Turkey: "🇹🇷",
+    "South Africa": "🇿🇦",
+    Argentina: "🇦🇷",
+    Chile: "🇨🇱",
+    "New Zealand": "🇳🇿",
+    Singapore: "🇸🇬",
+    Thailand: "🇹🇭",
+    Philippines: "🇵🇭",
+    Indonesia: "🇮🇩",
+    Malaysia: "🇲🇾",
+    Vietnam: "🇻🇳",
+    "Saudi Arabia": "🇸🇦",
+    "United Arab Emirates": "🇦🇪",
+    Israel: "🇮🇱",
+    Egypt: "🇪🇬",
+    Nigeria: "🇳🇬",
+    Kenya: "🇰🇪",
+    Ghana: "🇬🇭",
+    Portugal: "🇵🇹",
+    Greece: "🇬🇷",
+    Belgium: "🇧🇪",
+    Switzerland: "🇨🇭",
+    Austria: "🇦🇹",
+    Ireland: "🇮🇪",
+    "Czech Republic": "🇨🇿",
+    Romania: "🇷🇴",
+    Hungary: "🇭🇺",
+    Ukraine: "🇺🇦",
+    Colombia: "🇨🇴",
+    Peru: "🇵🇪",
+    Venezuela: "🇻🇪",
+    Ecuador: "🇪🇨",
+  };
+  return countryFlags[countryName] || "🌍";
+}
+
+// Convert country code to full name
+function getCountryName(country: string): string {
+  if (country.length === 2) {
+    return countryCodeToName[country.toUpperCase()] || country;
+  }
+  return country;
+}
+
+// Transform sessions to visitors format
+function transformSessionsToVisitors(sessions: Session[]): Visitor[] {
+  return sessions
+    .map((session) => ({
+      id: session.id,
+      timestamp: new Date(session.lastAt),
+      country: getCountryName(session.country),
+      city: session.city || "Unknown",
+      os: session.os || "Unknown",
+      browser: session.browser || "Unknown",
+      device: session.device || "Unknown",
+      page: session.hostname?.[0] || "/",
+    }))
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+    .slice(0, 10); // Limit to 10 most recent
+}
+
 interface DashboardClientPageProps {
   initialPostStats?: PostStats;
   initialActivities?: Activity[];
   initialAnalytics?: AnalyticsOverview;
-  initialVisitors?: Visitor[];
 }
 
 export function DashboardClientPage({
   initialPostStats,
   initialActivities,
   initialAnalytics,
-  initialVisitors,
 }: DashboardClientPageProps) {
-  const postStats = initialPostStats || generateDummyPostStats();
+  // State for time range selection
+  const [timeRange, setTimeRange] = useState<TimeRange>("24h");
+
+  // Fetch post stats from API
+  const {
+    data: postStats = initialPostStats || {
+      total: 0,
+      published: 0,
+      drafts: 0,
+      scheduled: 0,
+      archived: 0,
+      totalViews: 0,
+      averageViews: 0,
+    },
+    isLoading: isLoadingPostStats,
+  } = usePostStats({ initialData: initialPostStats });
+
+  // Fetch analytics overview with dynamic time range
+  const {
+    data: analytics = initialAnalytics || {
+      visitors: { value: 0, change: 0 },
+      visits: { value: 0, change: 0 },
+      views: { value: 0, change: 0 },
+      bounceRate: { value: 0, change: 0 },
+      visitDuration: { value: 0, change: 0 },
+      timeSeries: [],
+    },
+    isLoading: isLoadingAnalytics,
+    error: analyticsError,
+  } = useAnalyticsOverview(
+    { range: timeRange },
+    { initialData: initialAnalytics }
+  );
+
+  // Fetch sessions data for recent visitors
+  const { data: sessionsData, isLoading: isLoadingSessions } =
+    useAnalyticsSessions({
+      range: timeRange,
+      page: 1,
+      pageSize: 10,
+    });
+
+  // Keep activities as dummy for now (no activity API available)
   const activities = initialActivities || generateDummyActivities();
-  const analytics = initialAnalytics || generateDummyAnalytics();
-  const visitors = initialVisitors || generateDummyVisitors();
+
+  // Transform sessions to visitors format
+  const visitors = sessionsData?.data
+    ? transformSessionsToVisitors(sessionsData.data)
+    : [];
+
+  const handlePrevious = () => {
+    // TODO: Implement previous period navigation
+    console.log("Previous period");
+  };
+
+  const handleNext = () => {
+    // TODO: Implement next period navigation
+    console.log("Next period");
+  };
 
   return (
     <div className="space-y-8">
@@ -356,20 +440,85 @@ export function DashboardClientPage({
 
       {/* Web Analytics */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Web Analytics
-        </h2>
-        <div className="space-y-4">
-          <OverviewMetrics overview={analytics} />
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-stretch">
-            <div className="lg:col-span-3">
-              <TimeSeriesChart data={analytics.timeSeries} timeRange="7d" />
-            </div>
-            <div className="lg:col-span-2">
-              <VisitorsList visitors={visitors} />
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Web Analytics</h2>
+          <TimeRangeSelector
+            value={timeRange}
+            onChange={setTimeRange}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+          />
+        </div>
+        {analyticsError ? (
+          <div className="text-center text-red-600 py-4">
+            Error loading analytics data: {analyticsError.message}
+          </div>
+        ) : isLoadingAnalytics ? (
+          <div className="text-center text-muted-foreground py-4">
+            Loading analytics...
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Metrics Cards */}
+            <OverviewMetrics overview={analytics} />
+
+            {/* Time Series Chart and Recent Visitors - Side by Side */}
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-stretch">
+              <div className="lg:col-span-3">
+                <TimeSeriesChart
+                  data={analytics.timeSeries}
+                  timeRange={timeRange}
+                />
+              </div>
+              <div className="lg:col-span-2">
+                <Card className="h-full flex flex-col">
+                  <CardHeader>
+                    <CardTitle>Recent Visitors</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    {isLoadingSessions ? (
+                      <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                        Loading visitors...
+                      </div>
+                    ) : visitors.length === 0 ? (
+                      <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                        No visitors data available
+                      </div>
+                    ) : (
+                      <div className="space-y-2 flex-1">
+                        {visitors.map((visitor) => (
+                          <div
+                            key={visitor.id}
+                            className="flex items-center gap-2 pb-2 border-b last:border-0 last:pb-0"
+                          >
+                            <div className="shrink-0 text-xl">
+                              {getCountryFlag(visitor.country)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap text-sm">
+                                <span className="font-medium text-gray-900">
+                                  {visitor.city}, {visitor.country}
+                                </span>
+                                <span className="text-gray-500">•</span>
+                                <span className="text-gray-600">
+                                  {visitor.os}
+                                </span>
+                                <span className="text-gray-500">•</span>
+                                <span className="text-gray-500">
+                                  {formatTimeAgo(visitor.timestamp)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Recent Activity */}
@@ -377,93 +526,43 @@ export function DashboardClientPage({
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Recent Activity
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-3">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
-                <div className="space-y-2 flex-1">
-                  {activities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start gap-2 pb-2 border-b last:border-0 last:pb-0"
-                    >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                        <i
-                          className={`${getActivityIcon(
-                            activity.type
-                          )} text-gray-600 text-sm`}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap text-sm">
-                          <span className="font-medium text-gray-900">
-                            {activity.userName}
-                          </span>
-                          <span className="text-gray-500">•</span>
-                          <span className="text-gray-500">
-                            {formatTimeAgo(activity.createdAt)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 mt-0.5">
-                          {activity.description}
-                        </p>
-                      </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {activities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start gap-2 pb-2 border-b last:border-0 last:pb-0"
+                >
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i
+                      className={`${getActivityIcon(
+                        activity.type
+                      )} text-gray-600 text-sm`}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap text-sm">
+                      <span className="font-medium text-gray-900">
+                        {activity.userName}
+                      </span>
+                      <span className="text-gray-500">•</span>
+                      <span className="text-gray-500">
+                        {formatTimeAgo(activity.createdAt)}
+                      </span>
                     </div>
-                  ))}
+                    <p className="text-xs text-gray-600 mt-0.5">
+                      {activity.description}
+                    </p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Pages</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
-                <div className="space-y-2 flex-1">
-                  {[
-                    { path: "/", views: 12450, change: 15.2 },
-                    { path: "/services", views: 8920, change: 8.5 },
-                    { path: "/about", views: 6540, change: -3.2 },
-                    { path: "/blog", views: 5230, change: 22.1 },
-                    { path: "/contact", views: 4120, change: 5.8 },
-                  ].map((page, index) => (
-                    <div
-                      key={page.path}
-                      className="flex items-center justify-between gap-2 pb-2 border-b last:border-0 last:pb-0"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="font-medium text-gray-900 truncate">
-                            {page.path}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-gray-600">
-                            {page.views.toLocaleString()} views
-                          </span>
-                          <span
-                            className={`text-xs ${
-                              page.change > 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {page.change > 0 ? "↑" : "↓"}{" "}
-                            {Math.abs(page.change)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -571,3 +571,5 @@ WHERE NOT EXISTS (
   AND post_tags.tag_id = v.tag_id::uuid
 );
 
+
+
