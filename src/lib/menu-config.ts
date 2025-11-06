@@ -238,18 +238,16 @@ export const menuConfig: MenuCategory[] = [
         comingSoon: true,
         submenu: [
           {
-            label: "Catalog",
-            href: "/integrations/catalog",
-            badge: { text: "New", variant: "info" },
+            label: "Email",
+            href: "/integrations/email",
           },
           {
-            label: "Configure",
-            href: "/integrations/configure",
-            badge: { text: 7, variant: "default" },
+            label: "Database & Storage",
+            href: "/integrations/database-storage",
           },
           {
-            label: "Secrets",
-            href: "/integrations/secrets",
+            label: "AI",
+            href: "/integrations/ai",
           },
         ],
       },
