@@ -41,6 +41,24 @@ export const menuConfig: MenuCategory[] = [
     ],
   },
   {
+    label: "Web Analytics",
+    items: [
+      {
+        label: "Traffic",
+        icon: "ri-bar-chart-line",
+        href: "/analytics",
+        tabs: ["Overview", "Realtime", "Session"],
+      },
+      {
+        label: "Behaviour",
+        icon: "ri-user-heart-line",
+        href: "/behaviour",
+        badge: { text: "Soon", variant: "info" },
+        comingSoon: true,
+      },
+    ],
+  },
+  {
     label: "Content",
     items: [
       {
@@ -199,20 +217,20 @@ export const menuConfig: MenuCategory[] = [
     ],
   },
   {
-    label: "Insights & Operations",
+    label: "Control Panel",
+    comingSoon: true,
     items: [
       {
-        label: "Analytics",
-        icon: "ri-bar-chart-line",
-        href: "/analytics",
-        tabs: ["Overview", "Realtime", "Session"],
+        label: "Users & Access",
+        icon: "ri-user-line",
+        href: "/users",
+        tabs: ["Users", "Access Profiles", "Departments", "Invitations"],
       },
       {
-        label: "System (Control Center)",
-        icon: "ri-settings-3-line",
-        href: "/system",
-        tabs: ["Health", "Maintenance", "Feature Flags", "Logs", "Jobs/Queue"],
-        comingSoon: true,
+        label: "Audit Log",
+        icon: "ri-file-list-3-line",
+        href: "/audit",
+        badge: { text: "Beta", variant: "default" },
       },
       {
         label: "Integrations",
@@ -235,24 +253,6 @@ export const menuConfig: MenuCategory[] = [
           },
         ],
       },
-    ],
-  },
-  {
-    label: "Administration",
-    comingSoon: true,
-    items: [
-      {
-        label: "Users & Access",
-        icon: "ri-user-line",
-        href: "/users",
-        tabs: ["Users", "Access Profiles", "Departments", "Invitations"],
-      },
-      {
-        label: "Audit Log",
-        icon: "ri-file-list-3-line",
-        href: "/audit",
-        badge: { text: "Beta", variant: "default" },
-      },
       {
         label: "Settings",
         icon: "ri-settings-line",
@@ -264,17 +264,6 @@ export const menuConfig: MenuCategory[] = [
           "Legal Pages",
           "Content Defaults",
           "Public API Keys",
-        ],
-      },
-      {
-        label: "Developer",
-        icon: "ri-code-s-slash-line",
-        href: "/developer",
-        tabs: [
-          "API Playground",
-          "Content API Docs",
-          "Import/Export",
-          "Changelog",
         ],
       },
     ],
