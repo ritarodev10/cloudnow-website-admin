@@ -79,12 +79,24 @@ export async function GET(request: NextRequest) {
     const startAt = new Date(startDate).getTime();
     const endAt = new Date(endDate).getTime();
 
+    console.log("[API Weekly] Date conversion:", {
+      receivedStartDate: startDate,
+      receivedEndDate: endDate,
+      convertedStartAt: startAt,
+      convertedEndAt: endAt,
+      startDateISO: new Date(startAt).toISOString(),
+      endDateISO: new Date(endAt).toISOString(),
+      timezone,
+    });
+
     // Call the sessions/weekly endpoint with unit=hour
     const url = new URL(`${baseUrl}/websites/${websiteId}/sessions/weekly`);
     url.searchParams.set("startAt", startAt.toString());
     url.searchParams.set("endAt", endAt.toString());
     url.searchParams.set("unit", "hour");
     url.searchParams.set("timezone", timezone);
+
+    console.log("[API Weekly] Umami API URL:", url.toString());
 
     const response = await fetch(url.toString(), {
       method: "GET",

@@ -79,51 +79,44 @@ export function useWeeklyTraffic(
     ...options,
   });
 
-  // Transform the API response (7 days × 24 hours array) into our data structure
+  // Transform the API response (days × 24 hours array) into our data structure
   const weeklyData = useMemo<WeeklyTrafficData>(() => {
     if (!weeklyDataArray || weeklyDataArray.length === 0) {
+      console.log("[WeeklyTraffic] No data array or empty");
       return {};
     }
 
     const data: WeeklyTrafficData = {};
 
-    // API returns days in chronological order starting from the startDate's day of week
-    // We need to ensure the data is always ordered as: Sunday (0), Monday (1), ..., Saturday (6)
-    let orderedData = weeklyDataArray;
+    console.log("[WeeklyTraffic] Raw API data:", {
+      arrayLength: weeklyDataArray.length,
+      startDate: params?.startDate,
+      endDate: params?.endDate,
+      firstDaySample: weeklyDataArray[0]?.slice(0, 5), // First 5 hours of first day
+    });
 
-    // If we have 7 days, check if we need to reorder to start with Sunday
-    if (weeklyDataArray.length === 7 && params?.startDate) {
-      const startDate = new Date(params.startDate);
-      const startDayOfWeek = startDate.getDay(); // 0 = Sunday, 6 = Saturday
+    // IMPORTANT: The Umami API always returns data in a fixed format:
+    // arrayIndex 0 = Sunday, arrayIndex 1 = Monday, ..., arrayIndex 6 = Saturday
+    // This is regardless of the startDate/endDate - it always returns a full week
+    // in Sunday-Saturday order.
+    weeklyDataArray.forEach((dayHours, arrayIndex) => {
+      // arrayIndex directly maps to dayOfWeek: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+      const dayOfWeek = arrayIndex;
 
-      // If the week doesn't start on Sunday, we need to rotate the array
-      // Example: if startDayOfWeek = 6 (Saturday), weeklyDataArray[0] = Saturday, weeklyDataArray[1] = Sunday
-      // We want: Sunday first, so we rotate: [weeklyDataArray[1..6], weeklyDataArray[0]]
-      if (startDayOfWeek !== 0) {
-        // Calculate how many positions to rotate: Sunday is at index (7 - startDayOfWeek) % 7
-        // But simpler: we want index (7 - startDayOfWeek) % 7 to become index 0
-        // For startDayOfWeek = 6: Sunday is at index 1, so rotate left by 1: [1,2,3,4,5,6,0]
-        const rotationOffset = (7 - startDayOfWeek) % 7;
-        orderedData = [
-          ...weeklyDataArray.slice(rotationOffset), // Days from Sunday to end
-          ...weeklyDataArray.slice(0, rotationOffset), // Days from beginning to before Sunday
-        ];
-      }
-    }
-
-    // API returns: [day0hours[], day1hours[], ..., day6hours[]]
-    // day0 = Sunday (0), day1 = Monday (1), ..., day6 = Saturday (6)
-    // Each day array has 24 elements: [hour0, hour1, ..., hour23]
-    orderedData.forEach((dayHours, dayIndex) => {
-      // dayIndex should be 0-6 (Sunday to Saturday)
-      if (dayIndex < 0 || dayIndex > 6) {
-        console.warn(`Invalid day index: ${dayIndex}, expected 0-6`);
+      if (dayOfWeek < 0 || dayOfWeek > 6) {
+        console.warn(`Invalid day index: ${dayOfWeek}, expected 0-6`);
         return;
       }
 
+      console.log(
+        `[WeeklyTraffic] Mapping arrayIndex ${arrayIndex} to dayOfWeek ${dayOfWeek} (${
+          ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dayOfWeek]
+        })`
+      );
+
       // Initialize the day if needed
-      if (!data[dayIndex]) {
-        data[dayIndex] = {};
+      if (!data[dayOfWeek]) {
+        data[dayOfWeek] = {};
       }
 
       // Process each hour (0-23)
@@ -133,8 +126,16 @@ export function useWeeklyTraffic(
           return;
         }
 
+        if (visitors > 0) {
+          console.log(
+            `[WeeklyTraffic] Found ${visitors} visitors at dayOfWeek ${dayOfWeek} (${
+              ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dayOfWeek]
+            }), hour ${hourIndex}`
+          );
+        }
+
         // Store visitor count for this day/hour
-        data[dayIndex][hourIndex] = visitors || 0;
+        data[dayOfWeek][hourIndex] = visitors || 0;
       });
     });
 

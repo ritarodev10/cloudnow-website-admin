@@ -4,12 +4,26 @@ import { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useWeeklyTraffic } from "../_hooks/queries/use-weekly-traffic";
 import { TimeRange } from "@/types/analytics";
+import {
+  DateFilterPreset,
+  DateRange,
+  isPreset,
+} from "@/components/general/date-filter";
+import { startOfDay, startOfWeek, isBefore, isAfter } from "date-fns";
 
 interface WeeklyTrafficTrackerProps {
   timeRange: TimeRange;
+  dateFilter?: DateFilterPreset | DateRange;
+  startDate?: string;
+  endDate?: string;
 }
 
-export function WeeklyTrafficTracker({ timeRange }: WeeklyTrafficTrackerProps) {
+export function WeeklyTrafficTracker({
+  timeRange,
+  dateFilter,
+  startDate,
+  endDate,
+}: WeeklyTrafficTrackerProps) {
   const {
     data: weeklyData,
     maxVisitors,
@@ -17,6 +31,8 @@ export function WeeklyTrafficTracker({ timeRange }: WeeklyTrafficTrackerProps) {
     error,
   } = useWeeklyTraffic({
     range: timeRange,
+    startDate,
+    endDate,
   });
 
   const [hoveredCell, setHoveredCell] = useState<{
@@ -28,8 +44,130 @@ export function WeeklyTrafficTracker({ timeRange }: WeeklyTrafficTrackerProps) {
   } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Day labels (Sunday to Saturday)
-  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  // Calculate which cells should be visible based on date filter
+  const { visibleCells, dayLabels, labelToDataIndex } = useMemo(() => {
+    const now = new Date();
+    const visible = new Set<string>();
+
+    // Always use Sunday to Saturday order (matches API data structure)
+    const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    // Map label index to data index: Sun(0)->0, Mon(1)->1, ..., Sat(6)->6
+    // Data structure: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+    const labelToDataMap = [0, 1, 2, 3, 4, 5, 6];
+
+    if (!dateFilter) {
+      // No filter - show all cells
+      for (let labelIndex = 0; labelIndex < 7; labelIndex++) {
+        const dataIndex = labelToDataMap[labelIndex];
+        for (let hourIndex = 0; hourIndex < 24; hourIndex++) {
+          visible.add(`${labelIndex}-${hourIndex}`);
+        }
+      }
+      return {
+        visibleCells: visible,
+        dayLabels: labels,
+        labelToDataIndex: labelToDataMap,
+      };
+    }
+
+    // Calculate date range
+    let rangeStart: Date;
+    let rangeEnd: Date;
+
+    if (isPreset(dateFilter)) {
+      switch (dateFilter) {
+        case "today": {
+          rangeStart = startOfDay(now);
+          rangeEnd = now;
+          break;
+        }
+        case "24h": {
+          rangeStart = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          rangeEnd = now;
+          break;
+        }
+        case "thisWeek": {
+          rangeStart = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
+          rangeEnd = now;
+          break;
+        }
+        case "7d": {
+          rangeStart = startOfDay(
+            new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000)
+          );
+          rangeEnd = now;
+          break;
+        }
+        default: {
+          // For other filters, show all cells
+          for (let labelIndex = 0; labelIndex < 7; labelIndex++) {
+            for (let hourIndex = 0; hourIndex < 24; hourIndex++) {
+              visible.add(`${labelIndex}-${hourIndex}`);
+            }
+          }
+          return {
+            visibleCells: visible,
+            dayLabels: labels,
+            labelToDataIndex: labelToDataMap,
+          };
+        }
+      }
+    } else {
+      // Custom date range
+      rangeStart = dateFilter.startDate;
+      rangeEnd = dateFilter.endDate;
+    }
+
+    // Calculate which cells are within the date range
+    // Iterate through label indices (0-6) and map to actual dates
+    // Always start from Sunday (weekStartsOn: 0)
+    for (let labelIndex = 0; labelIndex < 7; labelIndex++) {
+      const dataIndex = labelToDataMap[labelIndex];
+
+      // Get the date for this day in the current week
+      // Week always starts on Sunday, label 0 = Sunday
+      const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+      const dayDate = new Date(weekStart);
+
+      // Calculate days to add based on label index
+      // Label 0 (Sun) = 0 days, label 1 (Mon) = 1 day, ..., label 6 (Sat) = 6 days
+      dayDate.setDate(dayDate.getDate() + labelIndex);
+      const dayStart = startOfDay(dayDate);
+
+      // Check if this day is within the range
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      // If the day is completely outside the range, skip it
+      if (isAfter(dayStart, rangeEnd) || isBefore(dayEnd, rangeStart)) {
+        continue;
+      }
+
+      // Check each hour in this day
+      for (let hourIndex = 0; hourIndex < 24; hourIndex++) {
+        const hourDate = new Date(dayStart);
+        hourDate.setHours(hourIndex, 0, 0, 0);
+        const hourEnd = new Date(hourDate);
+        hourEnd.setHours(hourIndex, 59, 59, 999);
+
+        // Check if this hour is within the range
+        // Hour is visible if it overlaps with the range at all
+        const hourStartsBeforeRangeEnd = !isAfter(hourDate, rangeEnd);
+        const hourEndsAfterRangeStart = !isBefore(hourEnd, rangeStart);
+
+        if (hourStartsBeforeRangeEnd && hourEndsAfterRangeStart) {
+          // This cell should be visible
+          visible.add(`${labelIndex}-${hourIndex}`);
+        }
+      }
+    }
+
+    return {
+      visibleCells: visible,
+      dayLabels: labels,
+      labelToDataIndex: labelToDataMap,
+    };
+  }, [dateFilter]);
 
   // Hour labels (12am to 11pm)
   const hourLabels = useMemo(() => {
@@ -141,22 +279,41 @@ export function WeeklyTrafficTracker({ timeRange }: WeeklyTrafficTrackerProps) {
                 </div>
 
                 {/* Day cells */}
-                {dayLabels.map((_, dayIndex) => {
-                  const visitors = weeklyData[dayIndex]?.[hourIndex] || 0;
+                {dayLabels.map((_, labelIndex) => {
+                  // Map label index to data index
+                  const dataIndex = labelToDataIndex[labelIndex];
+                  const visitors = weeklyData[dataIndex]?.[hourIndex] || 0;
                   const cellStyle = getCellStyle(visitors);
+                  const isVisible = visibleCells.has(
+                    `${labelIndex}-${hourIndex}`
+                  );
+
+                  // Debug logging for cells with data
+                  if (visitors > 0 && hourIndex === 1 && labelIndex === 0) {
+                    console.log("[WeeklyTrafficTracker] Cell data:", {
+                      labelIndex,
+                      label: dayLabels[labelIndex],
+                      dataIndex,
+                      hourIndex,
+                      visitors,
+                      isVisible,
+                      weeklyDataForDay: weeklyData[dataIndex],
+                    });
+                  }
 
                   return (
                     <div
-                      key={`${dayIndex}-${hourIndex}`}
+                      key={`${labelIndex}-${hourIndex}`}
                       className="flex items-center justify-center min-h-[20px] relative"
+                      style={{ opacity: isVisible ? 1 : 0.2 }}
                       onMouseEnter={(e) => {
-                        if (visitors > 0) {
+                        if (visitors > 0 && isVisible) {
                           const rect = e.currentTarget.getBoundingClientRect();
                           const containerRect =
                             containerRef.current?.getBoundingClientRect();
                           if (containerRect) {
                             setHoveredCell({
-                              dayIndex,
+                              dayIndex: labelIndex,
                               hourIndex,
                               visitors,
                               x:
@@ -171,7 +328,11 @@ export function WeeklyTrafficTracker({ timeRange }: WeeklyTrafficTrackerProps) {
                       }}
                     >
                       <div
-                        className="rounded-full transition-all hover:scale-125 cursor-pointer"
+                        className={`rounded-full transition-all ${
+                          isVisible
+                            ? "hover:scale-125 cursor-pointer"
+                            : "cursor-not-allowed"
+                        }`}
                         style={cellStyle}
                       />
                     </div>

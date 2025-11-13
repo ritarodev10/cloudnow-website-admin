@@ -13,10 +13,13 @@ import {
   YAxis,
   Legend,
 } from "recharts";
+import { startOfHour, subHours, startOfDay, setHours, startOfWeek, addDays, endOfWeek, isSameDay } from "date-fns";
 
 interface TimeSeriesChartProps {
   data: TimeSeriesDataPoint[];
   timeRange: "24h" | "7d" | "30d" | "custom";
+  endAtStartOfCurrentHour?: boolean;
+  isThisWeek?: boolean;
 }
 
 function formatTimeLabel(
@@ -57,7 +60,7 @@ const chartColors = {
   views: "#0a70a0", // Brand accent color (lighter blue)
 };
 
-export function TimeSeriesChart({ data, timeRange }: TimeSeriesChartProps) {
+export function TimeSeriesChart({ data, timeRange, endAtStartOfCurrentHour = false, isThisWeek = false }: TimeSeriesChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartHeight, setChartHeight] = useState(350);
 
@@ -113,23 +116,92 @@ export function TimeSeriesChart({ data, timeRange }: TimeSeriesChartProps) {
     };
   });
 
-  // For 24h range, fill in all 24 hours with data points
+  // For 7d range, fill in daily data points to ensure all 7 days (Sunday-Saturday) are shown
+  // Only do this for "this week" mode, not "last 7 days"
+  if (timeRange === "7d" && isThisWeek) {
+    const now = new Date();
+    const weekStart = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
+    const filledData = [];
+
+    // Create daily data points for Sunday through Saturday
+    for (let i = 0; i < 7; i++) {
+      const dayDate = addDays(weekStart, i);
+      const dayStart = startOfDay(dayDate);
+      const dayKey = dayStart.toISOString();
+
+      // Find and aggregate all existing data for this day
+      const dayDataPoints = chartData.filter((item) => {
+        const itemDate = new Date(item.timestamp);
+        return isSameDay(itemDate, dayStart);
+      });
+
+      if (dayDataPoints.length > 0) {
+        // Aggregate visitors and views for the day
+        const aggregated = dayDataPoints.reduce(
+          (acc, item) => ({
+            ...acc,
+            visitors: acc.visitors + (item.visitors || 0),
+            views: acc.views + (item.views || 0),
+          }),
+          { visitors: 0, views: 0 }
+        );
+
+        filledData.push({
+          timestamp: dayKey,
+          label: formatTimeLabel(dayKey, timeRange),
+          hour: 0,
+          visitors: aggregated.visitors,
+          views: aggregated.views,
+        });
+      } else {
+        // No data for this day, use zero values
+        filledData.push({
+          timestamp: dayKey,
+          label: formatTimeLabel(dayKey, timeRange),
+          hour: 0,
+          visitors: 0,
+          views: 0,
+        });
+      }
+    }
+    chartData = filledData;
+  }
+
+  // For 24h range, fill in hourly data points
   if (timeRange === "24h") {
     const now = new Date();
     const filledData = [];
 
-    // Create 24 hourly data points (last 24 hours from now)
-    for (let i = 23; i >= 0; i--) {
-      const hourDate = new Date(now.getTime() - i * 60 * 60 * 1000);
-      hourDate.setMinutes(0, 0, 0); // Set to start of hour
+    let startTime: Date;
+    let endTime: Date;
+    let numBuckets: number;
 
-      const hour = hourDate.getHours();
-      const hourKey = hourDate.toISOString();
+    if (endAtStartOfCurrentHour) {
+      // "Last 24 hours": end at start of current hour, start 24 hours before
+      // We want to show the same hour at both ends (e.g., 8am-8am)
+      endTime = startOfHour(now);
+      startTime = subHours(endTime, 24);
+      // Create 25 buckets to include both start and end hours (0-24 inclusive)
+      numBuckets = 25;
+    } else {
+      // "Today": start from beginning of today (12:00 AM), end at 10:00 PM (22:00)
+      startTime = startOfDay(now);
+      endTime = setHours(startOfDay(now), 22); // 10:00 PM
+      // Show 23 hours (0-22 inclusive): 12:00 AM to 10:00 PM
+      numBuckets = 23;
+    }
+
+    // Create hourly data points
+    for (let i = 0; i < numBuckets; i++) {
+      const hourDate = new Date(startTime.getTime() + i * 60 * 60 * 1000);
+      const hourStart = startOfHour(hourDate);
+      const hour = hourStart.getHours();
+      const hourKey = hourStart.toISOString();
 
       // Find existing data for this hour (within 1 hour window)
       const existing = chartData.find((item) => {
         const itemDate = new Date(item.timestamp);
-        const timeDiff = Math.abs(itemDate.getTime() - hourDate.getTime());
+        const timeDiff = Math.abs(itemDate.getTime() - hourStart.getTime());
         return timeDiff < 60 * 60 * 1000; // Within 1 hour
       });
 
@@ -177,8 +249,21 @@ export function TimeSeriesChart({ data, timeRange }: TimeSeriesChartProps) {
                   if (timeRange === "24h") {
                     const point = chartData[index];
                     if (point && point.hour !== undefined) {
+                      const isFirst = index === 0;
+                      const isLast = index === chartData.length - 1;
+                      
+                      // For "Last 24 hours", always show the first and last labels (same hour at both ends)
+                      if (endAtStartOfCurrentHour && (isFirst || isLast)) {
+                        return value;
+                      }
+                      
                       // Show label only for even hours
-                      return point.hour % 2 === 0 ? value : "";
+                      // For "Today", also show first label if it's an even hour
+                      if (point.hour % 2 === 0) {
+                        return value;
+                      }
+                      
+                      return "";
                     }
                     return "";
                   }
