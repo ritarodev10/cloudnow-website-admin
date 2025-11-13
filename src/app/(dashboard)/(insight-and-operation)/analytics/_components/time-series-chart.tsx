@@ -13,7 +13,16 @@ import {
   YAxis,
   Legend,
 } from "recharts";
-import { startOfHour, subHours, startOfDay, setHours, startOfWeek, addDays, endOfWeek, isSameDay } from "date-fns";
+import {
+  startOfHour,
+  subHours,
+  startOfDay,
+  setHours,
+  startOfWeek,
+  addDays,
+  endOfWeek,
+  isSameDay,
+} from "date-fns";
 
 interface TimeSeriesChartProps {
   data: TimeSeriesDataPoint[];
@@ -60,7 +69,12 @@ const chartColors = {
   views: "#0a70a0", // Brand accent color (lighter blue)
 };
 
-export function TimeSeriesChart({ data, timeRange, endAtStartOfCurrentHour = false, isThisWeek = false }: TimeSeriesChartProps) {
+export function TimeSeriesChart({
+  data,
+  timeRange,
+  endAtStartOfCurrentHour = false,
+  isThisWeek = false,
+}: TimeSeriesChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartHeight, setChartHeight] = useState(350);
 
@@ -251,18 +265,18 @@ export function TimeSeriesChart({ data, timeRange, endAtStartOfCurrentHour = fal
                     if (point && point.hour !== undefined) {
                       const isFirst = index === 0;
                       const isLast = index === chartData.length - 1;
-                      
+
                       // For "Last 24 hours", always show the first and last labels (same hour at both ends)
                       if (endAtStartOfCurrentHour && (isFirst || isLast)) {
                         return value;
                       }
-                      
+
                       // Show label only for even hours
                       // For "Today", also show first label if it's an even hour
                       if (point.hour % 2 === 0) {
                         return value;
                       }
-                      
+
                       return "";
                     }
                     return "";

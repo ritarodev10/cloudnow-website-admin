@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
+// Force dynamic rendering - this layout requires Supabase auth check
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayoutWrapper({
   children,
 }: {
@@ -18,6 +21,7 @@ export default async function DashboardLayoutWrapper({
 
   return <DashboardLayout>{children}</DashboardLayout>;
 }
+
 
 
 

@@ -1,13 +1,13 @@
 import { CommentsClientPage } from "./comments-client-page";
 import { Comment, CommentStats } from "@/types/comments";
 import { Post } from "@/types/posts";
+import { getPosts } from "@/lib/posts/queries";
 
 // Force dynamic rendering to avoid build-time static generation
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-// Mock data - will be replaced with actual API calls
+// Mock data - will be replaced with actual API calls when database table is ready
 async function getComments(): Promise<Comment[]> {
-  // TODO: Replace with actual API call
   return [
     {
       id: "1",
@@ -46,42 +46,7 @@ async function getComments(): Promise<Comment[]> {
   ];
 }
 
-async function getPosts(): Promise<Post[]> {
-  // TODO: Replace with actual API call
-  return [
-    {
-      id: "post-1",
-      title: "Getting Started with Cloud Infrastructure",
-      slug: "getting-started-cloud-infrastructure",
-      content: "Content here...",
-      authorId: "author-1",
-      authorName: "Admin",
-      authorEmail: "admin@example.com",
-      status: "published",
-      createdAt: new Date("2024-01-10"),
-      updatedAt: new Date("2024-01-10"),
-      views: 150,
-      tags: ["cloud", "infrastructure"],
-    },
-    {
-      id: "post-2",
-      title: "Introduction to Kubernetes",
-      slug: "introduction-kubernetes",
-      content: "Content here...",
-      authorId: "author-1",
-      authorName: "Admin",
-      authorEmail: "admin@example.com",
-      status: "published",
-      createdAt: new Date("2024-01-12"),
-      updatedAt: new Date("2024-01-12"),
-      views: 200,
-      tags: ["kubernetes", "devops"],
-    },
-  ];
-}
-
 async function getCommentStats(): Promise<CommentStats> {
-  // TODO: Replace with actual API call
   const comments = await getComments();
   return {
     total: comments.length,
@@ -93,7 +58,7 @@ async function getCommentStats(): Promise<CommentStats> {
 }
 
 export default async function CommentsPage() {
-  // Fetch data - will be replaced with actual API calls
+  // Fetch data - using mock data until database table is ready
   const [comments, posts, stats] = await Promise.all([
     getComments(),
     getPosts(),
@@ -108,7 +73,3 @@ export default async function CommentsPage() {
     />
   );
 }
-
-
-
-

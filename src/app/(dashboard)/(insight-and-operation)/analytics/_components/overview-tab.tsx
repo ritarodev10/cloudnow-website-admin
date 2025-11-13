@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { DateFilter, DateFilterPreset, DateRange, isPreset } from "@/components/general/date-filter";
+import {
+  DateFilter,
+  DateFilterPreset,
+  DateRange,
+  isPreset,
+} from "@/components/general/date-filter";
 import { OverviewMetrics } from "./overview-metrics";
 import { TimeSeriesChart } from "./time-series-chart";
 import { LocationCard } from "./location-card";
@@ -10,12 +15,24 @@ import { WorldMapComponent as WorldMap } from "./world-map";
 import { WeeklyTrafficTracker } from "./weekly-traffic-tracker";
 import { useAnalyticsOverview } from "../_hooks/queries/use-analytics-overview";
 import { TimeRange } from "@/types/analytics";
-import { format, subDays, addDays, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear, subMonths } from "date-fns";
+import {
+  format,
+  subDays,
+  addDays,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  startOfMonth,
+  startOfYear,
+  subMonths,
+} from "date-fns";
 import { Button } from "@/components/ui/button";
 
 export function OverviewTab() {
-  const [dateFilter, setDateFilter] = useState<DateFilterPreset | DateRange>("24h");
-  
+  const [dateFilter, setDateFilter] = useState<DateFilterPreset | DateRange>(
+    "24h"
+  );
+
   // Helper function to get current date range for a preset
   const getCurrentPresetRange = (preset: DateFilterPreset): DateRange => {
     const now = new Date();
@@ -28,7 +45,10 @@ export function OverviewTab() {
       case "24h":
         return { startDate: subDays(now, 1), endDate: now };
       case "thisWeek":
-        return { startDate: startOfWeek(now, { weekStartsOn: 0 }), endDate: end };
+        return {
+          startDate: startOfWeek(now, { weekStartsOn: 0 }),
+          endDate: end,
+        };
       case "7d":
         return { startDate: startOfDay(subDays(now, 6)), endDate: end };
       case "thisMonth":
@@ -63,7 +83,7 @@ export function OverviewTab() {
     }
 
     let currentRange: DateRange;
-    
+
     if (isPreset(dateFilter)) {
       // For presets, get the current range
       currentRange = getCurrentPresetRange(dateFilter);
@@ -97,7 +117,7 @@ export function OverviewTab() {
     }
 
     let currentRange: DateRange;
-    
+
     if (isPreset(dateFilter)) {
       // For presets, get the current range
       currentRange = getCurrentPresetRange(dateFilter);
@@ -118,12 +138,12 @@ export function OverviewTab() {
 
     setDateFilter(newRange);
   };
-  
+
   // Convert date filter to API params
   const apiParams = useMemo(() => {
     if (isPreset(dateFilter)) {
       const now = new Date();
-      
+
       // Differentiate Today/This week/This month by using custom ranges
       // This allows Today to include partial current hour, and week/month to include partial today
       if (dateFilter === "today") {
@@ -148,7 +168,7 @@ export function OverviewTab() {
           endDate: now.toISOString(),
         };
       }
-      
+
       // Handle "24h" - last 24 hours
       if (dateFilter === "24h") {
         return {
@@ -157,7 +177,7 @@ export function OverviewTab() {
           endDate: now.toISOString(),
         };
       }
-      
+
       // Handle "7d" - last 7 days
       if (dateFilter === "7d") {
         return {
@@ -166,7 +186,7 @@ export function OverviewTab() {
           endDate: now.toISOString(),
         };
       }
-      
+
       // Map other presets to TimeRange
       const rangeMap: Record<DateFilterPreset, TimeRange> = {
         today: "24h", // Should not reach here due to check above
@@ -282,8 +302,8 @@ export function OverviewTab() {
       <OverviewMetrics overview={overview} />
 
       {/* Time Series Chart - Full Width */}
-      <TimeSeriesChart 
-        data={overview.timeSeries} 
+      <TimeSeriesChart
+        data={overview.timeSeries}
         timeRange={timeRange}
         endAtStartOfCurrentHour={isPreset(dateFilter) && dateFilter === "24h"}
         isThisWeek={isPreset(dateFilter) && dateFilter === "thisWeek"}
@@ -301,7 +321,7 @@ export function OverviewTab() {
           <WorldMap timeRange={timeRange} />
         </div>
         <div className="lg:col-span-1 flex w-full">
-          <WeeklyTrafficTracker 
+          <WeeklyTrafficTracker
             timeRange={timeRange}
             dateFilter={dateFilter}
             startDate={apiParams.startDate}

@@ -10,6 +10,7 @@ import {
   EnvironmentMetrics,
   EnvironmentType,
 } from "@/types/analytics";
+import { startOfHour, subHours, startOfDay, subDays } from "date-fns";
 
 /**
  * Create a configured Umami API client
@@ -46,8 +47,7 @@ function getDateRange(
   customStart?: string,
   customEnd?: string
 ): { startAt: number; endAt: number } {
-  const end = new Date();
-  const start = new Date();
+  const now = new Date();
 
   if (range === "custom" && customStart && customEnd) {
     return {
@@ -58,22 +58,34 @@ function getDateRange(
 
   switch (range) {
     case "24h":
-      start.setHours(start.getHours() - 24);
-      break;
+      // Align to full hours: end at start of current hour, start 24 hours before
+      const endAt = startOfHour(now);
+      const startAt = subHours(endAt, 24);
+      return {
+        startAt: startAt.getTime(),
+        endAt: endAt.getTime(),
+      };
     case "7d":
-      start.setDate(start.getDate() - 7);
-      break;
+      // Include partial today: start 6 days ago at start of day, end at now
+      return {
+        startAt: startOfDay(subDays(now, 6)).getTime(),
+        endAt: now.getTime(),
+      };
     case "30d":
-      start.setDate(start.getDate() - 30);
-      break;
+      // Include partial today: start 29 days ago at start of day, end at now
+      return {
+        startAt: startOfDay(subDays(now, 29)).getTime(),
+        endAt: now.getTime(),
+      };
     default:
-      start.setHours(start.getHours() - 24);
+      // Default to 24h behavior
+      const defaultEndAt = startOfHour(now);
+      const defaultStartAt = subHours(defaultEndAt, 24);
+      return {
+        startAt: defaultStartAt.getTime(),
+        endAt: defaultEndAt.getTime(),
+      };
   }
-
-  return {
-    startAt: start.getTime(),
-    endAt: end.getTime(),
-  };
 }
 
 /**
@@ -147,152 +159,118 @@ export async function getAnalyticsOverview(
       views: number;
     }> = [];
 
-    // Use weekly endpoint for 7d and 30d ranges
-    if (range === "7d" || range === "30d") {
-      // Weekly endpoint expects startAt and endAt as ISO strings
-      const startAtStr = new Date(startAt).toISOString();
-      const endAtStr = new Date(endAt).toISOString();
-
-      const weeklyResult = await client.getWebsiteSessionsWeekly(websiteId, {
-        startAt: startAtStr,
-        endAt: endAtStr,
-      });
-
-      if (weeklyResult.ok && weeklyResult.data) {
-        // WebsiteSessionWeekly is number[][] - array of arrays
-        // Each inner array represents a week: [timestamp, visitors, views, ...]
-        const weeklyData = weeklyResult.data || [];
-
-        timeSeries = weeklyData.map((week: number[], index: number) => {
-          // weeklyData format: [[timestamp, visitors, views, ...], ...]
-          // Extract timestamp (first element) and visitors/views
-          const timestampMs = week[0];
-          const visitors = week[1] || 0;
-          const views = week[2] || week[1] || 0;
-
-          const timestamp = timestampMs
-            ? new Date(timestampMs).toISOString()
-            : new Date(startAt + index * 7 * 24 * 60 * 60 * 1000).toISOString();
-
-          return {
-            timestamp,
-            visitors,
-            views,
-          };
-        });
-      }
+    // Use pageviews endpoint for all ranges with appropriate unit
+    // For 7d and 30d, use day unit to get daily buckets aligned to local days
+    let unit: "hour" | "day" | "month" = "hour";
+    if (range === "24h") {
+      unit = "hour";
+    } else if (range === "7d" || range === "30d") {
+      unit = "day";
+    } else if (range === "custom") {
+      // For custom ranges, check if the duration is 7 days or less
+      const durationDays = (endAt - startAt) / (1000 * 60 * 60 * 24);
+      unit = durationDays <= 7 ? "hour" : "day";
     } else {
-      // Use regular pageviews endpoint for 24h with hourly granularity
-      // For custom ranges, use hourly if the range is 7 days or less
-      let unit: "hour" | "day" | "month" = "hour";
-      if (range === "24h") {
-        unit = "hour";
-      } else if (range === "custom") {
-        // For custom ranges, check if the duration is 7 days or less
-        const durationDays = (endAt - startAt) / (1000 * 60 * 60 * 24);
-        unit = durationDays <= 7 ? "hour" : "day";
-      } else {
-        unit = "day";
-      }
+      unit = "hour";
+    }
 
-      const pageviewsResult = await client.getWebsitePageviews(websiteId, {
-        startAt,
-        endAt,
-        unit,
-        timezone,
+    const pageviewsResult = await client.getWebsitePageviews(websiteId, {
+      startAt,
+      endAt,
+      unit,
+      timezone,
+    });
+
+    // Transform pageviews to time series format
+    if (pageviewsResult.ok && pageviewsResult.data) {
+      const pageviews = pageviewsResult.data.pageviews || [];
+      const sessions = pageviewsResult.data.sessions || [];
+
+      // Match pageviews and sessions by timestamp
+      const timeMap = new Map<
+        string,
+        { visitors: number; views: number; timestampMs?: number }
+      >();
+
+      // Process pageviews - Umami API returns { x: timestamp, y: value }
+      pageviews.forEach((pv: any) => {
+        // Timestamp is in 'x' field (ISO string), value is in 'y' field
+        const timestamp = pv.x || pv.t || pv.timestamp || pv.date || null;
+        if (!timestamp) {
+          return;
+        }
+
+        // Ensure timestamp is an ISO string
+        const timestampStr =
+          typeof timestamp === "number"
+            ? new Date(timestamp).toISOString()
+            : timestamp;
+
+        const existing = timeMap.get(timestampStr) || {
+          visitors: 0,
+          views: 0,
+          timestampMs:
+            typeof timestamp === "number"
+              ? timestamp
+              : new Date(timestampStr).getTime(),
+        };
+        timeMap.set(timestampStr, {
+          ...existing,
+          views: pv.y || pv.pageviews || pv.views || 0,
+          timestampMs:
+            typeof timestamp === "number"
+              ? timestamp
+              : existing.timestampMs || new Date(timestampStr).getTime(),
+        });
       });
 
-      // Transform pageviews to time series format
-      if (pageviewsResult.ok && pageviewsResult.data) {
-        const pageviews = pageviewsResult.data.pageviews || [];
-        const sessions = pageviewsResult.data.sessions || [];
+      // Process sessions - Umami API returns { x: timestamp, y: value }
+      sessions.forEach((sess: any) => {
+        // Timestamp is in 'x' field (ISO string), value is in 'y' field
+        const timestamp =
+          sess.x || sess.t || sess.timestamp || sess.date || null;
+        if (!timestamp) {
+          return;
+        }
 
-        // Match pageviews and sessions by timestamp
-        const timeMap = new Map<
-          string,
-          { visitors: number; views: number; timestampMs?: number }
-        >();
+        // Ensure timestamp is an ISO string
+        const timestampStr =
+          typeof timestamp === "number"
+            ? new Date(timestamp).toISOString()
+            : timestamp;
 
-        // Process pageviews - Umami API returns { x: timestamp, y: value }
-        pageviews.forEach((pv: any) => {
-          // Timestamp is in 'x' field (ISO string), value is in 'y' field
-          const timestamp = pv.x || pv.t || pv.timestamp || pv.date || null;
-          if (!timestamp) {
-            return;
-          }
-
-          // Ensure timestamp is an ISO string
-          const timestampStr =
+        const existing = timeMap.get(timestampStr) || {
+          visitors: 0,
+          views: 0,
+          timestampMs:
             typeof timestamp === "number"
-              ? new Date(timestamp).toISOString()
-              : timestamp;
-
-          const existing = timeMap.get(timestampStr) || {
-            visitors: 0,
-            views: 0,
-            timestampMs:
-              typeof timestamp === "number"
-                ? timestamp
-                : new Date(timestampStr).getTime(),
-          };
-          timeMap.set(timestampStr, {
-            ...existing,
-            views: pv.y || pv.pageviews || pv.views || 0,
-            timestampMs:
-              typeof timestamp === "number"
-                ? timestamp
-                : existing.timestampMs || new Date(timestampStr).getTime(),
-          });
-        });
-
-        // Process sessions - Umami API returns { x: timestamp, y: value }
-        sessions.forEach((sess: any) => {
-          // Timestamp is in 'x' field (ISO string), value is in 'y' field
-          const timestamp =
-            sess.x || sess.t || sess.timestamp || sess.date || null;
-          if (!timestamp) {
-            return;
-          }
-
-          // Ensure timestamp is an ISO string
-          const timestampStr =
+              ? timestamp
+              : new Date(timestampStr).getTime(),
+        };
+        timeMap.set(timestampStr, {
+          ...existing,
+          visitors: sess.y || sess.visitors || sess.uniques || 0,
+          timestampMs:
             typeof timestamp === "number"
-              ? new Date(timestamp).toISOString()
-              : timestamp;
-
-          const existing = timeMap.get(timestampStr) || {
-            visitors: 0,
-            views: 0,
-            timestampMs:
-              typeof timestamp === "number"
-                ? timestamp
-                : new Date(timestampStr).getTime(),
-          };
-          timeMap.set(timestampStr, {
-            ...existing,
-            visitors: sess.y || sess.visitors || sess.uniques || 0,
-            timestampMs:
-              typeof timestamp === "number"
-                ? timestamp
-                : existing.timestampMs || new Date(timestampStr).getTime(),
-          });
+              ? timestamp
+              : existing.timestampMs || new Date(timestampStr).getTime(),
         });
+      });
 
-        // Sort by timestamp and convert to array
-        timeSeries = Array.from(timeMap.entries())
-          .filter(([timestamp]) => timestamp && timestamp.length > 0) // Filter out empty timestamps
-          .sort(([a], [b]) => {
-            // Sort by timestamp value
-            const aMs = timeMap.get(a)?.timestampMs || new Date(a).getTime();
-            const bMs = timeMap.get(b)?.timestampMs || new Date(b).getTime();
-            return aMs - bMs;
-          })
-          .map(([timestamp, data]) => ({
-            timestamp,
-            visitors: data.visitors,
-            views: data.views,
-          }));
-      }
+      // Sort by timestamp and convert to array
+      timeSeries = Array.from(timeMap.entries())
+        .filter(([timestamp]) => timestamp && timestamp.length > 0) // Filter out empty timestamps
+        .sort(([a], [b]) => {
+          // Sort by timestamp value
+          const aMs = timeMap.get(a)?.timestampMs || new Date(a).getTime();
+          const bMs = timeMap.get(b)?.timestampMs || new Date(b).getTime();
+          return aMs - bMs;
+        })
+        .map(([timestamp, data]) => ({
+          timestamp,
+          visitors: data.visitors,
+          views: data.views,
+        }));
     }
 
     // Extract comparison values (prev) from stats
@@ -327,15 +305,8 @@ export async function getAnalyticsOverview(
       timeSeries,
     };
   } catch (error) {
-    // Return empty data structure on error
-    return {
-      visitors: { value: 0, change: 0 },
-      visits: { value: 0, change: 0 },
-      views: { value: 0, change: 0 },
-      bounceRate: { value: 0, change: 0 },
-      visitDuration: { value: 0, change: 0 },
-      timeSeries: [],
-    };
+    // Re-throw error instead of returning default values
+    throw error;
   }
 }
 

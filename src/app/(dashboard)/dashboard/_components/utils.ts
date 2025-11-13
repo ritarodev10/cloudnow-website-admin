@@ -264,3 +264,4 @@ export function generateDummyActivities(): Activity[] {
 
   return activities;
 }
+

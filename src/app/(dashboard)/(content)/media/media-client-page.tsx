@@ -34,171 +34,7 @@ interface MediaItem {
   };
 }
 
-// Dummy data
-const dummyMediaItems: MediaItem[] = [
-  // Images
-  {
-    id: "1",
-    name: "hero-banner.jpg",
-    type: "image",
-    url: "/assets/images/hero-banner.jpg",
-    thumbnail: "/assets/images/hero-banner.jpg",
-    size: 245678,
-    mimeType: "image/jpeg",
-    uploadedAt: "2024-01-15T10:30:00Z",
-    uploadedBy: "John Doe",
-    dimensions: { width: 1920, height: 1080 },
-  },
-  {
-    id: "2",
-    name: "company-logo.png",
-    type: "image",
-    url: "/assets/images/company-logo.png",
-    thumbnail: "/assets/images/company-logo.png",
-    size: 123456,
-    mimeType: "image/png",
-    uploadedAt: "2024-01-20T14:15:00Z",
-    uploadedBy: "Jane Smith",
-    dimensions: { width: 512, height: 512 },
-  },
-  {
-    id: "3",
-    name: "team-photo.jpg",
-    type: "image",
-    url: "/assets/images/team-photo.jpg",
-    thumbnail: "/assets/images/team-photo.jpg",
-    size: 567890,
-    mimeType: "image/jpeg",
-    uploadedAt: "2024-02-01T09:00:00Z",
-    uploadedBy: "Mike Johnson",
-    dimensions: { width: 1600, height: 1200 },
-  },
-  {
-    id: "4",
-    name: "product-screenshot.png",
-    type: "image",
-    url: "/assets/images/product-screenshot.png",
-    thumbnail: "/assets/images/product-screenshot.png",
-    size: 345678,
-    mimeType: "image/png",
-    uploadedAt: "2024-02-10T16:45:00Z",
-    uploadedBy: "Sarah Wilson",
-    dimensions: { width: 1280, height: 720 },
-  },
-  {
-    id: "5",
-    name: "icon-set.svg",
-    type: "image",
-    url: "/assets/images/icon-set.svg",
-    thumbnail: "/assets/images/icon-set.svg",
-    size: 45678,
-    mimeType: "image/svg+xml",
-    uploadedAt: "2024-02-15T11:20:00Z",
-    uploadedBy: "John Doe",
-    dimensions: { width: 256, height: 256 },
-  },
-  {
-    id: "6",
-    name: "background-gradient.jpg",
-    type: "image",
-    url: "/assets/images/background-gradient.jpg",
-    thumbnail: "/assets/images/background-gradient.jpg",
-    size: 789012,
-    mimeType: "image/jpeg",
-    uploadedAt: "2024-02-20T13:30:00Z",
-    uploadedBy: "Jane Smith",
-    dimensions: { width: 2560, height: 1440 },
-  },
-  // Videos
-  {
-    id: "7",
-    name: "product-demo.mp4",
-    type: "video",
-    url: "/assets/videos/product-demo.mp4",
-    thumbnail: "/assets/images/video-thumbnail-1.jpg",
-    size: 4567890,
-    mimeType: "video/mp4",
-    uploadedAt: "2024-01-25T10:00:00Z",
-    uploadedBy: "Mike Johnson",
-    dimensions: { width: 1920, height: 1080 },
-  },
-  {
-    id: "8",
-    name: "company-intro.mp4",
-    type: "video",
-    url: "/assets/videos/company-intro.mp4",
-    thumbnail: "/assets/images/video-thumbnail-2.jpg",
-    size: 6789012,
-    mimeType: "video/mp4",
-    uploadedAt: "2024-02-05T15:30:00Z",
-    uploadedBy: "Sarah Wilson",
-    dimensions: { width: 1280, height: 720 },
-  },
-  // Documents
-  {
-    id: "9",
-    name: "company-brochure.pdf",
-    type: "document",
-    url: "/assets/documents/company-brochure.pdf",
-    size: 2345678,
-    mimeType: "application/pdf",
-    uploadedAt: "2024-01-10T09:15:00Z",
-    uploadedBy: "John Doe",
-  },
-  {
-    id: "10",
-    name: "annual-report-2023.pdf",
-    type: "document",
-    url: "/assets/documents/annual-report-2023.pdf",
-    size: 5678901,
-    mimeType: "application/pdf",
-    uploadedAt: "2024-01-18T14:00:00Z",
-    uploadedBy: "Jane Smith",
-  },
-  {
-    id: "11",
-    name: "presentation-deck.pptx",
-    type: "document",
-    url: "/assets/documents/presentation-deck.pptx",
-    size: 3456789,
-    mimeType:
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    uploadedAt: "2024-02-08T11:45:00Z",
-    uploadedBy: "Mike Johnson",
-  },
-  {
-    id: "12",
-    name: "data-sheet.xlsx",
-    type: "document",
-    url: "/assets/documents/data-sheet.xlsx",
-    size: 1234567,
-    mimeType:
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    uploadedAt: "2024-02-12T16:20:00Z",
-    uploadedBy: "Sarah Wilson",
-  },
-  // Audio
-  {
-    id: "13",
-    name: "podcast-episode-1.mp3",
-    type: "audio",
-    url: "/assets/audio/podcast-episode-1.mp3",
-    size: 8901234,
-    mimeType: "audio/mpeg",
-    uploadedAt: "2024-01-30T10:30:00Z",
-    uploadedBy: "John Doe",
-  },
-  {
-    id: "14",
-    name: "background-music.mp3",
-    type: "audio",
-    url: "/assets/audio/background-music.mp3",
-    size: 4567890,
-    mimeType: "audio/mpeg",
-    uploadedAt: "2024-02-14T13:00:00Z",
-    uploadedBy: "Jane Smith",
-  },
-];
+// Media items will be fetched from UploadThing API or database
 
 // Helper functions
 function formatFileSize(bytes: number): string {
@@ -253,10 +89,11 @@ export function MediaClientPage() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]); // Will be fetched from API
 
   // Filter and search media items
   const filteredItems = useMemo(() => {
-    return dummyMediaItems.filter((item) => {
+    return mediaItems.filter((item) => {
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.uploadedBy.toLowerCase().includes(searchQuery.toLowerCase());
@@ -352,7 +189,7 @@ export function MediaClientPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Files</p>
-                <p className="text-2xl font-bold">{dummyMediaItems.length}</p>
+                <p className="text-2xl font-bold">{mediaItems.length}</p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
                 <i className="ri-folder-line text-blue-600 dark:text-blue-400 text-xl" />
@@ -366,7 +203,7 @@ export function MediaClientPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Images</p>
                 <p className="text-2xl font-bold">
-                  {dummyMediaItems.filter((item) => item.type === "image")
+                  {mediaItems.filter((item) => item.type === "image")
                     .length}
                 </p>
               </div>
@@ -382,7 +219,7 @@ export function MediaClientPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Videos</p>
                 <p className="text-2xl font-bold">
-                  {dummyMediaItems.filter((item) => item.type === "video")
+                  {mediaItems.filter((item) => item.type === "video")
                     .length}
                 </p>
               </div>
@@ -399,7 +236,7 @@ export function MediaClientPage() {
                 <p className="text-sm text-muted-foreground">Total Size</p>
                 <p className="text-2xl font-bold">
                   {formatFileSize(
-                    dummyMediaItems.reduce((sum, item) => sum + item.size, 0)
+                    mediaItems.reduce((sum, item) => sum + item.size, 0)
                   )}
                 </p>
               </div>
@@ -657,6 +494,7 @@ export function MediaClientPage() {
     </PageTitle>
   );
 }
+
 
 
 

@@ -39,3 +39,4 @@ CREATE TRIGGER update_blog_categories_updated_at
 
 
 
+
