@@ -5,6 +5,9 @@ import {
 } from "@/lib/faqs/queries";
 import { FAQClientPage } from "./faq-client-page";
 
+// Force dynamic rendering to avoid build-time static generation
+export const dynamic = 'force-dynamic';
+
 export default async function FAQPage() {
   // Fetch data from Supabase
   const [faqs, groups, stats] = await Promise.all([
@@ -21,6 +24,7 @@ export default async function FAQPage() {
     />
   );
 }
+
 
 
 

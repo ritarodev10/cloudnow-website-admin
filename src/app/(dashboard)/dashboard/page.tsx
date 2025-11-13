@@ -2,6 +2,9 @@ import { DashboardClientPage } from "./dashboard-client-page";
 import { getPostStats } from "@/lib/posts/queries";
 import { getAnalyticsOverview } from "@/lib/analytics/queries";
 
+// Force dynamic rendering to avoid build-time static generation
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   try {
     // Fetch initial data server-side for better performance

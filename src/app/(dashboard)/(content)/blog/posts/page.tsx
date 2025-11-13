@@ -2,6 +2,9 @@ import { getPosts, getPostStats } from "@/lib/posts/queries";
 import { getCategories } from "@/lib/categories/queries";
 import { PostsClientPage } from "./posts-client-page";
 
+// Force dynamic rendering to avoid build-time static generation
+export const dynamic = 'force-dynamic';
+
 export default async function PostsPage() {
   // Fetch data from Supabase
   const [posts, stats, categories] = await Promise.all([
@@ -27,6 +30,7 @@ export default async function PostsPage() {
     />
   );
 }
+
 
 
 
