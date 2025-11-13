@@ -2,6 +2,9 @@ import { CommentsClientPage } from "./comments-client-page";
 import { Comment, CommentStats } from "@/types/comments";
 import { Post } from "@/types/posts";
 
+// Force dynamic rendering to avoid build-time static generation
+export const dynamic = 'force-dynamic';
+
 // Mock data - will be replaced with actual API calls
 async function getComments(): Promise<Comment[]> {
   // TODO: Replace with actual API call
@@ -105,6 +108,7 @@ export default async function CommentsPage() {
     />
   );
 }
+
 
 
 
